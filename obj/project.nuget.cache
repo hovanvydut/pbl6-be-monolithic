@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "46YGdsMbQ3axGWI8TkcUw5oNNKdxiplxMarZmWgTpJXysyziMfCX5Co3EbkIIyZDrY25i/rShOHg3bZ63t0W5w==",
+  "success": true,
+  "projectFilePath": "/Users/admin/Documents/personal/code/pbl6/be/monolithic/monolithic.csproj",
+  "expectedPackageFiles": [
+    "/Users/admin/.nuget/packages/microsoft.extensions.apidescription.server/3.0.0/microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "/Users/admin/.nuget/packages/microsoft.openapi/1.2.3/microsoft.openapi.1.2.3.nupkg.sha512",
+    "/Users/admin/.nuget/packages/swashbuckle.aspnetcore/6.2.3/swashbuckle.aspnetcore.6.2.3.nupkg.sha512",
+    "/Users/admin/.nuget/packages/swashbuckle.aspnetcore.swagger/6.2.3/swashbuckle.aspnetcore.swagger.6.2.3.nupkg.sha512",
+    "/Users/admin/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.2.3/swashbuckle.aspnetcore.swaggergen.6.2.3.nupkg.sha512",
+    "/Users/admin/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.2.3/swashbuckle.aspnetcore.swaggerui.6.2.3.nupkg.sha512"
+  ],
+  "logs": []
+}

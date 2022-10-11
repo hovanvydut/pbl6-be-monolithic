@@ -15,7 +15,10 @@ amgr:
 	@dotnet ef database update
 
 dc-up:
-	@docker compose -p pbl6 up --build
+	@docker compose -p pbl6 up -d --build
 
 dc-down:
 	@docker compose -p pbl6 down
+
+dc-clean:
+	@docker system prune --all --force

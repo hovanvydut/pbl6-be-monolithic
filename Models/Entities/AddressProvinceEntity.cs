@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Monolithic.Models.Common;
+using Monolithic.Constants;
 
 namespace Monolithic.Models.Entities;
 
@@ -13,5 +13,5 @@ public class AddressProvinceEntity : EntityBase
     [Column("name")]
     public string Name { get; set; }
 
-    public ICollection<AddressDistrictEntity> AddressDistrictEntities { get; set; }
+    public ICollection<AddressDistrictEntity> AddressDistricts { get; set; }
 }

@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Monolithic.Models.Common;
+using Monolithic.Constants;
 
 namespace Monolithic.Models.Entities;
 
@@ -37,21 +37,21 @@ public class PostEntity : EntityBase
     [Column("num_view")]
     public int NumView { get; set; }
 
-    [ForeignKey(nameof(AddressWardEntity))]
-    public int AddressWardEntityId { get; set; }
+    [ForeignKey(nameof(AddressWard))]
+    public int AddressWardId { get; set; }
 
     [Column("address_ward_id")]
-    public AddressWardEntity AddressWardEntity { get; set; }
+    public AddressWardEntity AddressWard { get; set; }
 
-    [ForeignKey(nameof(TenantTypeEntity))]
-    public int TenantTypeEntityId { get; set; }
+    [ForeignKey(nameof(TenantType))]
+    public int TenantTypeId { get; set; }
 
     [Column("tenant_type_id")]
-    public TenantTypeEntity TenantTypeEntity { get; set; }
+    public TenantTypeEntity TenantType { get; set; }
 
-    [ForeignKey(nameof(CategoryEntity))]
+    [ForeignKey(nameof(Category))]
     [Column("category_id")]
-    public int CategoryEntityId { get; set; }
+    public int CategoryId { get; set; }
 
-    public CategoryEntity CategoryEntity { get; set; }
+    public CategoryEntity Category { get; set; }
 }

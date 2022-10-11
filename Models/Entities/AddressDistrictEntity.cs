@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Monolithic.Models.Common;
+using Monolithic.Constants;
 
 namespace Monolithic.Models.Entities;
 
@@ -13,11 +13,11 @@ public class AddressDistrictEntity : EntityBase
     [Column("name")]
     public string Name { get; set; }
 
-    [ForeignKey(nameof(AddressProvinceEntity))]
+    [ForeignKey(nameof(AddressProvince))]
     [Column("province_id")]
-    public int AddressProvinceEntityId { get; set; }
+    public int AddressProvinceId { get; set; }
 
-    public AddressProvinceEntity AddressProvinceEntity { get; set; }
+    public AddressProvinceEntity AddressProvince { get; set; }
 
-    public ICollection<AddressWardEntity> AddressWardEntities { get; set; }
+    public ICollection<AddressWardEntity> AddressWards { get; set; }
 }

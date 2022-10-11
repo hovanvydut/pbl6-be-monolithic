@@ -1,4 +1,4 @@
-namespace Monolithic.Models.Entities;
+namespace Monolithic.Constants;
 
 public static class TableName
 {

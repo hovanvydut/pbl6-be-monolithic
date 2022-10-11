@@ -31,10 +31,10 @@ public class DataContext : DbContext
         return base.SaveChangesAsync(cancellationToken);
     }
 
-    public DbSet<AddressDistrictEntity> AddressDistrictEntities { get; set; }
-    public DbSet<AddressProvinceEntity> AddressProvinceEntities { get; set; }
-    public DbSet<AddressWardEntity> AddressWardEntities { get; set; }
-    public DbSet<CategoryEntity> CategoryEntities { get; set; }
-    public DbSet<PostEntity> PostEntities { get; set; }
-    public DbSet<TenantTypeEntity> TenantTypeEntities { get; set; }
+    public DbSet<AddressDistrictEntity> AddressDistricts { get; set; }
+    public DbSet<AddressProvinceEntity> AddressProvinces { get; set; }
+    public DbSet<AddressWardEntity> AddressWards { get; set; }
+    public DbSet<CategoryEntity> Categories { get; set; }
+    public DbSet<PostEntity> Posts { get; set; }
+    public DbSet<TenantTypeEntity> TenantTypes { get; set; }
 }

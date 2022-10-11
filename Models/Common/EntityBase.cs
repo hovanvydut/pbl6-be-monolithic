@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Monolithic.Models.Common;
 
 public abstract class EntityBase

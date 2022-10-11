@@ -1,6 +1,6 @@
 namespace Monolithic.Constants;
 
-public static class TableName
+public class TableName
 {
     public const string ADDRESS_PROVINCE = "address_province";
     public const string ADDRESS_DISTRICT = "address_district";

@@ -16,5 +16,5 @@ public class CategoryEntity : EntityBase
     [Column("slug")]
     public string Slug { get; set; }
 
-    public ICollection<PostEntity> Posts { get; set; }
+    // public ICollection<PostEntity> Posts { get; set; }
 }

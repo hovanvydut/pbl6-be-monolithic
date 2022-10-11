@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace monolithic.Migrations
 {
-    public partial class PostTable : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,7 +22,8 @@ namespace monolithic.Migrations
                     name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -41,7 +42,8 @@ namespace monolithic.Migrations
                     slug = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,7 +62,8 @@ namespace monolithic.Migrations
                     slug = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -78,7 +81,8 @@ namespace monolithic.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     province_id = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -102,7 +106,8 @@ namespace monolithic.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     district_id = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -135,18 +140,19 @@ namespace monolithic.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     limit_tenant = table.Column<int>(type: "int", nullable: false),
                     num_view = table.Column<int>(type: "int", nullable: false),
-                    AddressWardEntityId = table.Column<int>(type: "int", nullable: false),
-                    TenantTypeEntityId = table.Column<int>(type: "int", nullable: false),
+                    AddressWardId = table.Column<int>(type: "int", nullable: false),
+                    TenantTypeId = table.Column<int>(type: "int", nullable: false),
                     category_id = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_post", x => x.id);
                     table.ForeignKey(
-                        name: "FK_post_address_ward_AddressWardEntityId",
-                        column: x => x.AddressWardEntityId,
+                        name: "FK_post_address_ward_AddressWardId",
+                        column: x => x.AddressWardId,
                         principalTable: "address_ward",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -157,8 +163,8 @@ namespace monolithic.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_post_tenant_type_TenantTypeEntityId",
-                        column: x => x.TenantTypeEntityId,
+                        name: "FK_post_tenant_type_TenantTypeId",
+                        column: x => x.TenantTypeId,
                         principalTable: "tenant_type",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -176,9 +182,9 @@ namespace monolithic.Migrations
                 column: "district_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_post_AddressWardEntityId",
+                name: "IX_post_AddressWardId",
                 table: "post",
-                column: "AddressWardEntityId");
+                column: "AddressWardId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_post_category_id",
@@ -186,9 +192,9 @@ namespace monolithic.Migrations
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_post_TenantTypeEntityId",
+                name: "IX_post_TenantTypeId",
                 table: "post",
-                column: "TenantTypeEntityId");
+                column: "TenantTypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

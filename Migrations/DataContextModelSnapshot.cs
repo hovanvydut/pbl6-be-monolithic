@@ -26,11 +26,14 @@ namespace monolithic.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<int>("AddressProvinceEntityId")
+                    b.Property<int>("AddressProvinceId")
                         .HasColumnType("int")
                         .HasColumnName("province_id");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
@@ -42,7 +45,7 @@ namespace monolithic.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressProvinceEntityId");
+                    b.HasIndex("AddressProvinceId");
 
                     b.ToTable("address_district");
                 });
@@ -55,6 +58,9 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
@@ -76,11 +82,14 @@ namespace monolithic.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<int>("AddressDistrictEntityId")
+                    b.Property<int>("AddressDistrictId")
                         .HasColumnType("int")
                         .HasColumnName("district_id");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
@@ -92,7 +101,7 @@ namespace monolithic.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressDistrictEntityId");
+                    b.HasIndex("AddressDistrictId");
 
                     b.ToTable("address_ward");
                 });
@@ -105,6 +114,9 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
@@ -134,18 +146,21 @@ namespace monolithic.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("address");
 
-                    b.Property<int>("AddressWardEntityId")
+                    b.Property<int>("AddressWardId")
                         .HasColumnType("int");
 
                     b.Property<float>("Area")
                         .HasColumnType("float")
                         .HasColumnName("area");
 
-                    b.Property<int>("CategoryEntityId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int")
                         .HasColumnName("category_id");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
@@ -172,7 +187,7 @@ namespace monolithic.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("slug");
 
-                    b.Property<int>("TenantTypeEntityId")
+                    b.Property<int>("TenantTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -184,11 +199,11 @@ namespace monolithic.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressWardEntityId");
+                    b.HasIndex("AddressWardId");
 
-                    b.HasIndex("CategoryEntityId");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("TenantTypeEntityId");
+                    b.HasIndex("TenantTypeId");
 
                     b.ToTable("post");
                 });
@@ -201,6 +216,9 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
@@ -221,71 +239,71 @@ namespace monolithic.Migrations
 
             modelBuilder.Entity("Monolithic.Models.Entities.AddressDistrictEntity", b =>
                 {
-                    b.HasOne("Monolithic.Models.Entities.AddressProvinceEntity", "AddressProvinceEntity")
-                        .WithMany("AddressDistrictEntities")
-                        .HasForeignKey("AddressProvinceEntityId")
+                    b.HasOne("Monolithic.Models.Entities.AddressProvinceEntity", "AddressProvince")
+                        .WithMany("AddressDistricts")
+                        .HasForeignKey("AddressProvinceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AddressProvinceEntity");
+                    b.Navigation("AddressProvince");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.AddressWardEntity", b =>
                 {
-                    b.HasOne("Monolithic.Models.Entities.AddressDistrictEntity", "AddressDistrictEntity")
-                        .WithMany("AddressWardEntities")
-                        .HasForeignKey("AddressDistrictEntityId")
+                    b.HasOne("Monolithic.Models.Entities.AddressDistrictEntity", "AddressDistrict")
+                        .WithMany("AddressWards")
+                        .HasForeignKey("AddressDistrictId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AddressDistrictEntity");
+                    b.Navigation("AddressDistrict");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.PostEntity", b =>
                 {
-                    b.HasOne("Monolithic.Models.Entities.AddressWardEntity", "AddressWardEntity")
+                    b.HasOne("Monolithic.Models.Entities.AddressWardEntity", "AddressWard")
                         .WithMany()
-                        .HasForeignKey("AddressWardEntityId")
+                        .HasForeignKey("AddressWardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Monolithic.Models.Entities.CategoryEntity", "CategoryEntity")
-                        .WithMany("PostEntities")
-                        .HasForeignKey("CategoryEntityId")
+                    b.HasOne("Monolithic.Models.Entities.CategoryEntity", "Category")
+                        .WithMany("Posts")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Monolithic.Models.Entities.TenantTypeEntity", "TenantTypeEntity")
-                        .WithMany("PostEntities")
-                        .HasForeignKey("TenantTypeEntityId")
+                    b.HasOne("Monolithic.Models.Entities.TenantTypeEntity", "TenantType")
+                        .WithMany("Posts")
+                        .HasForeignKey("TenantTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AddressWardEntity");
+                    b.Navigation("AddressWard");
 
-                    b.Navigation("CategoryEntity");
+                    b.Navigation("Category");
 
-                    b.Navigation("TenantTypeEntity");
+                    b.Navigation("TenantType");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.AddressDistrictEntity", b =>
                 {
-                    b.Navigation("AddressWardEntities");
+                    b.Navigation("AddressWards");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.AddressProvinceEntity", b =>
                 {
-                    b.Navigation("AddressDistrictEntities");
+                    b.Navigation("AddressDistricts");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.CategoryEntity", b =>
                 {
-                    b.Navigation("PostEntities");
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.TenantTypeEntity", b =>
                 {
-                    b.Navigation("PostEntities");
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

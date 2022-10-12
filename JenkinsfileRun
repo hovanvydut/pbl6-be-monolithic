@@ -19,11 +19,10 @@ pipeline{
 						sh '''
 							[ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh &&
           					ssh-keyscan -t rsa,dsa $REMOTE_SERVER_DOMAIN >> ~/.ssh/known_hosts &&
-							ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN << EOF
-							docker system prune --force --all --volumes
-							docker rm -f pbl6-api-1
-                            docker pull hovanvydut/pbl6-be-monolithic
-							docker run -d --name=pbl6-api-1 -p 7133:80 hovanvydut/pbl6-be-monolithic
+							ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker system prune --force --all --volumes'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker rm -f pbl6-api-1'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker pull hovanvydut/pbl6-be-monolithic'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker run -d --name=pbl6-api-1 -p 7133:80 hovanvydut/pbl6-be-monolithic'
 						'''
 					}
 				}

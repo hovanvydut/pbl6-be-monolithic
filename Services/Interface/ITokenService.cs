@@ -1,6 +1,6 @@
 namespace Monolithic.Services.Interface;
 
-public interface IExampleService
+public interface ITokenService
 {
-
+    
 }

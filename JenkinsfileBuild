@@ -1,0 +1,65 @@
+pipeline{
+	agent any
+	
+	triggers {
+		githubPush()
+	}
+	
+	environment {
+		DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+		REMOTE_SERVER_DOMAIN = "node-1.silk-cat.software"
+		NODE_1_CREDENTIALS = credentials('NODE_1')
+	}
+
+	stages {
+		stage('gitclone') {
+
+			steps {
+				git branch: 'main', credentialsId: 'HOME_SERVER_SSH_PRIVATE_KEY', url: 'git@github.com:hovanvydut/pbl6-be-monolithic.git'
+			}
+		}
+
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t hovanvydut/pbl6-be-monolithic .'
+			}
+		}
+
+		stage('Login docker hub') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+		stage('Push image to docker hub') {
+
+			steps {
+				sh 'docker push hovanvydut/pbl6-be-monolithic'
+			}
+		}
+	}
+
+	post {
+		always {
+            echo 'Always message'
+		}
+
+		success {
+            echo 'Success message'
+        }
+
+		failure {
+            echo 'Failed :( message'
+        }
+
+        changed {
+            echo 'Things were different before...'
+        }
+
+		aborted  {
+			echo "Aborted message"
+		}
+	}
+}

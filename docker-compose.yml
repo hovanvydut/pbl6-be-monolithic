@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  api1:
+    container_name: "api-1"
+    build: ./
+    ports:
+      - 7133:80
+    networks:
+      - api1
+networks:
+  api1:

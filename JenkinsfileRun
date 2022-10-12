@@ -22,6 +22,7 @@ pipeline{
 							ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN << EOF
 							docker system prune --force --all --volumes
 							docker rm -f pbl6-api-1
+                            docker pull hovanvydut/pbl6-be-monolithic
 							docker run -d --name=pbl6-api-1 -p 7133:80 hovanvydut/pbl6-be-monolithic
 						'''
 					}

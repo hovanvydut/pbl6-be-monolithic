@@ -12,6 +12,11 @@ make run
 make dc-up
 ```
 
+## Version API
+
+When build the new image, please increase the `APIVersion` in file `appsettings.json`;
+API check version: `/api/Common/Version`
+
 ## Jenkins
 
 - `JenkinsfileBuild` used to config pipeline to: clone repo --> build image --> pubish image to docker hub

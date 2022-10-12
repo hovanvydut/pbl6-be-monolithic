@@ -12,7 +12,7 @@ public static class ServiceExtension
 {
     public static void ConfigureDataContext(this IServiceCollection services, IConfiguration configuration)
     {
-        string cns = configuration.GetConnectionString("Local");
+        string cns = configuration.GetConnectionString("Node1");
         services.AddDbContext<DataContext>(options =>
         {
             options.UseMySql(cns, ServerVersion.AutoDetect(cns));
@@ -34,10 +34,13 @@ public static class ServiceExtension
     private static void ConfigureRepositoryDI(this IServiceCollection services)
     {
         services.AddScoped<IExampleRepository, ExampleRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)
     {
         services.AddScoped<IExampleService, ExampleService>();
+        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IPostService, PostService>();
     }
 }

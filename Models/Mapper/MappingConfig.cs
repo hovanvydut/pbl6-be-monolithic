@@ -10,5 +10,6 @@ public class MappingConfig : Profile
     {
         // Mapping for Example
         CreateMap<Example, ExampleDTO>();
+        CreateMap<CategoryEntity, CategoryDTO>();
     }
 }

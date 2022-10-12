@@ -1,0 +1,54 @@
+pipeline{
+	agent any
+	
+	triggers {
+		githubPush()
+	}
+	
+	environment {
+		DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+		REMOTE_SERVER_DOMAIN = "node-1.silk-cat.software"
+		NODE_1_CREDENTIALS = credentials('NODE_1')
+	}
+
+	stages {
+		stage('Pull and run container') {
+			steps {
+				script {
+					sshagent(credentials: ['NODE_1']) {
+						sh '''
+							[ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh &&
+          					ssh-keyscan -t rsa,dsa $REMOTE_SERVER_DOMAIN >> ~/.ssh/known_hosts &&
+							ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN << EOF
+							docker system prune --force --all --volumes
+							docker rm -f pbl6-api-1
+							docker run -d --name=pbl6-api-1 -p 7133:80 hovanvydut/pbl6-be-monolithic
+						'''
+					}
+				}
+			}
+		}
+	}
+
+	post {
+		always {
+            echo 'Always message'
+		}
+
+		success {
+            echo 'Success message'
+        }
+
+		failure {
+            echo 'Failed :( message'
+        }
+
+        changed {
+            echo 'Things were different before...'
+        }
+
+		aborted  {
+			echo "Aborted message"
+		}
+	}
+}

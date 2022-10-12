@@ -10,6 +10,4 @@ public class Example : EntityBase
 
     [MaxLength(255)]
     public string LastName { get; set; }
-
-    public string testField {get; set;}
 }

@@ -19,17 +19,11 @@ public class UserAccountService : IUserAccountService
         _mapper = mapper;
     }
 
-    public async Task<bool> IsExistingEmail(string email)
-    {
-        if (await _userAccountRepository.GetByEmail(email) == null)
-        {
-            return false;
-        }
-        return true;
-    }
-
     public async Task<UserRegisterResponseDTO> Register(UserRegisterDTO userRegisterDTO)
     {
+        // Return null if register email is exists
+        if (await _userAccountRepository.GetByEmail(userRegisterDTO.Email) != null)
+            return null;
         using var hmac = new HMACSHA512();
         var passwordByte = Encoding.UTF8.GetBytes(userRegisterDTO.Password);
         var newUser = new UserAccountEntity()

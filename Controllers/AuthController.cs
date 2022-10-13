@@ -1,9 +1,6 @@
 using Monolithic.Services.Interface;
-using System.Security.Cryptography;
-using Monolithic.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.DTO;
-using System.Text;
 
 namespace Monolithic.Controllers;
 
@@ -21,11 +18,11 @@ public class AuthController : BaseController
     {
         if (ModelState.IsValid)
         {
-            if (await _userAccountService.IsExistingEmail(userRegisterDTO.Email))
+            var newUser = await _userAccountService.Register(userRegisterDTO);
+            if (newUser == null)
             {
                 return BadRequest("This email is existing");
             }
-            var newUser = await _userAccountService.Register(userRegisterDTO);
             return Ok(newUser);
         }
         return BadRequest();

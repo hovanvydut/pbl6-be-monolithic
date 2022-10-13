@@ -10,6 +10,12 @@ public class MappingConfig : Profile
     {
         // Mapping for Example
         CreateMap<Example, ExampleDTO>();
+
+        // Category
         CreateMap<CategoryEntity, CategoryDTO>();
+
+        // User Register
+        CreateMap<UserAccountEntity, UserRegisterResponseDTO>()
+            .ForMember(dto => dto.RoleName, prop => prop.MapFrom(entity => entity.Role.Name));
     }
 }

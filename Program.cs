@@ -2,6 +2,16 @@ using Monolithic.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Cors
+builder.Services.AddCors(c =>
+    c.AddDefaultPolicy(options =>
+    {
+        options.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    })
+);
+
 // Add services to the container.
 builder.Services.ConfigureDataContext(builder.Configuration);
 builder.Services.ConfigureDI();
@@ -12,6 +22,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())

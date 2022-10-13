@@ -11,8 +11,8 @@ using Monolithic.Models.Context;
 namespace monolithic.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221013145203_Init")]
-    partial class Init
+    [Migration("20221013161754_Update1")]
+    partial class Update1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,14 +33,16 @@ namespace monolithic.Migrations
                         .HasColumnName("province_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -57,14 +59,16 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -83,14 +87,16 @@ namespace monolithic.Migrations
                         .HasColumnName("district_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -107,7 +113,8 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
@@ -118,7 +125,8 @@ namespace monolithic.Migrations
                         .HasColumnName("slug");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -133,7 +141,8 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext")
@@ -148,7 +157,8 @@ namespace monolithic.Migrations
                         .HasColumnName("role_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -180,7 +190,12 @@ namespace monolithic.Migrations
                         .HasColumnName("category_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("deleted_at");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext")
@@ -203,7 +218,7 @@ namespace monolithic.Migrations
                         .HasColumnName("price");
 
                     b.Property<string>("Slug")
-                        .HasColumnType("longtext")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("slug");
 
                     b.Property<int>("TenantTypeId")
@@ -214,7 +229,12 @@ namespace monolithic.Migrations
                         .HasColumnName("title");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("UserAccountId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id");
 
@@ -222,9 +242,105 @@ namespace monolithic.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
                     b.HasIndex("TenantTypeId");
 
+                    b.HasIndex("UserAccountId");
+
                     b.ToTable("post");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.PostPropertyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int")
+                        .HasColumnName("post_id");
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int")
+                        .HasColumnName("property_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("PostId", "PropertyId")
+                        .IsUnique();
+
+                    b.ToTable("post_property");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.PropertyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("longtext")
+                        .HasColumnName("code");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("display_name");
+
+                    b.Property<int>("PropertyGroupId")
+                        .HasColumnType("int")
+                        .HasColumnName("property_group_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyGroupId");
+
+                    b.ToTable("property");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.PropertyGroupEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("display_name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("property_group");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.RoleEntity", b =>
@@ -235,7 +351,8 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext")
@@ -246,7 +363,8 @@ namespace monolithic.Migrations
                         .HasColumnName("name");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -261,7 +379,8 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
@@ -272,7 +391,8 @@ namespace monolithic.Migrations
                         .HasColumnName("slug");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -287,7 +407,8 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .HasColumnType("longtext")
@@ -310,7 +431,8 @@ namespace monolithic.Migrations
                         .HasColumnName("role_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -372,11 +494,49 @@ namespace monolithic.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Monolithic.Models.Entities.UserAccountEntity", "UserAccount")
+                        .WithMany()
+                        .HasForeignKey("UserAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AddressWard");
 
                     b.Navigation("Category");
 
                     b.Navigation("TenantType");
+
+                    b.Navigation("UserAccount");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.PostPropertyEntity", b =>
+                {
+                    b.HasOne("Monolithic.Models.Entities.PostEntity", "Post")
+                        .WithMany("PostProperties")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monolithic.Models.Entities.PropertyEntity", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.PropertyEntity", b =>
+                {
+                    b.HasOne("Monolithic.Models.Entities.PropertyGroupEntity", "PropertyGroup")
+                        .WithMany("Properties")
+                        .HasForeignKey("PropertyGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PropertyGroup");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.UserAccountEntity", b =>
@@ -398,6 +558,16 @@ namespace monolithic.Migrations
             modelBuilder.Entity("Monolithic.Models.Entities.AddressProvinceEntity", b =>
                 {
                     b.Navigation("AddressDistricts");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.PostEntity", b =>
+                {
+                    b.Navigation("PostProperties");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.PropertyGroupEntity", b =>
+                {
+                    b.Navigation("Properties");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.RoleEntity", b =>

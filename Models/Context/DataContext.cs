@@ -40,4 +40,7 @@ public class DataContext : DbContext
     public DbSet<UserAccountEntity> UserAccounts { get; set; }
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
+    public DbSet<PropertyEntity> Properties { get; set; }
+    public DbSet<PropertyGroupEntity> PropertyGroups { get; set; }
+    public DbSet<PostPropertyEntity> PostProperties { get; set; }
 }

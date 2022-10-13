@@ -11,4 +11,7 @@ public class TableName
     public const string USER_ACCOUNT = "user_account";
     public const string ROLE = "role";
     public const string PERMISSION = "permission";
+    public const string PROPERTY = "property";
+    public const string PROPERTY_GROUP = "property_group";
+    public const string POST_PROPERTY = "post_property";
 }

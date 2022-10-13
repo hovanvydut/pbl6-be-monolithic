@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace monolithic.Migrations
 {
-    public partial class Init : Migration
+    public partial class Update1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,8 +21,8 @@ namespace monolithic.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -40,12 +40,29 @@ namespace monolithic.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     slug = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_category", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "property_group",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    display_name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_property_group", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -59,8 +76,8 @@ namespace monolithic.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -78,8 +95,8 @@ namespace monolithic.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     slug = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -96,8 +113,8 @@ namespace monolithic.Migrations
                     name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     province_id = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -106,6 +123,32 @@ namespace monolithic.Migrations
                         name: "FK_address_district_address_province_province_id",
                         column: x => x.province_id,
                         principalTable: "address_province",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "property",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    code = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    display_name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    property_group_id = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_property", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_property_property_group_property_group_id",
+                        column: x => x.property_group_id,
+                        principalTable: "property_group",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -122,8 +165,8 @@ namespace monolithic.Migrations
                     description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     role_id = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -149,8 +192,8 @@ namespace monolithic.Migrations
                     password_salt = table.Column<byte[]>(type: "longblob", nullable: true),
                     is_verified = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     role_id = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -173,8 +216,8 @@ namespace monolithic.Migrations
                     name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     district_id = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -203,15 +246,17 @@ namespace monolithic.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     price = table.Column<float>(type: "float", nullable: false),
                     pre_paid_price = table.Column<float>(type: "float", nullable: false),
-                    slug = table.Column<string>(type: "longtext", nullable: true)
+                    slug = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     limit_tenant = table.Column<int>(type: "int", nullable: false),
                     num_view = table.Column<int>(type: "int", nullable: false),
                     AddressWardId = table.Column<int>(type: "int", nullable: false),
                     TenantTypeId = table.Column<int>(type: "int", nullable: false),
                     category_id = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -232,6 +277,41 @@ namespace monolithic.Migrations
                         name: "FK_post_tenant_type_TenantTypeId",
                         column: x => x.TenantTypeId,
                         principalTable: "tenant_type",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_post_user_account_user_id",
+                        column: x => x.user_id,
+                        principalTable: "user_account",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "post_property",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    post_id = table.Column<int>(type: "int", nullable: false),
+                    property_id = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_post_property", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_post_property_post_post_id",
+                        column: x => x.post_id,
+                        principalTable: "post",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_post_property_property_property_id",
+                        column: x => x.property_id,
+                        principalTable: "property",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -263,9 +343,36 @@ namespace monolithic.Migrations
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_post_slug",
+                table: "post",
+                column: "slug",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_post_TenantTypeId",
                 table: "post",
                 column: "TenantTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_post_user_id",
+                table: "post",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_post_property_post_id_property_id",
+                table: "post_property",
+                columns: new[] { "post_id", "property_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_post_property_property_id",
+                table: "post_property",
+                column: "property_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_property_property_group_id",
+                table: "property",
+                column: "property_group_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_account_role_id",
@@ -279,10 +386,13 @@ namespace monolithic.Migrations
                 name: "permission");
 
             migrationBuilder.DropTable(
+                name: "post_property");
+
+            migrationBuilder.DropTable(
                 name: "post");
 
             migrationBuilder.DropTable(
-                name: "user_account");
+                name: "property");
 
             migrationBuilder.DropTable(
                 name: "address_ward");
@@ -294,10 +404,16 @@ namespace monolithic.Migrations
                 name: "tenant_type");
 
             migrationBuilder.DropTable(
-                name: "role");
+                name: "user_account");
+
+            migrationBuilder.DropTable(
+                name: "property_group");
 
             migrationBuilder.DropTable(
                 name: "address_district");
+
+            migrationBuilder.DropTable(
+                name: "role");
 
             migrationBuilder.DropTable(
                 name: "address_province");

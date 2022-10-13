@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Monolithic.Models.Common;
 using Monolithic.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace Monolithic.Models.Entities;
 
 [Table(TableName.POST)]
+[Index(nameof(PostEntity.Slug), IsUnique = true)]
 public class PostEntity : EntityBase
 {
     [Column("id")]
@@ -54,4 +56,15 @@ public class PostEntity : EntityBase
     public int CategoryId { get; set; }
 
     public CategoryEntity Category { get; set; }
+
+    [ForeignKey(nameof(UserAccount))]
+    [Column("user_id")]
+    public int UserAccountId { get; set; }
+
+    public UserAccountEntity UserAccount { get; set; }
+
+    [Column("deleted_at")]
+    public DateTime? DeletedAt { get; set; }
+
+    public ICollection<PostPropertyEntity> PostProperties { get; set; }
 }

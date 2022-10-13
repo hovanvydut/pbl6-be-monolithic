@@ -33,9 +33,6 @@ namespace monolithic.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
                         .HasColumnName("name");
@@ -58,9 +55,6 @@ namespace monolithic.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
@@ -89,9 +83,6 @@ namespace monolithic.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
                         .HasColumnName("name");
@@ -116,9 +107,6 @@ namespace monolithic.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext")
                         .HasColumnName("display_name");
@@ -133,6 +121,38 @@ namespace monolithic.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("category");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.PermissionEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("longtext")
+                        .HasColumnName("key");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int")
+                        .HasColumnName("role_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("permission");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.PostEntity", b =>
@@ -158,9 +178,6 @@ namespace monolithic.Migrations
                         .HasColumnName("category_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
@@ -208,7 +225,7 @@ namespace monolithic.Migrations
                     b.ToTable("post");
                 });
 
-            modelBuilder.Entity("Monolithic.Models.Entities.TenantTypeEntity", b =>
+            modelBuilder.Entity("Monolithic.Models.Entities.RoleEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,7 +235,30 @@ namespace monolithic.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("DeletedAt")
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("role");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.TenantTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
@@ -235,6 +275,46 @@ namespace monolithic.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tenant_type");
+                });
+
+            modelBuilder.Entity("Monolithic.Models.Entities.UserAccountEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_verified");
+
+                    b.Property<byte[]>("PasswordHashed")
+                        .HasColumnType("longblob")
+                        .HasColumnName("password_hashed");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("longblob")
+                        .HasColumnName("password_salt");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int")
+                        .HasColumnName("role_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("user_account");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.AddressDistrictEntity", b =>
@@ -259,6 +339,17 @@ namespace monolithic.Migrations
                     b.Navigation("AddressDistrict");
                 });
 
+            modelBuilder.Entity("Monolithic.Models.Entities.PermissionEntity", b =>
+                {
+                    b.HasOne("Monolithic.Models.Entities.RoleEntity", "Role")
+                        .WithMany("Permissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("Monolithic.Models.Entities.PostEntity", b =>
                 {
                     b.HasOne("Monolithic.Models.Entities.AddressWardEntity", "AddressWard")
@@ -268,7 +359,7 @@ namespace monolithic.Migrations
                         .IsRequired();
 
                     b.HasOne("Monolithic.Models.Entities.CategoryEntity", "Category")
-                        .WithMany("Posts")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -286,6 +377,17 @@ namespace monolithic.Migrations
                     b.Navigation("TenantType");
                 });
 
+            modelBuilder.Entity("Monolithic.Models.Entities.UserAccountEntity", b =>
+                {
+                    b.HasOne("Monolithic.Models.Entities.RoleEntity", "Role")
+                        .WithMany("UserAccounts")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("Monolithic.Models.Entities.AddressDistrictEntity", b =>
                 {
                     b.Navigation("AddressWards");
@@ -296,9 +398,11 @@ namespace monolithic.Migrations
                     b.Navigation("AddressDistricts");
                 });
 
-            modelBuilder.Entity("Monolithic.Models.Entities.CategoryEntity", b =>
+            modelBuilder.Entity("Monolithic.Models.Entities.RoleEntity", b =>
                 {
-                    b.Navigation("Posts");
+                    b.Navigation("Permissions");
+
+                    b.Navigation("UserAccounts");
                 });
 
             modelBuilder.Entity("Monolithic.Models.Entities.TenantTypeEntity", b =>

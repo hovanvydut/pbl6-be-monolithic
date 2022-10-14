@@ -13,9 +13,6 @@ public class PropertyEntity : EntityBase
     [Column("id")]
     public int Id { get; set; }
 
-    [Column("code")]
-    public string Code { get; set; }
-
     [Column("display_name")]
     public string DisplayName { get; set; }
 

@@ -43,8 +43,8 @@ pipeline{
 
 	post {
 		always {
-			sh 'docker system prune -af'
-            echo 'Always message'
+			sh 'docker system prune -f'
+            echo 'Clean dangling images'
 		}
 
 		success {

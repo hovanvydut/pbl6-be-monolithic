@@ -8,9 +8,6 @@ public class MappingConfig : Profile
 {
     public MappingConfig()
     {
-        // Mapping for Example
-        CreateMap<Example, ExampleDTO>();
-
         // Category
         CreateMap<CategoryEntity, CategoryDTO>();
 

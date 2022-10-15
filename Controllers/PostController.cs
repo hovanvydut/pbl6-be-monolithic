@@ -23,9 +23,9 @@ public class PostController : BaseController
     }
 
     [HttpPost]
-    public async void Create([FromBody] CreatePostDTO reqData)
+    public async void Create([FromBody] CreatePostDTO createPostDTO)
     {
-
+        // await _postService.CreatePost(createPostDTO);
     }
 
     [HttpPut]

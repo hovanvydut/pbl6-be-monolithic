@@ -49,6 +49,7 @@ public static class ServiceExtension
         services.AddScoped<IUserAccountReposiory, UserAccountReposiory>();
         services.AddScoped<IPropertyRepository, PropertyRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IPostRepository, PostRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)

@@ -29,5 +29,9 @@ public class MappingConfig : Profile
         //     .ForMember(dest => dest.district, act => act.MapFrom(src => src.AddressDistrict))
             // .ForMember(dest => dest.ward, act => act.MapFrom(src => src))
             .PreserveReferences();
+
+        // post
+        CreateMap<CreatePostDTO, PostEntity>().PreserveReferences();
+        CreateMap<CreateMediaDTO, MediaEntity>();
     }
 }

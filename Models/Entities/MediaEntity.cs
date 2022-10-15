@@ -19,7 +19,7 @@ public class MediaEntity : EntityBase
     public string Url { get; set; }
 
     [Column("entity_type")]
-    public string EntityType {get; set;}
+    public int EntityType {get; set;}
 
     [Column("entity_id")]
     public EntityType EntityId {get; set;}

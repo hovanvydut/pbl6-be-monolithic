@@ -45,12 +45,6 @@ public class PostEntity : EntityBase
     [Column("address_ward_id")]
     public AddressWardEntity AddressWard { get; set; }
 
-    [ForeignKey(nameof(TenantType))]
-    public int TenantTypeId { get; set; }
-
-    [Column("tenant_type_id")]
-    public TenantTypeEntity TenantType { get; set; }
-
     [ForeignKey(nameof(Category))]
     [Column("category_id")]
     public int CategoryId { get; set; }

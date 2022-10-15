@@ -29,9 +29,9 @@ public class CategoryService : ICategoryService
         return categoryDTOList;
     }
 
-    public async Task<List<CategoryDTO>> GetAll()
+    public async Task<List<CategoryDTO>> GetAllHouseType()
     {
-        List<CategoryEntity> categoryList = await _categoryRepo.GetAll();
+        List<CategoryEntity> categoryList = await _categoryRepo.GetAllHouseType();
         return categoryList.Select(c => _mapper.Map<CategoryDTO>(c)).ToList();
     }
 }

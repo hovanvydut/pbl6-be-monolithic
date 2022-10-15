@@ -36,7 +36,6 @@ public class DataContext : DbContext
     public DbSet<AddressWardEntity> AddressWards { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<PostEntity> Posts { get; set; }
-    public DbSet<TenantTypeEntity> TenantTypes { get; set; }
     public DbSet<UserAccountEntity> UserAccounts { get; set; }
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }

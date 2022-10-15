@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
+using Monolithic.Models.DTO;
 using Monolithic.Services.Interface;
 
 namespace Monolithic.Controllers;
@@ -13,18 +14,10 @@ public class CategoryController : BaseController
         this._categoryService = categoryService;
     }
 
-
-    // [HttpGet]
-    // public async Task<IActionResult> GetAllWithFilter([FromQuery] ReqParam reqParam)
-    // {
-    //     var result = await _categoryService.GetAllWithFilter(reqParam);
-    //     return Ok(result);
-    // }
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("house-type")]
+    public async Task<ActionResult<List<CategoryDTO>>> GetAllHouseType()
     {
-        var result = await _categoryService.GetAll();
+        var result = await _categoryService.GetAllHouseType();
         return Ok(result);
     }
 }

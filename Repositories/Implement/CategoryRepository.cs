@@ -23,7 +23,7 @@ public class CategoryRepository : ICategoryRepository
         return null;
     }
 
-    public async Task<List<CategoryEntity>> GetAll()
+    public async Task<List<CategoryEntity>> GetAllHouseType()
     {
         return await _db.Categories.ToListAsync();
     }

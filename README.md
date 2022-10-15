@@ -21,3 +21,7 @@ API check version: `/api/Common/Version`
 
 - `JenkinsfileBuild` used to config pipeline to: clone repo --> build image --> pubish image to docker hub
 - `JenkinsfileRun` used to config pipeline to: ssh remote server --> pull image from dockerhub --> run container
+
+## TODO
+
+[ ] Validate field model

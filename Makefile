@@ -7,6 +7,9 @@ run:
 	@dotnet watch
 
 # create migration
+setup-mgr:
+	@ln -snf ./../Migrations ./Migrations
+	
 cmgr:
 	@dotnet ef migrations add $(MGR_NAME)
 

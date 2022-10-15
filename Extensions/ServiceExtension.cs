@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Monolithic.Services.Implement;
 using Monolithic.Services.Interface;
 using Monolithic.Models.Context;
+using Monolithic.Common;
 using Monolithic.Models.Mapper;
 using Monolithic.Helpers;
 
@@ -13,7 +14,7 @@ public static class ServiceExtension
 {
     public static void ConfigureDataContext(this IServiceCollection services, IConfiguration configuration)
     {
-        string cns = configuration.GetConnectionString("Node1");
+        string cns = configuration.GetConnectionString("Local");
         services.AddDbContext<DataContext>(options =>
         {
             options.UseMySql(cns, ServerVersion.AutoDetect(cns));
@@ -30,6 +31,7 @@ public static class ServiceExtension
         services.ConfigureLibraryDI();
         services.ConfigureRepositoryDI();
         services.ConfigureServiceDI();
+        services.ConfigCommonServiceDI();
         services.ConfigureHelperDI();
     }
 
@@ -42,6 +44,8 @@ public static class ServiceExtension
     {
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IUserAccountReposiory, UserAccountReposiory>();
+        services.AddScoped<IPropertyRepository, PropertyRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)
@@ -50,6 +54,13 @@ public static class ServiceExtension
         services.AddScoped<IPostService, PostService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserAccountService, UserAccountService>();
+        services.AddScoped<IPropertyService, PropertyService>();
+        services.AddScoped<IAddressService, AddressService>();
+    }
+
+    private static void ConfigCommonServiceDI(this IServiceCollection services)
+    {
+        services.AddScoped<IConfigUtil, ConfigUtil>();
         services.AddScoped<IAuthService, AuthService>();
     }
 

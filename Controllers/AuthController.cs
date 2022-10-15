@@ -6,11 +6,11 @@ namespace Monolithic.Controllers;
 
 public class AuthController : BaseController
 {
-    private readonly IUserAccountService _userAccountService;
+    private readonly IAuthService _authService;
 
-    public AuthController(IUserAccountService userAccountService)
+    public AuthController(IAuthService authService)
     {
-        _userAccountService = userAccountService;
+        _authService = authService;
     }
 
     [HttpPost("Register")]
@@ -18,12 +18,27 @@ public class AuthController : BaseController
     {
         if (ModelState.IsValid)
         {
-            var newUser = await _userAccountService.Register(userRegisterDTO);
+            var newUser = await _authService.Register(userRegisterDTO);
             if (newUser == null)
             {
                 return BadRequest("This email is existing");
             }
             return Ok(newUser);
+        }
+        return BadRequest();
+    }
+
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
+    {
+        if (ModelState.IsValid)
+        {
+            var userLogin = await _authService.Login(userLoginDTO);
+            if (userLogin == null)
+            {
+                return Unauthorized("Invalid email or password");
+            }
+            return Ok(userLogin);
         }
         return BadRequest();
     }

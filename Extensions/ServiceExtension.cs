@@ -3,9 +3,10 @@ using Monolithic.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using Monolithic.Services.Implement;
 using Monolithic.Services.Interface;
-using Monolithic.Models.Mapper;
 using Monolithic.Models.Context;
 using Monolithic.Common;
+using Monolithic.Models.Mapper;
+using Monolithic.Helpers;
 
 namespace Monolithic.Extensions;
 
@@ -20,12 +21,18 @@ public static class ServiceExtension
         });
     }
 
+    public static void ConfigureModelSetting(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+    }
+
     public static void ConfigureDI(this IServiceCollection services)
     {
         services.ConfigureLibraryDI();
         services.ConfigureRepositoryDI();
         services.ConfigureServiceDI();
         services.ConfigCommonServiceDI();
+        services.ConfigureHelperDI();
     }
 
     private static void ConfigureLibraryDI(this IServiceCollection services)
@@ -54,5 +61,11 @@ public static class ServiceExtension
     private static void ConfigCommonServiceDI(this IServiceCollection services)
     {
         services.AddScoped<IConfigUtil, ConfigUtil>();
+        services.AddScoped<IAuthService, AuthService>();
+    }
+
+    private static void ConfigureHelperDI(this IServiceCollection services)
+    {
+        services.AddScoped<ISendMailHelper, SendMailHelper>();
     }
 }

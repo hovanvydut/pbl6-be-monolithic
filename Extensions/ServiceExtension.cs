@@ -5,6 +5,7 @@ using Monolithic.Services.Implement;
 using Monolithic.Services.Interface;
 using Monolithic.Models.Mapper;
 using Monolithic.Models.Context;
+using Monolithic.Common;
 
 namespace Monolithic.Extensions;
 
@@ -24,6 +25,7 @@ public static class ServiceExtension
         services.ConfigureLibraryDI();
         services.ConfigureRepositoryDI();
         services.ConfigureServiceDI();
+        services.ConfigCommonServiceDI();
     }
 
     private static void ConfigureLibraryDI(this IServiceCollection services)
@@ -47,5 +49,10 @@ public static class ServiceExtension
         services.AddScoped<IUserAccountService, UserAccountService>();
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<IAddressService, AddressService>();
+    }
+
+    private static void ConfigCommonServiceDI(this IServiceCollection services)
+    {
+        services.AddScoped<IConfigUtil, ConfigUtil>();
     }
 }

@@ -1,6 +1,7 @@
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
+using Monolithic.Common;
 using Monolithic.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,7 @@ builder.Services.AddCors(c =>
 // Add services to the container.
 builder.Services.ConfigureDataContext(builder.Configuration);
 builder.Services.ConfigureModelSetting(builder.Configuration);
-builder.Services.ConfigureDI();
+builder.Services.ConfigureDI(new ConfigUtil(builder.Configuration));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

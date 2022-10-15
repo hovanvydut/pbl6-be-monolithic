@@ -33,4 +33,9 @@ public class ConfigUtil : IConfigUtil
     {
         return this.getAWSConfig().GetSection("bucket").Value;
     }
+
+    public string getAPIVersion()
+    {
+        return _config.GetSection("APIVersion").Value;
+    }
 }

@@ -43,6 +43,7 @@ pipeline{
 
 	post {
 		always {
+			sh 'docker system prune -af'
             echo 'Always message'
 		}
 

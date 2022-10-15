@@ -7,6 +7,7 @@ using Monolithic.Models.Context;
 using Monolithic.Common;
 using Monolithic.Models.Mapper;
 using Monolithic.Helpers;
+using Microsoft.OpenApi.Models;
 
 namespace Monolithic.Extensions;
 
@@ -27,13 +28,14 @@ public static class ServiceExtension
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
     }
 
-    public static void ConfigureDI(this IServiceCollection services)
+    public static void ConfigureDI(this IServiceCollection services, IConfigUtil configUtil)
     {
         services.ConfigureLibraryDI();
         services.ConfigureRepositoryDI();
         services.ConfigureServiceDI();
         services.ConfigCommonServiceDI();
         services.ConfigureHelperDI();
+        services.ConfigSwagger(configUtil);
     }
 
     private static void ConfigureLibraryDI(this IServiceCollection services)
@@ -68,5 +70,15 @@ public static class ServiceExtension
     private static void ConfigureHelperDI(this IServiceCollection services)
     {
         services.AddScoped<ISendMailHelper, SendMailHelper>();
+    }
+
+    private static void ConfigSwagger(this IServiceCollection services, IConfigUtil configUtil)
+    {
+        // Register the Swagger generator, defining 1 or more Swagger documents
+        services.AddSwaggerGen(c =>
+        {
+            string version = "v" + configUtil.getAPIVersion();
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "API PBL6", Version = version });
+        });
     }
 }

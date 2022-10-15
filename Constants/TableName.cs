@@ -13,4 +13,5 @@ public class TableName
     public const string PROPERTY = "property";
     public const string PROPERTY_GROUP = "property_group";
     public const string POST_PROPERTY = "post_property";
+    public const string MEDIA = "media";
 }

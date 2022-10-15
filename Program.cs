@@ -22,6 +22,13 @@ builder.Services.ConfigureModelSetting(builder.Configuration);
 builder.Services.ConfigureDI(new ConfigUtil(builder.Configuration));
 
 builder.Services.AddControllers();
+
+// generate lowercase URLs
+builder.Services.Configure<RouteOptions>(options =>
+{
+   options.LowercaseUrls = true;
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

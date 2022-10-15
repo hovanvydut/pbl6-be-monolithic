@@ -20,21 +20,21 @@ public class AddressController : BaseController
         return Ok(result);
     }
 
-    [HttpGet("/district")]
+    [HttpGet("district")]
     public async Task<ActionResult<ProvinceDTO>> GetAllDistrictOfProvince([FromQuery] int provinceId)
     {
         var result = await _addressService.GetAllDistrictOfProvince(provinceId);
         return Ok(result);
     }
 
-    [HttpGet("/ward")]
+    [HttpGet("ward")]
     public async Task<ActionResult<DistrictDTO>> GetAllWardOfDistrict([FromQuery] int districtId)
     {
         var result = await _addressService.GetAllWardOfDistrict(districtId);
         return Ok(result);
     }
 
-    [HttpGet("/address-string")]
+    [HttpGet("full-address")]
     public async Task<IActionResult> GetAddressStringByWardId([FromQuery] int wardId)
     {
         var result = await _addressService.GetAddress(wardId);

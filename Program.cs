@@ -14,6 +14,7 @@ builder.Services.AddCors(c =>
 
 // Add services to the container.
 builder.Services.ConfigureDataContext(builder.Configuration);
+builder.Services.ConfigureModelSetting(builder.Configuration);
 builder.Services.ConfigureDI();
 
 builder.Services.AddControllers();

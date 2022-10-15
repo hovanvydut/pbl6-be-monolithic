@@ -38,6 +38,7 @@ public class DataContext : DbContext
     public DbSet<PostEntity> Posts { get; set; }
     public DbSet<TenantTypeEntity> TenantTypes { get; set; }
     public DbSet<UserAccountEntity> UserAccounts { get; set; }
+    public DbSet<UserProfileEntity> UserProfiles { get; set; }
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<PropertyEntity> Properties { get; set; }

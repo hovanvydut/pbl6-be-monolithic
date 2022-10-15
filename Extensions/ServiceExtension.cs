@@ -14,7 +14,8 @@ public static class ServiceExtension
 {
     public static void ConfigureDataContext(this IServiceCollection services, IConfiguration configuration)
     {
-        string cns = configuration.GetConnectionString("Local");
+        string currentDatabaseConfig = configuration.GetSection("CurrentDatabaseConfig").Value;
+        string cns = configuration.GetConnectionString(currentDatabaseConfig);
         services.AddDbContext<DataContext>(options =>
         {
             options.UseMySql(cns, ServerVersion.AutoDetect(cns));

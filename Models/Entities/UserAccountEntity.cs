@@ -28,4 +28,6 @@ public class UserAccountEntity : EntityBase
     [Column("role_id")]
     public int RoleId { get; set; }
     public RoleEntity Role { get; set; }
+
+    public UserProfileEntity UserProfile { get; set; }
 }

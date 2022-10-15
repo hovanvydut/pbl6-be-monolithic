@@ -11,10 +11,12 @@ namespace Monolithic.Services.Implement;
 public class AuthService : IAuthService
 {
     private readonly IUserAccountReposiory _userAccountRepository;
+    private readonly IUserProfileReposiory _userProfileReposiory;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
     public AuthService(IUserAccountReposiory userAccountRepository,
+                       IUserProfileReposiory userProfileReposiory,
                        ITokenService tokenService,
                        IMapper mapper)
     {
@@ -30,16 +32,21 @@ public class AuthService : IAuthService
             return null;
         using var hmac = new HMACSHA512();
         var passwordByte = Encoding.UTF8.GetBytes(userRegisterDTO.Password);
-        var newUser = new UserAccountEntity()
-        {
-            Email = userRegisterDTO.Email,
-            PasswordSalt = hmac.Key,
-            PasswordHashed = hmac.ComputeHash(passwordByte),
-            IsVerified = true,
-            RoleId = userRegisterDTO.RoleId,
-        };
-        await _userAccountRepository.Create(newUser);
-        return _mapper.Map<UserRegisterResponseDTO>(newUser);
+
+        // Create user account
+        var newUserAccount = _mapper.Map<UserAccountEntity>(userRegisterDTO);
+        newUserAccount.PasswordSalt = hmac.Key;
+        newUserAccount.PasswordHashed = hmac.ComputeHash(passwordByte);
+        newUserAccount.IsVerified = true;
+        await _userAccountRepository.Create(newUserAccount);
+
+        // Create user profile with new user account Id
+        var newUserProfile = _mapper.Map<UserProfileEntity>(userRegisterDTO);
+        newUserProfile.CurrentCredit = 0;
+        newUserProfile.UserAccountId = newUserAccount.Id;
+        await _userProfileReposiory.Create(newUserProfile);
+
+        return _mapper.Map<UserRegisterResponseDTO>(newUserAccount);
     }
 
     public async Task<UserLoginResponseDTO> Login(UserLoginDTO userLoginDTO)

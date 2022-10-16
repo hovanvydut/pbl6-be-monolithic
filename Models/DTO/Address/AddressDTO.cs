@@ -1,6 +1,7 @@
 namespace Monolithic.Models.DTO;
 
-public class AddressDTO : WardDTO
+public class AddressDTO
 {
-    public DistrictDTO AddressDistrict { get; set; }
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

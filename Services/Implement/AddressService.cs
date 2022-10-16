@@ -1,6 +1,7 @@
 using AutoMapper;
 using Monolithic.Common;
 using Monolithic.Models.DTO;
+using Monolithic.Models.Entities;
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
 
@@ -34,10 +35,10 @@ public class AddressService : IAddressService
         return _mapper.Map<DistrictDTO>(district);
     }
 
-    public async Task<AddressDTO> GetAddress(int wardId)
+    public async Task<FullAddressDTO> GetAddress(int wardId)
     {
-        var address = await _addressRepo.GetAddress(wardId);
-        var result = _mapper.Map<AddressDTO>(address);
+        AddressWardEntity address = await _addressRepo.GetAddress(wardId);
+        FullAddressDTO result = _mapper.Map<FullAddressDTO>(address);
         return result;
     }
 }

@@ -45,6 +45,7 @@ public class AddressRepository : IAddressRepository
     {
         AddressWardEntity entity = await _db.AddressWards
                                             .Include(p => p.AddressDistrict.AddressProvince)
+                                            // .ThenInclude(p => p.AddressProvince)
                                             .FirstOrDefaultAsync(p => p.Id == wardId);
         return entity;
     }

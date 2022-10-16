@@ -4,6 +4,7 @@ services:
   api1:
     container_name: "api-1"
     build: ./
+    restart: always
     ports:
       - 7133:80
     networks:

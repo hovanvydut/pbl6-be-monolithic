@@ -47,6 +47,7 @@ public static class ServiceExtension
     {
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IUserAccountReposiory, UserAccountReposiory>();
+        services.AddScoped<IUserProfileReposiory, UserProfileReposiory>();
         services.AddScoped<IPropertyRepository, PropertyRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IPostRepository, PostRepository>();

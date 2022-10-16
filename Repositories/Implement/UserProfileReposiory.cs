@@ -30,4 +30,12 @@ public class UserProfileReposiory : IUserProfileReposiory
         await _db.SaveChangesAsync();
         return await GetByUserId(userProfileEntity.UserAccountId);
     }
+
+    public async Task<bool> IsInvalidNewProfile(UserProfileEntity userProfileEntity)
+    {
+        return await _db.UserProfiles.AnyAsync(c =>
+            c.PhoneNumber == userProfileEntity.PhoneNumber ||
+            c.IdentityNumber == userProfileEntity.IdentityNumber
+        );
+    }
 }

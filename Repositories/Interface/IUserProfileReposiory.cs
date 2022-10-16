@@ -7,4 +7,6 @@ public interface IUserProfileReposiory
     Task<UserProfileEntity> GetByUserId(int userId);
 
     Task<UserProfileEntity> Create(UserProfileEntity userProfileEntity);
+
+    Task<bool> IsInvalidNewProfile(UserProfileEntity userProfileEntity);
 }

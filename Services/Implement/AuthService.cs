@@ -33,21 +33,23 @@ public class AuthService : IAuthService
 
     public async Task<UserRegisterResponseDTO> Register(UserRegisterDTO userRegisterDTO, string scheme, string host)
     {
-        // Return null if register email is exists
-        if (await _userAccountRepository.GetByEmail(userRegisterDTO.Email) != null)
+        var newUserAccount = _mapper.Map<UserAccountEntity>(userRegisterDTO);
+        var newUserProfile = _mapper.Map<UserProfileEntity>(userRegisterDTO);
+        // Return null if register unique info is exists
+        if (await _userAccountRepository.GetByEmail(newUserAccount.Email) != null)
             return null;
-        using var hmac = new HMACSHA512();
-        var passwordByte = Encoding.UTF8.GetBytes(userRegisterDTO.Password);
+        if (await _userProfileReposiory.IsInvalidNewProfile(newUserProfile))
+            return null;
 
         // Create user account
-        var newUserAccount = _mapper.Map<UserAccountEntity>(userRegisterDTO);
+        using var hmac = new HMACSHA512();
+        var passwordByte = Encoding.UTF8.GetBytes(userRegisterDTO.Password);
         newUserAccount.PasswordSalt = hmac.Key;
         newUserAccount.PasswordHashed = hmac.ComputeHash(passwordByte);
         newUserAccount.IsVerified = false;
         await _userAccountRepository.Create(newUserAccount);
 
         // Create user profile with new user account Id
-        var newUserProfile = _mapper.Map<UserProfileEntity>(userRegisterDTO);
         newUserProfile.CurrentCredit = 0;
         newUserProfile.UserAccountId = newUserAccount.Id;
         await _userProfileReposiory.Create(newUserProfile);

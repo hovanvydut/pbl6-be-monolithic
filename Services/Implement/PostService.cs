@@ -59,45 +59,34 @@ public class PostService : IPostService
     {
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
         {
-            try
+            // save post
+            PostEntity postEntity = _mapper.Map<PostEntity>(createPostDTO);
+            PostEntity savedPostEntity = await _postRepo.CreatePost(postEntity);
+
+            // save media
+            List<MediaEntity> mediaEntityList = createPostDTO.Medias
+                        .Select(m => _mapper.Map<MediaEntity>(m)).ToList();
+            foreach (var media in mediaEntityList)
             {
-                // save post
-                PostEntity postEntity = _mapper.Map<PostEntity>(createPostDTO);
-                PostEntity savedPostEntity = await _postRepo.CreatePost(postEntity);
-
-                throw new Exception("Aaaa");
-
-                // save media
-                List<MediaEntity> mediaEntityList = createPostDTO.Medias
-                            .Select(m => _mapper.Map<MediaEntity>(m)).ToList();
-                foreach (var media in mediaEntityList)
-                {
-                    media.EntityType = (int)EntityType.POST;
-                    media.EntityId = savedPostEntity.Id;
-                }
-                await _mediaRepo.Create(mediaEntityList);
-
-                // save properties
-                List<PostPropertyEntity> postPropertyEntityList = new List<PostPropertyEntity>();
-                foreach (var propertyId in createPostDTO.Properties)
-                {
-                    PropertyEntity propertyEntity = await _propertyRepo.GetPropertyById(propertyId);
-                    PostPropertyEntity postPropertyEntity = new PostPropertyEntity
-                    {
-                        Post = savedPostEntity,
-                        Property = propertyEntity
-                    };
-                    postPropertyEntityList.Add(postPropertyEntity);
-                }
-                await _propertyRepo.CreatePostProperty(postPropertyEntityList);
-                transaction.Commit();
+                media.EntityType = (int)EntityType.POST;
+                media.EntityId = savedPostEntity.Id;
             }
-            catch (Exception ex)
+            await _mediaRepo.Create(mediaEntityList);
+
+            // save properties
+            List<PostPropertyEntity> postPropertyEntityList = new List<PostPropertyEntity>();
+            foreach (var propertyId in createPostDTO.Properties)
             {
-                transaction.Rollback();
-                Console.WriteLine("Error occurred. Rollback data");
-                // Console.WriteLine(ex);
+                PropertyEntity propertyEntity = await _propertyRepo.GetPropertyById(propertyId);
+                PostPropertyEntity postPropertyEntity = new PostPropertyEntity
+                {
+                    Post = savedPostEntity,
+                    Property = propertyEntity
+                };
+                postPropertyEntityList.Add(postPropertyEntity);
             }
+            await _propertyRepo.CreatePostProperty(postPropertyEntityList);
+            transaction.Commit();
         }
     }
 }

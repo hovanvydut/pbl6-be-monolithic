@@ -40,10 +40,10 @@ public class PostEntity : EntityBase
     [Column("num_view")]
     public int NumView { get; set; }
 
+    [Column("address_ward_id")]
     [ForeignKey(nameof(AddressWard))]
     public int AddressWardId { get; set; }
 
-    [Column("address_ward_id")]
     public AddressWardEntity AddressWard { get; set; }
 
     [ForeignKey(nameof(Category))]

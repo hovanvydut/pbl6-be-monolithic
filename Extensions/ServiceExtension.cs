@@ -59,7 +59,7 @@ public static class ServiceExtension
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IPostService, PostService>();
         services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IUserAccountService, UserAccountService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<IAddressService, AddressService>();
     }

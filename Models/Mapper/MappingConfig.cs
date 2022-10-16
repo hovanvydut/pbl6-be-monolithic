@@ -17,6 +17,12 @@ public class MappingConfig : Profile
         CreateMap<UserRegisterDTO, UserAccountEntity>();
         CreateMap<UserRegisterDTO, UserProfileEntity>();
 
+        // User manager
+        CreateMap<UserProfileEntity, UserProfilePersonalDTO>()
+            .ForMember(dto => dto.UserAccountEmail, prop => prop.MapFrom(entity => entity.UserAccount.Email));
+        CreateMap<UserProfileEntity, UserProfileAnonymousDTO>();
+        CreateMap<UserProfileUpdateDTO, UserProfileEntity>();
+
         // Property, PropertyGroup
         CreateMap<PropertyGroupEntity, PropertyGroupDTO>();
         CreateMap<PropertyEntity, PropertyDTO>();

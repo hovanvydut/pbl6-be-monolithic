@@ -9,8 +9,8 @@ public class CreatePostDTO
     public int AddressWardId { get; set; }
     public double Price { get; set; }
     public double PrePaidPrice { get; set; }
-    public int UserId { get; set; }
     public int CategoryId { get; set; }
     public int LimitTenant { get; set; }
     public List<CreateMediaDTO> Medias { get; set; }
+    public List<int> Properties { get; set; }
 }

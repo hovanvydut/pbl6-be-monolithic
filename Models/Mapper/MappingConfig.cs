@@ -21,17 +21,23 @@ public class MappingConfig : Profile
 
         // Address
         CreateMap<AddressWardEntity, WardDTO>().PreserveReferences();
-            // .ForMember(dest => dest.AddressDistrict, act => act.MapFrom(src => src.AddressDistrict));
         CreateMap<AddressDistrictEntity, DistrictDTO>().PreserveReferences();
         CreateMap<AddressProvinceEntity, ProvinceDTO>().PreserveReferences();
-        CreateMap<AddressWardEntity, AddressDTO>()
-        //     .ForMember(dest => dest.province, act => act.MapFrom(src => src.AddressDistrict.AddressProvince))
-        //     .ForMember(dest => dest.district, act => act.MapFrom(src => src.AddressDistrict))
-            // .ForMember(dest => dest.ward, act => act.MapFrom(src => src))
-            .PreserveReferences();
-
+        CreateMap<AddressWardEntity, AddressDTO>().PreserveReferences();
+            
         // post
         CreateMap<CreatePostDTO, PostEntity>().PreserveReferences();
+
+        CreateMap<PostPropertyEntity, PropertyDTO>()
+            .ForMember(dest => dest.Id, act => act.MapFrom(src => src.Property.Id))
+            .ForMember(dest => dest.DisplayName, act => act.MapFrom(src => src.Property.DisplayName))
+            .PreserveReferences();
+        CreateMap<PostEntity, PostDTO>()
+            .ForMember(dest => dest.Properties, act => act.MapFrom(src => src.PostProperties))
+            .PreserveReferences();
+
+        // media
         CreateMap<CreateMediaDTO, MediaEntity>();
+        CreateMap<MediaEntity, MediaDTO>();
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Monolithic.Models.Common;
 using Monolithic.Constants;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace Monolithic.Models.Entities;
 
@@ -25,4 +26,14 @@ public class PostPropertyEntity : EntityBase
     public int PropertyId { get; set; }
 
     public PropertyEntity Property { get; set; }
+
+    public override string ToString()
+    {
+        return GetType().GetProperties()
+            .Select(info => (info.Name, Value: info.GetValue(this, null) ?? "(null)"))
+            .Aggregate(
+                new StringBuilder(),
+                (sb, pair) => sb.AppendLine($"{pair.Name}: {pair.Value}"),
+                sb => sb.ToString());
+    }
 }

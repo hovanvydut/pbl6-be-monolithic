@@ -22,8 +22,19 @@ public class PostRepository : IPostRepository
         return await GetPostById(postEntity.Id);
     }
 
+    public async Task<List<PostEntity>> GetAllPost()
+    {
+        return await _db.Posts.Where(p => p.DeletedAt == null)
+                            .Include(p => p.Category)
+                            .Include(p => p.AddressWard)
+                            .Include(p => p.PostProperties)
+                            .ThenInclude(prop => prop.Property)
+                            .ToListAsync();
+    }
+
     public async Task<PostEntity> GetPostById(int id)
     {
-        return await _db.Posts.FindAsync(id);
+        var postEntity = await _db.Posts.FindAsync(id);
+        return postEntity;
     }
 }

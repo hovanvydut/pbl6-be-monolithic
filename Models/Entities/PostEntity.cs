@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Monolithic.Models.Common;
 using Monolithic.Constants;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace Monolithic.Models.Entities;
 
@@ -51,14 +52,24 @@ public class PostEntity : EntityBase
 
     public CategoryEntity Category { get; set; }
 
-    [ForeignKey(nameof(UserAccount))]
-    [Column("user_id")]
-    public int UserAccountId { get; set; }
+    // [ForeignKey(nameof(UserAccount))]
+    // [Column("user_id")]
+    // public int UserAccountId { get; set; }
 
-    public UserAccountEntity UserAccount { get; set; }
+    // public UserAccountEntity UserAccount { get; set; }
 
     [Column("deleted_at")]
     public DateTime? DeletedAt { get; set; }
 
     public ICollection<PostPropertyEntity> PostProperties { get; set; }
+
+    public override string ToString()
+    {
+        return GetType().GetProperties()
+            .Select(info => (info.Name, Value: info.GetValue(this, null) ?? "(null)"))
+            .Aggregate(
+                new StringBuilder(),
+                (sb, pair) => sb.AppendLine($"{pair.Name}: {pair.Value}"),
+                sb => sb.ToString());
+    }
 }

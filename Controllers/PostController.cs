@@ -19,13 +19,13 @@ public class PostController : BaseController
     [HttpGet]
     public async Task<ActionResult<List<PostDTO>>> GetAll()
     {
-        throw new NotImplementedException();   
+        return await _postService.GetAllPost();
     }
 
     [HttpPost]
-    public async void Create([FromBody] CreatePostDTO createPostDTO)
+    public async Task Create([FromBody] CreatePostDTO createPostDTO)
     {
-        // await _postService.CreatePost(createPostDTO);
+        await _postService.CreatePost(createPostDTO);
     }
 
     [HttpPut]

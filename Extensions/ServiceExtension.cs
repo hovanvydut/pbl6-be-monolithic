@@ -50,6 +50,7 @@ public static class ServiceExtension
         services.AddScoped<IPropertyRepository, PropertyRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<IMediaRepository, MediaRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)

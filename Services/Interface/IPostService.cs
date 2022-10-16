@@ -4,5 +4,7 @@ namespace Monolithic.Services.Interface;
 
 public interface IPostService
 {
-    void CreatePost(CreatePostDTO createPostDTO);
+    Task<PostDTO> GetPostById(int id);
+    Task<List<PostDTO>> GetAllPost();
+    Task CreatePost(CreatePostDTO createPostDTO);
 }

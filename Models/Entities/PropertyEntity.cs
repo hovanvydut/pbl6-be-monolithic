@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Monolithic.Models.Common;
 using Monolithic.Constants;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace Monolithic.Models.Entities;
 
@@ -18,7 +19,17 @@ public class PropertyEntity : EntityBase
 
     [ForeignKey(nameof(PropertyGroup))]
     [Column("property_group_id")]
-    public int PropertyGroupId {get; set;}
+    public int PropertyGroupId { get; set; }
 
-    public PropertyGroupEntity PropertyGroup {get; set;}
+    public PropertyGroupEntity PropertyGroup { get; set; }
+
+    public override string ToString()
+    {
+        return GetType().GetProperties()
+            .Select(info => (info.Name, Value: info.GetValue(this, null) ?? "(null)"))
+            .Aggregate(
+                new StringBuilder(),
+                (sb, pair) => sb.AppendLine($"{pair.Name}: {pair.Value}"),
+                sb => sb.ToString());
+    }
 }

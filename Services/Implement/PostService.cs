@@ -27,9 +27,12 @@ public class PostService : IPostService
     public async Task<PostDTO> GetPostById(int id)
     {
         PostEntity postEntity = await _postRepo.GetPostById(id);
-
         if (postEntity == null) return null;
-        return _mapper.Map<PostDTO>(postEntity);
+
+        PostDTO postDTO = _mapper.Map<PostDTO>(postEntity);
+        List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
+        postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+        return postDTO;
     }
 
     public async Task<List<PostDTO>> GetAllPost()

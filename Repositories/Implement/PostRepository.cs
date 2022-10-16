@@ -34,7 +34,12 @@ public class PostRepository : IPostRepository
 
     public async Task<PostEntity> GetPostById(int id)
     {
-        var postEntity = await _db.Posts.FindAsync(id);
+        var postEntity = await _db.Posts.Where(p => p.DeletedAt == null && p.Id == id)
+                            .Include(p => p.Category)
+                            .Include(p => p.AddressWard)
+                            .Include(p => p.PostProperties)
+                            .ThenInclude(prop => prop.Property)
+                            .FirstOrDefaultAsync();
         return postEntity;
     }
 }

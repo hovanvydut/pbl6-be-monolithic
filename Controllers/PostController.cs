@@ -16,6 +16,12 @@ public class PostController : BaseController
         this._mapper = mapper;
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PostDTO>> GetPostById(int id)
+    {
+        return await _postService.GetPostById(id);
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<PostDTO>>> GetAll()
     {

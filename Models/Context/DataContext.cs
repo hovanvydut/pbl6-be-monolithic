@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Monolithic.Models.Context.Configurations;
 using Microsoft.EntityFrameworkCore;
-using Monolithic.Models.Common;
 using Monolithic.Models.Entities;
+using Monolithic.Models.Common;
 
 namespace Monolithic.Models.Context;
 
@@ -11,6 +12,8 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new UserAccountConfiguration());
+        modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 

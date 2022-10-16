@@ -23,7 +23,7 @@ public class AuthController : BaseController
             var newUser = await _authService.Register(userRegisterDTO, scheme, host);
             if (newUser == null)
             {
-                return BadRequest("This email is existing");
+                return BadRequest("Email, phone number or identity number already exists");
             }
             return Ok(newUser);
         }

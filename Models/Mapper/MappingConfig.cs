@@ -22,10 +22,18 @@ public class MappingConfig : Profile
         CreateMap<PropertyEntity, PropertyDTO>();
 
         // Address
+        CreateMap<AddressWardEntity, AddressDTO>();
+        CreateMap<AddressDistrictEntity, AddressDTO>();
+        CreateMap<AddressProvinceEntity, AddressDTO>();
+
         CreateMap<AddressWardEntity, WardDTO>().PreserveReferences();
         CreateMap<AddressDistrictEntity, DistrictDTO>().PreserveReferences();
         CreateMap<AddressProvinceEntity, ProvinceDTO>().PreserveReferences();
-        CreateMap<AddressWardEntity, AddressDTO>().PreserveReferences();
+        CreateMap<AddressWardEntity, FullAddressDTO>()
+            .ForMember(dest => dest.ward, act => act.MapFrom(src => src))
+            .ForMember(dest => dest.district, act => act.MapFrom(src => src.AddressDistrict))
+            .ForMember(dest => dest.province, act => act.MapFrom(src => src.AddressDistrict.AddressProvince))
+            .PreserveReferences();
             
         // post
         CreateMap<CreatePostDTO, PostEntity>().PreserveReferences();

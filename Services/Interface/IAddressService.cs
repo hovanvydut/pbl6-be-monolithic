@@ -7,5 +7,5 @@ public interface IAddressService
     Task<List<ProvinceDTO>> GetAllProvince();
     Task<ProvinceDTO> GetAllDistrictOfProvince(int provinceId);
     Task<DistrictDTO> GetAllWardOfDistrict(int districtId);
-    Task<AddressDTO> GetAddress(int wardId);
+    Task<FullAddressDTO> GetAddress(int wardId);
 }

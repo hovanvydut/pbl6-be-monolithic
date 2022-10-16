@@ -20,6 +20,7 @@ builder.Services.AddCors(c =>
 builder.Services.ConfigureDataContext(builder.Configuration);
 builder.Services.ConfigureModelSetting(builder.Configuration);
 builder.Services.ConfigureDI(new ConfigUtil(builder.Configuration));
+builder.Services.ConfigureAuth(builder.Configuration);
 
 builder.Services.AddControllers();
 
@@ -56,6 +57,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -21,6 +21,7 @@ public class AuthService : IAuthService
                        IMapper mapper)
     {
         _userAccountRepository = userAccountRepository;
+        _userProfileReposiory = userProfileReposiory;
         _tokenService = tokenService;
         _mapper = mapper;
     }
@@ -52,7 +53,7 @@ public class AuthService : IAuthService
     public async Task<UserLoginResponseDTO> Login(UserLoginDTO userLoginDTO)
     {
         var currentUser = await _userAccountRepository.GetByEmail(userLoginDTO.Email);
-        if (currentUser == null)
+        if (currentUser == null || !currentUser.IsVerified)
             return null;
 
         using var hmac = new HMACSHA512(currentUser.PasswordSalt);

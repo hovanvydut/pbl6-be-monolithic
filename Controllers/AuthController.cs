@@ -18,7 +18,9 @@ public class AuthController : BaseController
     {
         if (ModelState.IsValid)
         {
-            var newUser = await _authService.Register(userRegisterDTO);
+            var scheme = HttpContext.Request.Scheme;
+            var host = HttpContext.Request.Host.Value;
+            var newUser = await _authService.Register(userRegisterDTO, scheme, host);
             if (newUser == null)
             {
                 return BadRequest("This email is existing");
@@ -39,6 +41,21 @@ public class AuthController : BaseController
                 return Unauthorized("Invalid email or password");
             }
             return Ok(userLogin);
+        }
+        return BadRequest();
+    }
+
+    [HttpGet("Confirm-Email")]
+    public async Task<IActionResult> ConfirmEmail(int userId)
+    {
+        if (ModelState.IsValid)
+        {
+            var userConfirm = await _authService.ConfirmEmail(userId);
+            if (!userConfirm)
+            {
+                return BadRequest("Email confirm request is invalid");
+            }
+            return Ok();
         }
         return BadRequest();
     }

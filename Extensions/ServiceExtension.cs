@@ -52,6 +52,7 @@ public static class ServiceExtension
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IMediaRepository, MediaRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)
@@ -62,6 +63,7 @@ public static class ServiceExtension
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<IAddressService, AddressService>();
+        services.AddScoped<IRoleService, RoleService>();
     }
 
     private static void ConfigCommonServiceDI(this IServiceCollection services)
@@ -73,6 +75,7 @@ public static class ServiceExtension
     private static void ConfigureHelperDI(this IServiceCollection services)
     {
         services.AddScoped<ISendMailHelper, SendMailHelper>();
+        services.AddScoped<IPermissionHelper, PermissionHelper>();
     }
 
     private static void ConfigSwagger(this IServiceCollection services, IConfigUtil configUtil)

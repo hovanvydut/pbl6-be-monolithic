@@ -23,7 +23,7 @@ public class AuthController : BaseController
             var scheme = HttpContext.Request.Scheme;
             var host = HttpContext.Request.Host.Value;
             var newUser = await _authService.Register(userRegisterDTO, scheme, host);
-            return new BaseResponse<UserRegisterResponseDTO>(newUser, HttpCode.OK, "");
+            return new BaseResponse<UserRegisterResponseDTO>(newUser, HttpCode.CREATED, "");
         }
         return new BaseResponse<UserRegisterResponseDTO>(null, HttpCode.BAD_REQUEST, "");
     }

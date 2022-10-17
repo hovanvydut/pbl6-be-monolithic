@@ -3,6 +3,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Monolithic.Common;
 using Monolithic.Extensions;
+using Monolithic.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,8 @@ app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(
 // }
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.ConfigureErrorHandler();
 
 app.UseHttpsRedirection();
 

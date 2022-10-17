@@ -3,16 +3,20 @@ using Monolithic.Models.Entities;
 using Monolithic.Repositories.Interface;
 using Monolithic.Models.Context;
 using Microsoft.EntityFrameworkCore;
+using Monolithic.Models.DTO;
+using AutoMapper;
 
 namespace Monolithic.Repositories.Implement;
 
 public class PostRepository : IPostRepository
 {
     private readonly DataContext _db;
+    private readonly IMapper _mapper;
 
-    public PostRepository(DataContext db)
+    public PostRepository(DataContext db, IMapper mapper)
     {
         _db = db;
+        _mapper = mapper;
     }
 
     public async Task<PostEntity> CreatePost(PostEntity postEntity)
@@ -20,6 +24,16 @@ public class PostRepository : IPostRepository
         await _db.Posts.AddAsync(postEntity);
         await _db.SaveChangesAsync();
         return await GetPostById(postEntity.Id);
+    }
+
+    public async Task DeletePost(int postId)
+    {
+        PostEntity postEntity = await GetPostById(postId);
+        if (postEntity != null)
+        {
+            postEntity.DeletedAt = new DateTime();
+            await _db.SaveChangesAsync();
+        }
     }
 
     public async Task<List<PostEntity>> GetAllPost()
@@ -41,5 +55,23 @@ public class PostRepository : IPostRepository
                             .ThenInclude(prop => prop.Property)
                             .FirstOrDefaultAsync();
         return postEntity;
+    }
+
+    public async Task<PostEntity> UpdatePost(int postId, UpdatePostDTO updatePostDTO)
+    {
+        PostEntity existPostEntity = await GetPostById(postId);
+        if (existPostEntity != null)
+        {
+            existPostEntity.Title = updatePostDTO.Title;
+            existPostEntity.Description = updatePostDTO.Description;
+            existPostEntity.Area = updatePostDTO.Area;
+            existPostEntity.AddressWardId = updatePostDTO.AddressWardId;
+            existPostEntity.Price = updatePostDTO.Price;
+            existPostEntity.PrePaidPrice = updatePostDTO.PrePaidPrice;
+            existPostEntity.CategoryId = updatePostDTO.CategoryId;
+            existPostEntity.LimitTenant = updatePostDTO.LimitTenant;
+            await _db.SaveChangesAsync();
+        }
+        return existPostEntity;
     }
 }

@@ -37,6 +37,7 @@ public class MappingConfig : Profile
             
         // post
         CreateMap<CreatePostDTO, PostEntity>().PreserveReferences();
+        CreateMap<UpdatePostDTO, PostEntity>().PreserveReferences();
 
         CreateMap<PostPropertyEntity, PropertyDTO>()
             .ForMember(dest => dest.Id, act => act.MapFrom(src => src.Property.Id))

@@ -62,4 +62,14 @@ public class PropertyRepository : IPropertyRepository
         }
         return result;
     }
+
+    public async Task DeleteAllPropertyOfPost(int postId)
+    {
+        List<PostPropertyEntity> propertyList = await _db.PostProperties.Where(p => p.PostId == postId).ToListAsync();
+        foreach (var prop in propertyList)
+        {
+            _db.PostProperties.Remove(prop);
+        }
+        await _db.SaveChangesAsync();
+    }
 }

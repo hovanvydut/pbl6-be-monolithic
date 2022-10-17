@@ -11,4 +11,5 @@ public interface IPropertyRepository
     Task<List<PropertyEntity>> CreateProperty(List<PropertyEntity> propertyEntities);
     Task<PostPropertyEntity> CreatePostProperty(PostPropertyEntity postPropertyEntity);
     Task<List<PostPropertyEntity>> CreatePostProperty(List<PostPropertyEntity> postPropertyEntities);
+    Task DeleteAllPropertyOfPost(int postId);
 }

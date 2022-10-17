@@ -34,15 +34,15 @@ public class PostController : BaseController
         await _postService.CreatePost(createPostDTO);
     }
 
-    [HttpPut]
-    public async void Update()
+    [HttpPut("{id}")]
+    public async Task Update(int id, [FromBody] UpdatePostDTO updatePostDTO)
     {
-
+        await _postService.UpdatePost(id, updatePostDTO);
     }
 
-    [HttpDelete]
-    public async void Delete()
+    [HttpDelete("{id}")]
+    public async Task Delete(int id)
     {
-
+        await _postService.DeletePost(id);
     }
 }

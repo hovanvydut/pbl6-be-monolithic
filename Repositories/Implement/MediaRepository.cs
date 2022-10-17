@@ -32,6 +32,16 @@ public class MediaRepository : IMediaRepository
         return result;
     }
 
+    public async Task DeleteAllMediaOfPost(int postId)
+    {
+        List<MediaEntity> mediaList = await _db.Medias.Where(m => m.EntityType == EntityType.POST && m.EntityId ==  postId).ToListAsync();
+        foreach (var media in mediaList)
+        {
+            _db.Medias.Remove(media);
+        }
+       await _db.SaveChangesAsync();
+    }
+
     public async Task<List<MediaEntity>> GetAllMediaOfPost(int postId)
     {
         return await _db.Medias.Where(m => m.EntityId == postId

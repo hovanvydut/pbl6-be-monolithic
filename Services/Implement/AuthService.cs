@@ -2,7 +2,9 @@ using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
 using System.Security.Cryptography;
 using Monolithic.Models.Entities;
+using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
+using Monolithic.Constants;
 using Monolithic.Helpers;
 using System.Text;
 using AutoMapper;
@@ -35,11 +37,11 @@ public class AuthService : IAuthService
     {
         var newUserAccount = _mapper.Map<UserAccountEntity>(userRegisterDTO);
         var newUserProfile = _mapper.Map<UserProfileEntity>(userRegisterDTO);
-        // Return null if register unique info is exists
+        // Throw exception if register unique info is exists
         if (await _userAccountRepository.GetByEmail(newUserAccount.Email) != null)
-            return null;
+            throw new BaseException(HttpCode.BAD_REQUEST, "This email is existed");
         if (await _userProfileReposiory.IsInvalidNewProfile(newUserProfile))
-            return null;
+            throw new BaseException(HttpCode.BAD_REQUEST, "Phone number or identity number is existed");
 
         // Create user account
         using var hmac = new HMACSHA512();
@@ -81,13 +83,13 @@ public class AuthService : IAuthService
     {
         var currentUser = await _userAccountRepository.GetByEmail(userLoginDTO.Email);
         if (currentUser == null || !currentUser.IsVerified)
-            return null;
+            throw new BaseException(HttpCode.BAD_REQUEST, "Account is not registed or email confirmed");
 
         using var hmac = new HMACSHA512(currentUser.PasswordSalt);
         var passwordByte = Encoding.UTF8.GetBytes(userLoginDTO.Password);
         var computedHash = hmac.ComputeHash(passwordByte);
         if (!computedHash.SequenceEqual(currentUser.PasswordHashed))
-            return null;
+            throw new BaseException(HttpCode.BAD_REQUEST, "Invalid password");
 
         return new UserLoginResponseDTO()
         {
@@ -101,7 +103,7 @@ public class AuthService : IAuthService
     {
         var currentUser = await _userAccountRepository.GetById(userId);
         if (currentUser == null || currentUser.IsVerified)
-            return false;
+            throw new BaseException(HttpCode.BAD_REQUEST, "Account is already verified or not registed");
 
         currentUser.IsVerified = true;
         return await _userAccountRepository.Update(currentUser.Id, currentUser);

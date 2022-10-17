@@ -8,6 +8,6 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfileEnti
 {
     public void Configure(EntityTypeBuilder<UserProfileEntity> builder)
     {
-        builder.HasIndex(c => new { c.PhoneNumber, c.IdentityNumber }).IsUnique();
+        builder.HasIndex(c => new { c.PhoneNumber, c.IdentityNumber, c.UserAccountId }).IsUnique();
     }
 }

@@ -22,6 +22,7 @@ public static class ErrorHandler
                 {
                     await context.Response.WriteAsync(new BaseResponse<int>()
                     {
+                        Success = false,
                         StatusCode = exception.StatusCode,
                         Message = exception.Message
                     }.ToString());

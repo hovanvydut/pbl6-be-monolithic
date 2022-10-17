@@ -6,6 +6,8 @@ public class BaseResponse<T>
 {
     public T Data { get; set; }
 
+    public bool Success { get; set; }
+
     public int StatusCode { get; set; }
 
     public string Message { get; set; }
@@ -14,6 +16,7 @@ public class BaseResponse<T>
     public BaseResponse(T Data, int StatusCode, string Message)
     {
         this.Data = Data;
+        this.Success = true;
         this.StatusCode = StatusCode;
         this.Message = Message;
     }

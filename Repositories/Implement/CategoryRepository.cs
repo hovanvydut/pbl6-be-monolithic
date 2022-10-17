@@ -27,4 +27,9 @@ public class CategoryRepository : ICategoryRepository
     {
         return await _db.Categories.ToListAsync();
     }
+
+    public async Task<CategoryEntity> GetHouseTypeById(int id)
+    {
+        return await _db.Categories.FindAsync(id);
+    }
 }

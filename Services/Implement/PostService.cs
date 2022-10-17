@@ -17,16 +17,21 @@ public class PostService : IPostService
     private readonly IPropertyRepository _propertyRepo;
     private readonly IMapper _mapper;
     private readonly DataContext _db;
+    private readonly ICategoryRepository _categoryRepo;
+    private readonly IAddressRepository _addressRepo;
 
     public PostService(IPostRepository postRepo, IMapper mapper,
                         IMediaRepository mediaRepo, IPropertyRepository propertyRepo,
-                        DataContext db)
+                        DataContext db, ICategoryRepository categoryRepo,
+                        IAddressRepository addressRepo)
     {
         _postRepo = postRepo;
         _mapper = mapper;
         _mediaRepo = mediaRepo;
         _propertyRepo = propertyRepo;
         _db = db;
+        _categoryRepo = categoryRepo;
+        _addressRepo = addressRepo;
     }
 
     public async Task<PostDTO> GetPostById(int id)
@@ -54,11 +59,24 @@ public class PostService : IPostService
         return postDTOList;
     }
 
-    // TODO: transaction here
     public async Task CreatePost(CreatePostDTO createPostDTO)
     {
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
         {
+            // check if category exists
+            CategoryEntity category = await _categoryRepo.GetHouseTypeById(createPostDTO.CategoryId);
+            if (category == null)
+            {
+                throw new BadHttpRequestException($"Category id = {createPostDTO.CategoryId} not found");
+            }
+
+            // check if address exists
+            AddressWardEntity address = await _addressRepo.GetAddress(createPostDTO.AddressWardId);
+            if (address == null)
+            {
+                throw new BadHttpRequestException($"AddressWard id = {createPostDTO.AddressWardId} not found");
+            }
+
             // save post
             PostEntity postEntity = _mapper.Map<PostEntity>(createPostDTO);
             PostEntity savedPostEntity = await _postRepo.CreatePost(postEntity);
@@ -78,6 +96,11 @@ public class PostService : IPostService
             foreach (var propertyId in createPostDTO.Properties)
             {
                 PropertyEntity propertyEntity = await _propertyRepo.GetPropertyById(propertyId);
+                if (propertyEntity == null)
+                {
+                    throw new BadHttpRequestException($"Property id = {propertyId} not found");
+                }
+                
                 PostPropertyEntity postPropertyEntity = new PostPropertyEntity
                 {
                     Post = savedPostEntity,

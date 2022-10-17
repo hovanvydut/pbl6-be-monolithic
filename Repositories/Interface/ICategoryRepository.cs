@@ -6,4 +6,5 @@ public interface ICategoryRepository
 {
     Task<PagedList<CategoryEntity>> GetAllWithFilter(ReqParam reqParam);
     Task<List<CategoryEntity>> GetAllHouseType();
+    Task<CategoryEntity> GetHouseTypeById(int id);
 }

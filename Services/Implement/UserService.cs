@@ -12,14 +12,17 @@ public class UserService : IUserService
 {
     private readonly IUserAccountReposiory _userAccountRepository;
     private readonly IUserProfileReposiory _userProfileRepository;
+    private readonly IAddressService _addressService;
     private readonly IMapper _mapper;
 
     public UserService(IUserAccountReposiory userAccountRepository,
                        IUserProfileReposiory userProfileRepository,
+                       IAddressService addressService,
                        IMapper mapper)
     {
         _userAccountRepository = userAccountRepository;
         _userProfileRepository = userProfileRepository;
+        _addressService = addressService;
         _mapper = mapper;
     }
 
@@ -29,7 +32,10 @@ public class UserService : IUserService
         if (user == null)
             throw new BaseException(HttpCode.NOT_FOUND, "This user is not found");
         var userPersonal = _mapper.Map<UserProfilePersonalDTO>(user);
-        // TODO: get address
+        var userAddress = await _addressService.GetAddress(userPersonal.AddressWardId);
+        userPersonal.AddressWard = userAddress.ward.Name;
+        userPersonal.AddressDistrict = userAddress.district.Name;
+        userPersonal.AddressProvince = userAddress.province.Name;
         return userPersonal;
     }
 
@@ -39,7 +45,10 @@ public class UserService : IUserService
         if (user == null)
             throw new BaseException(HttpCode.NOT_FOUND, "This user is not found");
         var userAnonymous = _mapper.Map<UserProfileAnonymousDTO>(user);
-        // TODO: get address
+        var userAddress = await _addressService.GetAddress(userAnonymous.AddressWardId);
+        userAnonymous.AddressWard = userAddress.ward.Name;
+        userAnonymous.AddressDistrict = userAddress.district.Name;
+        userAnonymous.AddressProvince = userAddress.province.Name;
         return userAnonymous;
     }
 

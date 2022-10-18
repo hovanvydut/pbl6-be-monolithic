@@ -14,6 +14,7 @@ public class DataContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new UserAccountConfiguration());
         modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
+        modelBuilder.ApplyConfiguration(new PermissionConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 

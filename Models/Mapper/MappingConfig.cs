@@ -40,7 +40,7 @@ public class MappingConfig : Profile
             .ForMember(dest => dest.district, act => act.MapFrom(src => src.AddressDistrict))
             .ForMember(dest => dest.province, act => act.MapFrom(src => src.AddressDistrict.AddressProvince))
             .PreserveReferences();
-            
+
         // post
         CreateMap<CreatePostDTO, PostEntity>().PreserveReferences();
         CreateMap<UpdatePostDTO, PostEntity>().PreserveReferences();
@@ -57,5 +57,11 @@ public class MappingConfig : Profile
         // media
         CreateMap<CreateMediaDTO, MediaEntity>();
         CreateMap<MediaEntity, MediaDTO>();
+
+        // role - permission
+        CreateMap<CreateRoleDTO, RoleEntity>();
+        CreateMap<UpdateRoleDTO, RoleEntity>();
+        CreateMap<CreatePermissionDTO, PermissionEntity>();
+        CreateMap<PermissionEntity, PermissionDTO>();
     }
 }

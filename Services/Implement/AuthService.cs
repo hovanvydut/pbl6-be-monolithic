@@ -95,6 +95,7 @@ public class AuthService : IAuthService
         {
             Id = currentUser.Id,
             Email = currentUser.Email,
+            DisplayName = currentUser.UserProfile.DisplayName,
             AccessToken = _tokenService.CreateToken(currentUser)
         };
     }

@@ -17,6 +17,7 @@ public class UserAccountReposiory : IUserAccountReposiory
     public async Task<UserAccountEntity> GetByEmail(string email)
     {
         UserAccountEntity userAccount = await _db.UserAccounts
+                                .Include(c => c.UserProfile)
                                 .Include(c => c.Role)
                                 .FirstOrDefaultAsync(c => c.Email == email);
         if (userAccount == null) return null;

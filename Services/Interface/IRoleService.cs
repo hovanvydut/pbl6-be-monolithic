@@ -11,7 +11,7 @@ public interface IRoleService
 
     Task<RoleDTO> GetRoleById(int roleId);
 
-    List<PermissionContent> GetPermissions();
+    Task<List<PermissionContent>> GetPermissionsRoleNotHave(int roleId);
 
     Task<List<PermissionDTO>> GetPermissionByRoleId(int roleId);
 

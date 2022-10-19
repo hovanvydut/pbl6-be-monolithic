@@ -91,12 +91,13 @@ public class AuthService : IAuthService
         if (!computedHash.SequenceEqual(currentUser.PasswordHashed))
             throw new BaseException(HttpCode.BAD_REQUEST, "Invalid password");
 
+        var accessToken = await _tokenService.CreateToken(currentUser);
         return new UserLoginResponseDTO()
         {
             Id = currentUser.Id,
             Email = currentUser.Email,
             DisplayName = currentUser.UserProfile.DisplayName,
-            AccessToken = _tokenService.CreateToken(currentUser)
+            AccessToken = accessToken
         };
     }
 

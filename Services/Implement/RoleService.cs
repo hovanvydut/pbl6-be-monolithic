@@ -48,9 +48,12 @@ public class RoleService : IRoleService
         };
     }
 
-    public List<PermissionContent> GetPermissions()
+    public async Task<List<PermissionContent>> GetPermissionsRoleNotHave(int roleId)
     {
-        return _permissionHelper.GetAllPermission();
+        var allPermission = _permissionHelper.GetAllPermission();
+        var rolePermission = (await _roleRepository.GetPermissionByRoleId(roleId))
+                                .Select(c => c.Key);
+        return allPermission.Where(c => !rolePermission.Contains(c.Key)).ToList();
     }
 
     public async Task<List<PermissionDTO>> GetPermissionByRoleId(int roleId)

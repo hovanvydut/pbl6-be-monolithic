@@ -4,5 +4,5 @@ namespace Monolithic.Services.Interface;
 
 public interface ITokenService
 {
-    string CreateToken(UserAccountEntity user);
+    Task<string> CreateToken(UserAccountEntity user);
 }

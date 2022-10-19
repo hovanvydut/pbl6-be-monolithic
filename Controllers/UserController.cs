@@ -1,3 +1,5 @@
+using static Monolithic.Constants.PermissionPolicy;
+using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
@@ -16,6 +18,7 @@ public class UserController : BaseController
     }
 
     [HttpGet("Personal")]
+    [Authorize(Roles = UserViewPersonal)]
     public async Task<BaseResponse<UserProfilePersonalDTO>> GetUserProfilePersonal(int userId)
     {
         var userProfile = await _userService.GetUserProfilePersonal(userId);
@@ -23,6 +26,7 @@ public class UserController : BaseController
     }
 
     [HttpGet("Anonymous")]
+    [Authorize(Roles = UserViewAnonymous)]
     public async Task<BaseResponse<UserProfileAnonymousDTO>> GetUserProfileAnonymous(int userId)
     {
         var userProfile = await _userService.GetUserProfileAnonymous(userId);
@@ -30,6 +34,7 @@ public class UserController : BaseController
     }
 
     [HttpPut("{userId}")]
+    [Authorize(Roles = UserUpdateProfile)]
     public async Task<BaseResponse<bool>> UpdateUserProfile(int userId, [FromBody] UserProfileUpdateDTO userProfileUpdateDTO)
     {
         if (ModelState.IsValid)
@@ -38,8 +43,8 @@ public class UserController : BaseController
             if (userUpdated)
                 return new BaseResponse<bool>(userUpdated, HttpCode.NO_CONTENT);
             else
-                return new BaseResponse<bool>(userUpdated, HttpCode.BAD_REQUEST);
+                return new BaseResponse<bool>(userUpdated, HttpCode.BAD_REQUEST, "", false);
         }
-        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST);
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
     }
 }

@@ -59,6 +59,8 @@ app.UseSwaggerUI();
 
 app.ConfigureErrorHandler();
 
+app.UseCustomAuthResponse();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

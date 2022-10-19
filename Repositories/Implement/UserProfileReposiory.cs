@@ -57,6 +57,7 @@ public class UserProfileReposiory : IUserProfileReposiory
         userProfileDB.DisplayName = userProfileEntity.DisplayName;
         userProfileDB.Address = userProfileEntity.Address;
         userProfileDB.AddressWardId = userProfileEntity.AddressWardId;
+        userProfileDB.PhoneNumber = userProfileDB.PhoneNumber;
 
         _db.UserProfiles.Update(userProfileDB);
         return await _db.SaveChangesAsync() >= 0;

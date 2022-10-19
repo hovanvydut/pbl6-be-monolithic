@@ -15,19 +15,19 @@ namespace Monolithic.Services.Implement;
 public class AuthService : IAuthService
 {
     private readonly IUserAccountReposiory _userAccountRepository;
-    private readonly IUserProfileReposiory _userProfileReposiory;
+    private readonly IUserProfileReposiory _userProfileRepository;
     private readonly ISendMailHelper _sendMailHelper;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
     public AuthService(IUserAccountReposiory userAccountRepository,
-                       IUserProfileReposiory userProfileReposiory,
+                       IUserProfileReposiory userProfileRepository,
                        ISendMailHelper sendMailHelper,
                        ITokenService tokenService,
                        IMapper mapper)
     {
         _userAccountRepository = userAccountRepository;
-        _userProfileReposiory = userProfileReposiory;
+        _userProfileRepository = userProfileRepository;
         _sendMailHelper = sendMailHelper;
         _tokenService = tokenService;
         _mapper = mapper;
@@ -40,7 +40,7 @@ public class AuthService : IAuthService
         // Throw exception if register unique info is exists
         if (await _userAccountRepository.GetByEmail(newUserAccount.Email) != null)
             throw new BaseException(HttpCode.BAD_REQUEST, "This email is existed");
-        if (await _userProfileReposiory.IsInvalidNewProfile(newUserProfile))
+        if (await _userProfileRepository.IsInvalidNewProfile(newUserProfile))
             throw new BaseException(HttpCode.BAD_REQUEST, "Phone number or identity number is existed");
 
         // Create user account
@@ -54,7 +54,7 @@ public class AuthService : IAuthService
         // Create user profile with new user account Id
         newUserProfile.CurrentCredit = 0;
         newUserProfile.UserAccountId = newUserAccount.Id;
-        await _userProfileReposiory.Create(newUserProfile);
+        await _userProfileRepository.Create(newUserProfile);
 
         // Send mail
         await SendMailConfirm(newUserAccount, scheme, host);

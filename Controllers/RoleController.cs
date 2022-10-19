@@ -46,6 +46,13 @@ public class RoleController : BaseController
         return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
     }
 
+    [HttpGet]
+    public async Task<BaseResponse<List<RoleDTO>>> GetAllRoles()
+    {
+        var roles = await _roleService.GetAllRoles();
+        return new BaseResponse<List<RoleDTO>>(roles, HttpCode.OK);
+    }
+
     [HttpGet("{roleId}")]
     public async Task<BaseResponse<RoleDTO>> GetRoleById(int roleId)
     {

@@ -9,6 +9,8 @@ public interface IRoleService
 
     Task<bool> UpdateRole(int roleId, UpdateRoleDTO updateRoleDTO);
 
+    Task<List<RoleDTO>> GetAllRoles();
+
     Task<RoleDTO> GetRoleById(int roleId);
 
     Task<List<PermissionContent>> GetPermissionsRoleNotHave(int roleId);

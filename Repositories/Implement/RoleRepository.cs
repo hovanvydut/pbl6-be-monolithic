@@ -29,6 +29,11 @@ public class RoleRepository : IRoleRepository
         return await _db.SaveChangesAsync() >= 0;
     }
 
+    public async Task<List<RoleEntity>> GetAllRoles()
+    {
+        return await _db.Roles.ToListAsync();
+    }
+
     public async Task<RoleEntity> GetRoleById(int roleId)
     {
         RoleEntity role = await _db.Roles

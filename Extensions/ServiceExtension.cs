@@ -75,7 +75,6 @@ public static class ServiceExtension
     private static void ConfigureHelperDI(this IServiceCollection services)
     {
         services.AddScoped<ISendMailHelper, SendMailHelper>();
-        services.AddScoped<IPermissionHelper, PermissionHelper>();
     }
 
     private static void ConfigSwagger(this IServiceCollection services, IConfigUtil configUtil)

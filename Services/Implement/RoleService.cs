@@ -11,14 +11,11 @@ namespace Monolithic.Services.Implement;
 
 public class RoleService : IRoleService
 {
-    private readonly IPermissionHelper _permissionHelper;
     private readonly IRoleRepository _roleRepository;
     private readonly IMapper _mapper;
-    public RoleService(IPermissionHelper permissionHelper,
-                       IRoleRepository roleRepository,
+    public RoleService(IRoleRepository roleRepository,
                        IMapper mapper)
     {
-        _permissionHelper = permissionHelper;
         _roleRepository = roleRepository;
         _mapper = mapper;
     }
@@ -35,6 +32,18 @@ public class RoleService : IRoleService
         return await _roleRepository.UpdateRole(roleId, updateRole);
     }
 
+    public async Task<List<RoleDTO>> GetAllRoles()
+    {
+        var listRole = await _roleRepository.GetAllRoles();
+        return listRole.Select(role => new RoleDTO()
+        {
+            Id = role.Id,
+            Name = role.Name,
+            Description = role.Description,
+            Permissions = new List<PermissionDTO>()
+        }).ToList();
+    }
+
     public async Task<RoleDTO> GetRoleById(int roleId)
     {
         RoleEntity role = await _roleRepository.GetRoleById(roleId);
@@ -42,6 +51,7 @@ public class RoleService : IRoleService
             throw new BaseException(HttpCode.NOT_FOUND, "This role is not found");
         return new RoleDTO()
         {
+            Id = role.Id,
             Name = role.Name,
             Description = role.Description,
             Permissions = role.Permissions.Select(c => _mapper.Map<PermissionDTO>(c)).ToList(),
@@ -50,7 +60,7 @@ public class RoleService : IRoleService
 
     public async Task<List<PermissionContent>> GetPermissionsRoleNotHave(int roleId)
     {
-        var allPermission = _permissionHelper.GetAllPermission();
+        var allPermission = PermissionPolicy.AllPermissions;
         var rolePermission = (await _roleRepository.GetPermissionByRoleId(roleId))
                                 .Select(c => c.Key);
         return allPermission.Where(c => !rolePermission.Contains(c.Key)).ToList();

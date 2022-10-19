@@ -8,6 +8,8 @@ public interface IRoleRepository
 
     Task<bool> UpdateRole(int roleId, RoleEntity updateRole);
 
+    Task<List<RoleEntity>> GetAllRoles();
+
     Task<RoleEntity> GetRoleById(int roleId);
 
     Task<List<PermissionEntity>> GetPermissionByRoleId(int roleId);

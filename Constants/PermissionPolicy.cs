@@ -1,20 +1,26 @@
+using Monolithic.Helpers;
+
 namespace Monolithic.Constants;
 
 public static class PermissionPolicy
 {
-    public static Dictionary<string, string> AllPermissions = new Dictionary<string, string>()
+    public static List<PermissionContent> AllPermissions = new List<PermissionContent>()
     {
-        [EmailSend] = "Can send mail",
-        [UserViewPersonal] = "Can view personal user profile",
-        [UserViewAnonymous] = "Can view personal user profile",
-        [UserUpdateProfile] = "Can update user profile",
+        new PermissionContent(EmailPermission.Send,"Can send mail"),
+        new PermissionContent(UserPermission.ViewPersonal,"Can view personal user profile"),
+        new PermissionContent(UserPermission.ViewAnonymous,"Can view personal user profile"),
+        new PermissionContent(UserPermission.UpdateProfile,"Can update user profile"),
     };
 
-    // Mail
-    public const string EmailSend = "Email.Send";
+    public static class EmailPermission
+    {
+        public const string Send = "Email.Send";
+    }
 
-    // User
-    public const string UserViewPersonal = "User.View.Personal";
-    public const string UserViewAnonymous = "User.View.Anonymous";
-    public const string UserUpdateProfile = "User.Update.Profile";
+    public static class UserPermission
+    {
+        public const string ViewPersonal = "User.View.Personal";
+        public const string ViewAnonymous = "User.View.Anonymous";
+        public const string UpdateProfile = "User.Update.Profile";
+    }
 }

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Monolithic.Services.Interface;
 using Monolithic.Models.Entities;
 using System.Security.Claims;
+using Monolithic.Helpers;
 using System.Text;
 
 namespace Monolithic.Services.Implement;
@@ -10,18 +11,24 @@ namespace Monolithic.Services.Implement;
 public class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
-    public TokenService(IConfiguration configuration)
+    private readonly IRoleService _roleService;
+    public TokenService(IConfiguration configuration, IRoleService roleService)
     {
         _configuration = configuration;
+        _roleService = roleService;
     }
 
-    public string CreateToken(UserAccountEntity user)
+    public async Task<string> CreateToken(UserAccountEntity user)
     {
-        var claims = new List<Claim>()
-            {
-                new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            };
+        var listPermission = await _roleService.GetPermissionByRoleId(user.RoleId);
+
+        var claims = new List<Claim>();
+        claims.Add(new Claim(CustomClaimTypes.UserId, user.Id.ToString()));
+        claims.Add(new Claim(CustomClaimTypes.Email, user.Email));
+        foreach (var permission in listPermission)
+        {
+            claims.Add(new Claim(CustomClaimTypes.Permission, permission.Key));
+        }
 
         var tokenKey = Encoding.UTF8.GetBytes(_configuration["JwtSettings:secretKey"]);
         var tokenLife = Convert.ToDouble(_configuration["JwtSettings:expires"]);

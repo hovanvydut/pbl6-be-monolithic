@@ -25,7 +25,7 @@ public class AuthController : BaseController
             var newUser = await _authService.Register(userRegisterDTO, scheme, host);
             return new BaseResponse<UserRegisterResponseDTO>(newUser, HttpCode.CREATED);
         }
-        return new BaseResponse<UserRegisterResponseDTO>(null, HttpCode.BAD_REQUEST);
+        return new BaseResponse<UserRegisterResponseDTO>(null, HttpCode.BAD_REQUEST, "", false);
     }
 
     [HttpPost("Login")]
@@ -36,7 +36,7 @@ public class AuthController : BaseController
             var userLogin = await _authService.Login(userLoginDTO);
             return new BaseResponse<UserLoginResponseDTO>(userLogin, HttpCode.OK);
         }
-        return new BaseResponse<UserLoginResponseDTO>(null, HttpCode.BAD_REQUEST);
+        return new BaseResponse<UserLoginResponseDTO>(null, HttpCode.BAD_REQUEST, "", false);
     }
 
     [HttpGet("Confirm-Email")]

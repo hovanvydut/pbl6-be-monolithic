@@ -1,3 +1,5 @@
+using static Monolithic.Constants.PermissionPolicy;
+using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
@@ -25,9 +27,9 @@ public class RoleController : BaseController
             if (roleCreated)
                 return new BaseResponse<bool>(roleCreated, HttpCode.CREATED);
             else
-                return new BaseResponse<bool>(roleCreated, HttpCode.BAD_REQUEST);
+                return new BaseResponse<bool>(roleCreated, HttpCode.BAD_REQUEST, "", false);
         }
-        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST);
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
     }
 
     [HttpPut("{roleId}")]
@@ -39,9 +41,9 @@ public class RoleController : BaseController
             if (roleUpdated)
                 return new BaseResponse<bool>(roleUpdated, HttpCode.NO_CONTENT);
             else
-                return new BaseResponse<bool>(roleUpdated, HttpCode.BAD_REQUEST);
+                return new BaseResponse<bool>(roleUpdated, HttpCode.BAD_REQUEST, "", false);
         }
-        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST);
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
     }
 
     [HttpGet("{roleId}")]
@@ -51,10 +53,10 @@ public class RoleController : BaseController
         return new BaseResponse<RoleDTO>(role, HttpCode.OK);
     }
 
-    [HttpGet("Permission")]
-    public BaseResponse<List<PermissionContent>> GetPermissions()
+    [HttpGet("Permission/{roleId}/Not-Have")]
+    public async Task<BaseResponse<List<PermissionContent>>> GetPermissionsRoleNotHave(int roleId)
     {
-        var listPermission = _roleService.GetPermissions();
+        var listPermission = await _roleService.GetPermissionsRoleNotHave(roleId);
         return new BaseResponse<List<PermissionContent>>(listPermission, HttpCode.OK);
     }
 
@@ -74,9 +76,9 @@ public class RoleController : BaseController
             if (permisisonCreated)
                 return new BaseResponse<bool>(permisisonCreated, HttpCode.CREATED);
             else
-                return new BaseResponse<bool>(permisisonCreated, HttpCode.BAD_REQUEST);
+                return new BaseResponse<bool>(permisisonCreated, HttpCode.BAD_REQUEST, "", false);
         }
-        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST);
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
     }
 
     [HttpDelete("Permission")]
@@ -86,6 +88,6 @@ public class RoleController : BaseController
         if (permisisonDeleted)
             return new BaseResponse<bool>(permisisonDeleted, HttpCode.NO_CONTENT);
         else
-            return new BaseResponse<bool>(permisisonDeleted, HttpCode.BAD_REQUEST);
+            return new BaseResponse<bool>(permisisonDeleted, HttpCode.BAD_REQUEST, "", false);
     }
 }

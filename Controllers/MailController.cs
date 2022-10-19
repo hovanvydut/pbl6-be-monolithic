@@ -1,3 +1,5 @@
+using static Monolithic.Constants.PermissionPolicy;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Helpers;
 
@@ -13,6 +15,7 @@ public class MailController : BaseController
     }
 
     [HttpPost("Send")]
+    [Authorize(Roles = EmailSend)]
     public async Task<IActionResult> Send([FromForm] MailContent mailContent)
     {
         await _sendMailHelper.SendEmailAsync(mailContent);

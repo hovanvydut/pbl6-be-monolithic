@@ -65,6 +65,8 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseMiddleware<JwtMiddleware>();
+
 app.MapControllers();
 
 app.Run();

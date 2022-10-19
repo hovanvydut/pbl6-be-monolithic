@@ -48,9 +48,6 @@ public class JwtMiddleware
                 Email = jwtToken.Claims.First(x => x.Type == CustomClaimTypes.Email).Value,
             };
         }
-        catch
-        {
-            throw new BaseException(HttpCode.UNAUTHORIZED, "Invalid token");
-        }
+        catch { }
     }
 }

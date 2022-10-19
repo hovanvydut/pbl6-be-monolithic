@@ -23,11 +23,11 @@ public class RoleController : BaseController
         {
             var roleCreated = await _roleService.CreateRole(createRoleDTO);
             if (roleCreated)
-                return new BaseResponse<bool>(roleCreated, HttpCode.CREATED, "");
+                return new BaseResponse<bool>(roleCreated, HttpCode.CREATED);
             else
-                return new BaseResponse<bool>(roleCreated, HttpCode.BAD_REQUEST, "");
+                return new BaseResponse<bool>(roleCreated, HttpCode.BAD_REQUEST);
         }
-        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "");
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST);
     }
 
     [HttpPut("{roleId}")]
@@ -37,32 +37,32 @@ public class RoleController : BaseController
         {
             var roleUpdated = await _roleService.UpdateRole(roleId, updateRoleDTO);
             if (roleUpdated)
-                return new BaseResponse<bool>(roleUpdated, HttpCode.NO_CONTENT, "");
+                return new BaseResponse<bool>(roleUpdated, HttpCode.NO_CONTENT);
             else
-                return new BaseResponse<bool>(roleUpdated, HttpCode.BAD_REQUEST, "");
+                return new BaseResponse<bool>(roleUpdated, HttpCode.BAD_REQUEST);
         }
-        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "");
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST);
     }
 
     [HttpGet("{roleId}")]
     public async Task<BaseResponse<RoleDTO>> GetRoleById(int roleId)
     {
         var role = await _roleService.GetRoleById(roleId);
-        return new BaseResponse<RoleDTO>(role, HttpCode.OK, "");
+        return new BaseResponse<RoleDTO>(role, HttpCode.OK);
     }
 
     [HttpGet("Permission")]
     public BaseResponse<List<PermissionContent>> GetPermissions()
     {
         var listPermission = _roleService.GetPermissions();
-        return new BaseResponse<List<PermissionContent>>(listPermission, HttpCode.OK, "");
+        return new BaseResponse<List<PermissionContent>>(listPermission, HttpCode.OK);
     }
 
     [HttpGet("Permission/{roleId}")]
     public async Task<BaseResponse<List<PermissionDTO>>> GetPermissionByRoleId(int roleId)
     {
         var listPermission = await _roleService.GetPermissionByRoleId(roleId);
-        return new BaseResponse<List<PermissionDTO>>(listPermission, HttpCode.OK, "");
+        return new BaseResponse<List<PermissionDTO>>(listPermission, HttpCode.OK);
     }
 
     [HttpPost("Permission")]
@@ -72,11 +72,11 @@ public class RoleController : BaseController
         {
             var permisisonCreated = await _roleService.AddPermissionForRole(createPermissionDTO);
             if (permisisonCreated)
-                return new BaseResponse<bool>(permisisonCreated, HttpCode.CREATED, "");
+                return new BaseResponse<bool>(permisisonCreated, HttpCode.CREATED);
             else
-                return new BaseResponse<bool>(permisisonCreated, HttpCode.BAD_REQUEST, "");
+                return new BaseResponse<bool>(permisisonCreated, HttpCode.BAD_REQUEST);
         }
-        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "");
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST);
     }
 
     [HttpDelete("Permission")]
@@ -84,8 +84,8 @@ public class RoleController : BaseController
     {
         var permisisonDeleted = await _roleService.RemovePermissionForRole(permissionId, roleId);
         if (permisisonDeleted)
-            return new BaseResponse<bool>(permisisonDeleted, HttpCode.NO_CONTENT, "");
+            return new BaseResponse<bool>(permisisonDeleted, HttpCode.NO_CONTENT);
         else
-            return new BaseResponse<bool>(permisisonDeleted, HttpCode.BAD_REQUEST, "");
+            return new BaseResponse<bool>(permisisonDeleted, HttpCode.BAD_REQUEST);
     }
 }

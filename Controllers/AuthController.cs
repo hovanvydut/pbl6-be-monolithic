@@ -23,9 +23,9 @@ public class AuthController : BaseController
             var scheme = HttpContext.Request.Scheme;
             var host = HttpContext.Request.Host.Value;
             var newUser = await _authService.Register(userRegisterDTO, scheme, host);
-            return new BaseResponse<UserRegisterResponseDTO>(newUser, HttpCode.CREATED, "");
+            return new BaseResponse<UserRegisterResponseDTO>(newUser, HttpCode.CREATED);
         }
-        return new BaseResponse<UserRegisterResponseDTO>(null, HttpCode.BAD_REQUEST, "");
+        return new BaseResponse<UserRegisterResponseDTO>(null, HttpCode.BAD_REQUEST);
     }
 
     [HttpPost("Login")]
@@ -34,15 +34,15 @@ public class AuthController : BaseController
         if (ModelState.IsValid)
         {
             var userLogin = await _authService.Login(userLoginDTO);
-            return new BaseResponse<UserLoginResponseDTO>(userLogin, HttpCode.OK, "");
+            return new BaseResponse<UserLoginResponseDTO>(userLogin, HttpCode.OK);
         }
-        return new BaseResponse<UserLoginResponseDTO>(null, HttpCode.BAD_REQUEST, "");
+        return new BaseResponse<UserLoginResponseDTO>(null, HttpCode.BAD_REQUEST);
     }
 
     [HttpGet("Confirm-Email")]
     public async Task<BaseResponse<bool>> ConfirmEmail(int userId)
     {
         var userConfirm = await _authService.ConfirmEmail(userId);
-        return new BaseResponse<bool>(userConfirm, HttpCode.OK, "");
+        return new BaseResponse<bool>(userConfirm, HttpCode.OK);
     }
 }

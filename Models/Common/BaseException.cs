@@ -6,7 +6,8 @@ public class BaseException : Exception
 
     public BaseException() { }
 
-    public BaseException(int StatusCode, string Message) : base(Message)
+    public BaseException(int StatusCode,
+                         string Message = "") : base(Message)
     {
         this.StatusCode = StatusCode;
     }

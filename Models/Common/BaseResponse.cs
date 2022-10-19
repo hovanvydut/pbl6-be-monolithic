@@ -1,3 +1,4 @@
+using Monolithic.Constants;
 using Newtonsoft.Json;
 
 namespace Monolithic.Models.Common;
@@ -13,12 +14,15 @@ public class BaseResponse<T>
     public string Message { get; set; }
 
     public BaseResponse() { }
-    public BaseResponse(T Data, int StatusCode, string Message)
+    public BaseResponse(T Data,
+                        int StatusCode = HttpCode.INTERNAL_SERVER_ERROR,
+                        string Message = "",
+                        bool Success = true)
     {
-        this.Data = Data;
-        this.Success = true;
+        this.Success = Success;
         this.StatusCode = StatusCode;
         this.Message = Message;
+        this.Data = Data;
     }
 
     public override string ToString()

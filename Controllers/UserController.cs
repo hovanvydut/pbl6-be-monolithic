@@ -19,9 +19,10 @@ public class UserController : BaseController
 
     [HttpGet("Personal")]
     [Authorize(Roles = UserPermission.ViewPersonal)]
-    public async Task<BaseResponse<UserProfilePersonalDTO>> GetUserProfilePersonal(int userId)
+    public async Task<BaseResponse<UserProfilePersonalDTO>> GetUserProfilePersonal()
     {
-        var userProfile = await _userService.GetUserProfilePersonal(userId);
+        ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var userProfile = await _userService.GetUserProfilePersonal(reqUser.Id);
         return new BaseResponse<UserProfilePersonalDTO>(userProfile, HttpCode.OK);
     }
 
@@ -33,13 +34,14 @@ public class UserController : BaseController
         return new BaseResponse<UserProfileAnonymousDTO>(userProfile, HttpCode.OK);
     }
 
-    [HttpPut("{userId}")]
+    [HttpPut("Personal")]
     [Authorize(Roles = UserPermission.UpdateProfile)]
-    public async Task<BaseResponse<bool>> UpdateUserProfile(int userId, [FromBody] UserProfileUpdateDTO userProfileUpdateDTO)
+    public async Task<BaseResponse<bool>> UpdateUserProfilePersonal([FromBody] UserProfileUpdateDTO userProfileUpdateDTO)
     {
         if (ModelState.IsValid)
         {
-            var userUpdated = await _userService.UpdateUserProfile(userId, userProfileUpdateDTO);
+            ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+            var userUpdated = await _userService.UpdateUserProfile(reqUser.Id, userProfileUpdateDTO);
             if (userUpdated)
                 return new BaseResponse<bool>(userUpdated, HttpCode.NO_CONTENT);
             else

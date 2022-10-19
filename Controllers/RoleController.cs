@@ -60,14 +60,14 @@ public class RoleController : BaseController
         return new BaseResponse<RoleDTO>(role, HttpCode.OK);
     }
 
-    [HttpGet("Permission/{roleId}/Not-Have")]
+    [HttpGet("{roleId}/Permission/Not-Have")]
     public async Task<BaseResponse<List<PermissionContent>>> GetPermissionsRoleNotHave(int roleId)
     {
         var listPermission = await _roleService.GetPermissionsRoleNotHave(roleId);
         return new BaseResponse<List<PermissionContent>>(listPermission, HttpCode.OK);
     }
 
-    [HttpGet("Permission/{roleId}")]
+    [HttpGet("{roleId}/Permission")]
     public async Task<BaseResponse<List<PermissionDTO>>> GetPermissionByRoleId(int roleId)
     {
         var listPermission = await _roleService.GetPermissionByRoleId(roleId);
@@ -88,7 +88,7 @@ public class RoleController : BaseController
         return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
     }
 
-    [HttpDelete("Permission")]
+    [HttpDelete("{roleId}/Permission/{permissionId}")]
     public async Task<BaseResponse<bool>> RemovePermissionForRole(int permissionId, int roleId)
     {
         var permisisonDeleted = await _roleService.RemovePermissionForRole(permissionId, roleId);

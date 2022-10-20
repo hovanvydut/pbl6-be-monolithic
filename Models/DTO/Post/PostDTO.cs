@@ -14,5 +14,6 @@ public class PostDTO
     public FullAddressDTO Address { get; set; }
     public CategoryDTO Category { get; set; }
     public List<PropertyDTO> Properties { get; set; }
+    public List<PropertyGroupDTO> PropertyGroup { get; set; }
     public List<MediaDTO> Medias { get; set; }
 }

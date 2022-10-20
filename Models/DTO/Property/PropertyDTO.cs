@@ -4,4 +4,5 @@ public class PropertyDTO
 {
     public int Id { get; set; }
     public string DisplayName { get; set; }
+    public int PropertyGroupId { get; set; }
 }

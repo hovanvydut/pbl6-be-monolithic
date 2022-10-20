@@ -19,11 +19,12 @@ public class PostService : IPostService
     private readonly DataContext _db;
     private readonly ICategoryRepository _categoryRepo;
     private readonly IAddressRepository _addressRepo;
+    private readonly IPropertyService _propService;
 
     public PostService(IPostRepository postRepo, IMapper mapper,
                         IMediaRepository mediaRepo, IPropertyRepository propertyRepo,
                         DataContext db, ICategoryRepository categoryRepo,
-                        IAddressRepository addressRepo)
+                        IAddressRepository addressRepo, IPropertyService propService)
     {
         _postRepo = postRepo;
         _mapper = mapper;
@@ -32,6 +33,7 @@ public class PostService : IPostService
         _db = db;
         _categoryRepo = categoryRepo;
         _addressRepo = addressRepo;
+        _propService = propService;
     }
 
     public async Task<PostDTO> GetPostById(int id)
@@ -40,8 +42,14 @@ public class PostService : IPostService
         if (postEntity == null) return null;
 
         PostDTO postDTO = _mapper.Map<PostDTO>(postEntity);
+
+        // adjust media
         List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
         postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+
+        // group properties
+        List<PostDTO> postDTOList = new List<PostDTO> { postDTO };
+        await parsePostDTOGroup(postDTOList);
         return postDTO;
     }
 
@@ -56,7 +64,36 @@ public class PostService : IPostService
             List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
             postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
         }
+
+        await parsePostDTOGroup(postDTOList);
         return postDTOList;
+    }
+
+    private List<PropertyGroupDTO> parsePostDTOGroup(PostDTO postDTO, List<PropertyGroupDTO> propertyGroupDTOList)
+    {
+        foreach (PropertyGroupDTO group in propertyGroupDTOList)
+        {
+            // reset group.Properties
+            group.Properties = new List<PropertyDTO>();
+            foreach (PropertyDTO prop in postDTO.Properties)
+            {
+                if (prop.PropertyGroupId == group.Id)
+                {
+                    group.Properties.Add(prop);
+                }
+            }
+        }
+        return propertyGroupDTOList;
+    }
+
+    private async Task parsePostDTOGroup(List<PostDTO> postDTOList)
+    {
+        List<PropertyGroupDTO> propertyGroupDTOList = await _propService.GetAllPropertyGroup();
+
+        foreach (PostDTO postDTO in postDTOList)
+        {
+            postDTO.PropertyGroup = parsePostDTOGroup(postDTO, propertyGroupDTOList);
+        }
     }
 
     public async Task CreatePost(CreatePostDTO createPostDTO)

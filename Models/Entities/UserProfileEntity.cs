@@ -21,6 +21,9 @@ public class UserProfileEntity : EntityBase
     [Column("identity_number")]
     public string IdentityNumber { get; set; }
 
+    [Column("avatar")]
+    public string Avatar { get; set; }
+
     [Column("current_credit")]
     public double CurrentCredit { get; set; }
 

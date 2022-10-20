@@ -2,6 +2,8 @@ using Monolithic.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Context;
+using Monolithic.Models.Common;
+using Monolithic.Constants;
 
 namespace Monolithic.Repositories.Implement;
 
@@ -54,10 +56,14 @@ public class UserProfileReposiory : IUserProfileReposiory
         UserProfileEntity userProfileDB = await GetByUserId(userId);
         if (userProfileDB == null) return false;
 
+        if (userProfileDB.PhoneNumber != userProfileEntity.PhoneNumber
+                        && await IsInvalidNewProfile(userProfileEntity))
+            throw new BaseException(HttpCode.BAD_REQUEST, "Phone number is existed");
+
         userProfileDB.DisplayName = userProfileEntity.DisplayName;
         userProfileDB.Address = userProfileEntity.Address;
         userProfileDB.AddressWardId = userProfileEntity.AddressWardId;
-        userProfileDB.PhoneNumber = userProfileDB.PhoneNumber;
+        userProfileDB.PhoneNumber = userProfileEntity.PhoneNumber;
 
         _db.UserProfiles.Update(userProfileDB);
         return await _db.SaveChangesAsync() >= 0;

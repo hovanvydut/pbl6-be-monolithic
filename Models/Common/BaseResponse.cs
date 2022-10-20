@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Serialization;
 using Monolithic.Constants;
 using Newtonsoft.Json;
 
@@ -27,6 +28,13 @@ public class BaseResponse<T>
 
     public override string ToString()
     {
-        return JsonConvert.SerializeObject(this);
+        return JsonConvert.SerializeObject(
+            this,
+            Formatting.Indented,
+            new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            }
+        );
     }
 }

@@ -12,6 +12,8 @@ public class UserProfilePersonalDTO
 
     public double CurrentCredit { get; set; }
 
+    public string Avatar { get; set; }
+
     public string Address { get; set; }
 
     public int AddressWardId { get; set; }

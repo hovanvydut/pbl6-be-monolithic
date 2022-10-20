@@ -8,6 +8,8 @@ public class UserProfileAnonymousDTO
 
     public string Address { get; set; }
 
+    public string Avatar { get; set; }
+
     public int AddressWardId { get; set; }
 
     public string AddressWard { get; set; }

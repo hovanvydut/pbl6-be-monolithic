@@ -55,8 +55,6 @@ public class UserService : IUserService
     public async Task<bool> UpdateUserProfile(int userId, UserProfileUpdateDTO userProfileUpdateDTO)
     {
         var userProfileEntity = _mapper.Map<UserProfileEntity>(userProfileUpdateDTO);
-        if (await _userProfileRepository.IsInvalidNewProfile(userProfileEntity))
-            throw new BaseException(HttpCode.BAD_REQUEST, "Phone number is existed");
         return await _userProfileRepository.Update(userId, userProfileEntity);
     }
 }

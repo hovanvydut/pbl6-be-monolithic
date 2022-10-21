@@ -34,7 +34,7 @@ public class AuthController : BaseController
         if (ModelState.IsValid)
         {
             var userLogin = await _authService.Login(userLoginDTO);
-            return new BaseResponse<UserLoginResponseDTO>(userLogin, HttpCode.OK);
+            return new BaseResponse<UserLoginResponseDTO>(userLogin);
         }
         return new BaseResponse<UserLoginResponseDTO>(null, HttpCode.BAD_REQUEST, "", false);
     }
@@ -43,6 +43,6 @@ public class AuthController : BaseController
     public async Task<BaseResponse<bool>> ConfirmEmail(int userId)
     {
         var userConfirm = await _authService.ConfirmEmail(userId);
-        return new BaseResponse<bool>(userConfirm, HttpCode.OK);
+        return new BaseResponse<bool>(userConfirm);
     }
 }

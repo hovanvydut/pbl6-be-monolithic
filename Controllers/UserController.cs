@@ -23,7 +23,7 @@ public class UserController : BaseController
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
         var userProfile = await _userService.GetUserProfilePersonal(reqUser.Id);
-        return new BaseResponse<UserProfilePersonalDTO>(userProfile, HttpCode.OK);
+        return new BaseResponse<UserProfilePersonalDTO>(userProfile);
     }
 
     [HttpGet("Anonymous")]
@@ -31,7 +31,7 @@ public class UserController : BaseController
     public async Task<BaseResponse<UserProfileAnonymousDTO>> GetUserProfileAnonymous(int userId)
     {
         var userProfile = await _userService.GetUserProfileAnonymous(userId);
-        return new BaseResponse<UserProfileAnonymousDTO>(userProfile, HttpCode.OK);
+        return new BaseResponse<UserProfileAnonymousDTO>(userProfile);
     }
 
     [HttpPut("Personal")]

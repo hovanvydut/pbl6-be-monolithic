@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Services.Interface;
 
@@ -17,32 +18,35 @@ public class PostController : BaseController
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PostDTO>> GetPostById(int id)
+    public async Task<BaseResponse<PostDTO>> GetPostById(int id)
     {
-        return await _postService.GetPostById(id);
+        return new BaseResponse<PostDTO>(await _postService.GetPostById(id));
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<PostDTO>>> GetAll()
+    public async Task<BaseResponse<List<PostDTO>>> GetAll()
     {
-        return await _postService.GetAllPost();
+        return new BaseResponse<List<PostDTO>>(await _postService.GetAllPost());
     }
 
     [HttpPost]
-    public async Task Create([FromBody] CreatePostDTO createPostDTO)
+    public async Task<BaseResponse<string>> Create([FromBody] CreatePostDTO createPostDTO)
     {
         await _postService.CreatePost(createPostDTO);
+        return new BaseResponse<string>("");
     }
 
     [HttpPut("{id}")]
-    public async Task Update(int id, [FromBody] UpdatePostDTO updatePostDTO)
+    public async Task<BaseResponse<string>> Update(int id, [FromBody] UpdatePostDTO updatePostDTO)
     {
         await _postService.UpdatePost(id, updatePostDTO);
+        return new BaseResponse<string>("");
     }
 
     [HttpDelete("{id}")]
-    public async Task Delete(int id)
+    public async Task<BaseResponse<string>> Delete(int id)
     {
         await _postService.DeletePost(id);
+        return new BaseResponse<string>("");
     }
 }

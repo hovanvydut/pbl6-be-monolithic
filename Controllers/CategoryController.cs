@@ -15,9 +15,9 @@ public class CategoryController : BaseController
     }
 
     [HttpGet("house-type")]
-    public async Task<ActionResult<List<CategoryDTO>>> GetAllHouseType()
+    public async Task<BaseResponse<List<CategoryDTO>>> GetAllHouseType()
     {
         var result = await _categoryService.GetAllHouseType();
-        return Ok(result);
+        return new BaseResponse<List<CategoryDTO>>(result);
     }
 }

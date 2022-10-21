@@ -16,7 +16,7 @@ public class BaseResponse<T>
 
     public BaseResponse() { }
     public BaseResponse(T Data,
-                        int StatusCode = HttpCode.INTERNAL_SERVER_ERROR,
+                        int StatusCode = HttpCode.OK,
                         string Message = "",
                         bool Success = true)
     {

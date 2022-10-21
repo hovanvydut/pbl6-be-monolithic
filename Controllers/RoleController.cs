@@ -50,28 +50,28 @@ public class RoleController : BaseController
     public async Task<BaseResponse<List<RoleDTO>>> GetAllRoles()
     {
         var roles = await _roleService.GetAllRoles();
-        return new BaseResponse<List<RoleDTO>>(roles, HttpCode.OK);
+        return new BaseResponse<List<RoleDTO>>(roles);
     }
 
     [HttpGet("{roleId}")]
     public async Task<BaseResponse<RoleDTO>> GetRoleById(int roleId)
     {
         var role = await _roleService.GetRoleById(roleId);
-        return new BaseResponse<RoleDTO>(role, HttpCode.OK);
+        return new BaseResponse<RoleDTO>(role);
     }
 
     [HttpGet("{roleId}/Permission/Not-Have")]
     public async Task<BaseResponse<List<PermissionContent>>> GetPermissionsRoleNotHave(int roleId)
     {
         var listPermission = await _roleService.GetPermissionsRoleNotHave(roleId);
-        return new BaseResponse<List<PermissionContent>>(listPermission, HttpCode.OK);
+        return new BaseResponse<List<PermissionContent>>(listPermission);
     }
 
     [HttpGet("{roleId}/Permission")]
     public async Task<BaseResponse<List<PermissionDTO>>> GetPermissionByRoleId(int roleId)
     {
         var listPermission = await _roleService.GetPermissionByRoleId(roleId);
-        return new BaseResponse<List<PermissionDTO>>(listPermission, HttpCode.OK);
+        return new BaseResponse<List<PermissionDTO>>(listPermission);
     }
 
     [HttpPost("Permission")]

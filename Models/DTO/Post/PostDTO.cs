@@ -11,7 +11,8 @@ public class PostDTO
     public string Slug { get; set; }
     public int LimitTenant { get; set; }
     public int NumView { get; set; }
-    public FullAddressDTO Address { get; set; }
+    public string Address { get; set; }
+    public FullAddressDTO FullAddress { get; set; }
     public CategoryDTO Category { get; set; }
     public List<PropertyDTO> Properties { get; set; }
     public List<PropertyGroupDTO> PropertyGroup { get; set; }

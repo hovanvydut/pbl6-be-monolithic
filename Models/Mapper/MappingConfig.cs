@@ -52,7 +52,8 @@ public class MappingConfig : Profile
             .PreserveReferences();
         CreateMap<PostEntity, PostDTO>()
             .ForMember(dest => dest.Properties, act => act.MapFrom(src => src.PostProperties))
-            .ForMember(dest => dest.Address, act => act.MapFrom(src => src.AddressWard))
+            .ForMember(dest => dest.FullAddress, act => act.MapFrom(src => src.AddressWard))
+            .ForMember(dest => dest.Address, act => act.MapFrom(src => src.Address))
             .PreserveReferences();
 
         // media

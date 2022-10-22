@@ -3,6 +3,7 @@ using Monolithic.Models.Entities;
 using Monolithic.Repositories.Interface;
 using Monolithic.Models.Context;
 using Microsoft.EntityFrameworkCore;
+using Monolithic.Models.ReqParams;
 
 namespace Monolithic.Repositories.Implement;
 
@@ -15,10 +16,10 @@ public class CategoryRepository : ICategoryRepository
         _db = db;
     }
 
-    public async Task<PagedList<CategoryEntity>> GetAllWithFilter(ReqParam reqParam)
+    public async Task<PagedList<CategoryEntity>> GetAllWithFilter(CategoryParams categoryParams)
     {
         // PagedList<CategoryEntity> categoryList = await _db.Categories.Where(c => c.CreatedAt == null)
-        //                             .ToPagedList(reqParam.PageNumber, reqParam.PageSize);
+        //                             .ToPagedList(categoryParams.PageNumber, categoryParams.PageSize);
         // return categoryList;
         return null;
     }

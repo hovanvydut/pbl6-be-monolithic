@@ -5,6 +5,8 @@ using Monolithic.Models.Context;
 using Microsoft.EntityFrameworkCore;
 using Monolithic.Models.DTO;
 using AutoMapper;
+using Monolithic.Models.ReqParams;
+using Monolithic.Extensions;
 
 namespace Monolithic.Repositories.Implement;
 
@@ -43,6 +45,7 @@ public class PostRepository : IPostRepository
                             .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
                             .Include(p => p.PostProperties)
                             .ThenInclude(prop => prop.Property)
+                            .OrderByDescending(c => c.CreatedAt)
                             .ToListAsync();
     }
 
@@ -73,5 +76,16 @@ public class PostRepository : IPostRepository
             await _db.SaveChangesAsync();
         }
         return existPostEntity;
+    }
+
+    public async Task<PagedList<PostEntity>> GetPostWithParams(PostParams postParams)
+    {
+        var posts = _db.Posts.Include(p => p.Category)
+                            .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
+                            .Include(p => p.PostProperties)
+                            .ThenInclude(prop => prop.Property)
+                            .OrderByDescending(c => c.CreatedAt)
+                            .Where(p => p.DeletedAt == null);
+        return await posts.ToPagedList(postParams.PageNumber, postParams.PageSize);
     }
 }

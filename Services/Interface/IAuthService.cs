@@ -9,4 +9,10 @@ public interface IAuthService
     Task<UserLoginResponseDTO> Login(UserLoginDTO userLoginDTO);
 
     Task<bool> ConfirmEmail(int userId);
+
+    Task<bool> ChangePassword(int userId, UserChangePasswordDTO userChangePasswordDTO);
+
+    Task ForgotPassword(string email, string scheme, string host);
+
+    Task RecoverPassword(UserRecoverPasswordDTO userRecoverPasswordDTO);
 }

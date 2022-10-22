@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Monolithic.Constants;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Models.ReqParams;
@@ -41,15 +42,23 @@ public class PostController : BaseController
     [HttpPost]
     public async Task<BaseResponse<string>> Create([FromBody] CreatePostDTO createPostDTO)
     {
-        await _postService.CreatePost(createPostDTO);
-        return new BaseResponse<string>("");
+        if (ModelState.IsValid)
+        {
+            await _postService.CreatePost(createPostDTO);
+            return new BaseResponse<string>("");
+        }
+        return new BaseResponse<string>("", HttpCode.BAD_REQUEST, "Model state is not valid", false);
     }
 
     [HttpPut("{id}")]
     public async Task<BaseResponse<string>> Update(int id, [FromBody] UpdatePostDTO updatePostDTO)
     {
-        await _postService.UpdatePost(id, updatePostDTO);
-        return new BaseResponse<string>("");
+        if (ModelState.IsValid)
+        {
+            await _postService.UpdatePost(id, updatePostDTO);
+            return new BaseResponse<string>("");
+        }
+        return new BaseResponse<string>("", HttpCode.BAD_REQUEST, "Model state is not valid", false);
     }
 
     [HttpDelete("{id}")]

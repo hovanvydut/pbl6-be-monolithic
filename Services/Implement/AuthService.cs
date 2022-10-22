@@ -1,12 +1,10 @@
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
-using System.Security.Cryptography;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Constants;
 using Monolithic.Helpers;
-using System.Text;
 using AutoMapper;
 using System.Web;
 
@@ -44,10 +42,9 @@ public class AuthService : IAuthService
             throw new BaseException(HttpCode.BAD_REQUEST, "Phone number or identity number is existed");
 
         // Create user account
-        using var hmac = new HMACSHA512();
-        var passwordByte = Encoding.UTF8.GetBytes(userRegisterDTO.Password);
-        newUserAccount.PasswordSalt = hmac.Key;
-        newUserAccount.PasswordHashed = hmac.ComputeHash(passwordByte);
+        var passwordHash = PasswordSecure.GetPasswordHash(userRegisterDTO.Password);
+        newUserAccount.PasswordSalt = passwordHash.PasswordSalt;
+        newUserAccount.PasswordHashed = passwordHash.PasswordHashed;
         newUserAccount.IsVerified = false;
         await _userAccountRepository.Create(newUserAccount);
 
@@ -85,10 +82,8 @@ public class AuthService : IAuthService
         if (currentUser == null || !currentUser.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is not registed or email confirmed");
 
-        using var hmac = new HMACSHA512(currentUser.PasswordSalt);
-        var passwordByte = Encoding.UTF8.GetBytes(userLoginDTO.Password);
-        var computedHash = hmac.ComputeHash(passwordByte);
-        if (!computedHash.SequenceEqual(currentUser.PasswordHashed))
+        var passwordHash = new PasswordHash(currentUser.PasswordHashed, currentUser.PasswordSalt);
+        if (!PasswordSecure.IsValidPasswod(userLoginDTO.Password, passwordHash))
             throw new BaseException(HttpCode.BAD_REQUEST, "Invalid password");
 
         var accessToken = await _tokenService.CreateToken(currentUser);

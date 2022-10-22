@@ -64,5 +64,8 @@ public class MappingConfig : Profile
         CreateMap<UpdateRoleDTO, RoleEntity>();
         CreateMap<CreatePermissionDTO, PermissionEntity>();
         CreateMap<PermissionEntity, PermissionDTO>();
+
+        // bank code
+        CreateMap<BankCodeEntity, BankCodeDTO>();
     }
 }

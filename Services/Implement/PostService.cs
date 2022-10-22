@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore.Storage;
 using Monolithic.Common;
 using Monolithic.Constants;
+using Monolithic.Models.Common;
 using Monolithic.Models.Context;
 using Monolithic.Models.DTO;
 using Monolithic.Models.Entities;
@@ -106,14 +107,14 @@ public class PostService : IPostService
                 CategoryEntity category = await _categoryRepo.GetHouseTypeById(createPostDTO.CategoryId);
                 if (category == null)
                 {
-                    throw new BadHttpRequestException($"Category id = {createPostDTO.CategoryId} not found");
+                    throw new BaseException(HttpCode.BAD_REQUEST, $"Category id = {createPostDTO.CategoryId} not found");
                 }
 
                 // check if address exists
                 AddressWardEntity address = await _addressRepo.GetAddress(createPostDTO.AddressWardId);
                 if (address == null)
                 {
-                    throw new BadHttpRequestException($"AddressWard id = {createPostDTO.AddressWardId} not found");
+                    throw new BaseException(HttpCode.BAD_REQUEST, $"AddressWard id = {createPostDTO.AddressWardId} not found");
                 }
 
                 // save post
@@ -137,7 +138,7 @@ public class PostService : IPostService
                     PropertyEntity propertyEntity = await _propertyRepo.GetPropertyById(propertyId);
                     if (propertyEntity == null)
                     {
-                        throw new BadHttpRequestException($"Property id = {propertyId} not found");
+                        throw new BaseException(HttpCode.BAD_REQUEST, $"Property id = {propertyId} not found");
                     }
 
                     PostPropertyEntity postPropertyEntity = new PostPropertyEntity
@@ -150,7 +151,7 @@ public class PostService : IPostService
                 await _propertyRepo.CreatePostProperty(postPropertyEntityList);
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch (BaseException ex)
             {
                 transaction.Rollback();
                 throw ex;
@@ -168,14 +169,14 @@ public class PostService : IPostService
                 CategoryEntity category = await _categoryRepo.GetHouseTypeById(updatePostDTO.CategoryId);
                 if (category == null)
                 {
-                    throw new BadHttpRequestException($"Category id = {updatePostDTO.CategoryId} not found");
+                    throw new BaseException(HttpCode.BAD_REQUEST,$"Category id = {updatePostDTO.CategoryId} not found");
                 }
 
                 // check if address exists
                 AddressWardEntity address = await _addressRepo.GetAddress(updatePostDTO.AddressWardId);
                 if (address == null)
                 {
-                    throw new BadHttpRequestException($"AddressWard id = {updatePostDTO.AddressWardId} not found");
+                    throw new BaseException(HttpCode.BAD_REQUEST, $"AddressWard id = {updatePostDTO.AddressWardId} not found");
                 }
 
                 // save post
@@ -204,7 +205,7 @@ public class PostService : IPostService
                     PropertyEntity propertyEntity = await _propertyRepo.GetPropertyById(propertyId);
                     if (propertyEntity == null)
                     {
-                        throw new BadHttpRequestException($"Property id = {propertyId} not found");
+                        throw new BaseException(HttpCode.BAD_REQUEST, $"Property id = {propertyId} not found");
                     }
 
                     PostPropertyEntity postPropertyEntity = new PostPropertyEntity
@@ -217,7 +218,7 @@ public class PostService : IPostService
                 await _propertyRepo.CreatePostProperty(postPropertyEntityList);
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch (BaseException ex)
             {
                 transaction.Rollback();
                 throw ex;

@@ -3,6 +3,8 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Common;
+using Monolithic.Constants;
+using Monolithic.Models.Common;
 
 namespace Monolithic.Controllers;
 
@@ -23,13 +25,13 @@ public class FileControler : BaseController
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> UploadFileAsync(IFormFile file, string? prefix)
+    public async Task<BaseResponse<string>> UploadFileAsync(IFormFile file, string? prefix)
     {
         string bucketName = _configUtil.getAWSBucketName();
         string region = _configUtil.getAWSRegion();
 
         var bucketExists = await _s3Client.DoesS3BucketExistAsync(bucketName);
-        if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
+        if (!bucketExists) throw new BaseException(HttpCode.NOT_FOUND, $"Bucket {bucketName} does not exist.");
 
         string filePath = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}";
         var request = new PutObjectRequest()
@@ -41,6 +43,6 @@ public class FileControler : BaseController
         request.Metadata.Add("Content-Type", file.ContentType);
         await _s3Client.PutObjectAsync(request);
 
-        return Ok($"https://{bucketName}.s3.{region}.amazonaws.com/{filePath}");
+        return new BaseResponse<string>($"https://{bucketName}.s3.{region}.amazonaws.com/{filePath}", HttpCode.OK);
     }
 }

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Monolithic.Common;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Services.Interface;
@@ -16,9 +15,9 @@ public class PropertyController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllPropertyGroup()
+    public async Task<BaseResponse<List<PropertyGroupDTO>>> GetAllPropertyGroup()
     {
         var propertyGroupList = await _propertyService.GetAllPropertyGroup();
-        return Ok(propertyGroupList);
+        return new BaseResponse<List<PropertyGroupDTO>>(propertyGroupList);
     }
 }

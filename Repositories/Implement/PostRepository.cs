@@ -86,6 +86,58 @@ public class PostRepository : IPostRepository
                             .ThenInclude(prop => prop.Property)
                             .OrderByDescending(c => c.CreatedAt)
                             .Where(p => p.DeletedAt == null);
+
+        if (postParams.AddressWardId > 0)
+        {
+            posts = posts.Where(p => p.AddressWardId == postParams.AddressWardId);
+        }
+
+        if (postParams.CategoryId > 0)
+        {
+            posts = posts.Where(p => p.CategoryId == postParams.CategoryId);
+        }
+
+        if (!String.IsNullOrEmpty(postParams.SearchValue))
+        {
+            var searchValue = postParams.SearchValue.ToLower();
+            posts = posts.Where(
+                p => p.Title.ToLower().Contains(searchValue) ||
+                     p.Description.ToLower().Contains(searchValue) ||
+                     p.Address.ToLower().Contains(searchValue) ||
+                     p.AddressWard.Name.ToLower().Contains(searchValue) ||
+                     p.AddressWard.AddressDistrict.Name.ToLower().Contains(searchValue) ||
+                     p.AddressWard.AddressDistrict.AddressProvince.Name.ToLower().Contains(searchValue) ||
+                     p.Category.Name.ToLower().Contains(searchValue)
+            );
+        }
+
+        if (postParams.MaxPrice > 0 && postParams.MaxPrice > postParams.MinPrice)
+        {
+            posts = posts.Where(
+                p => p.Price >= postParams.MinPrice &&
+                     p.Price <= postParams.MaxPrice
+            );
+        }
+
+        if (postParams.MaxArea > 0 && postParams.MaxArea > postParams.MinPrice)
+        {
+            posts = posts.Where(
+                p => p.Area >= postParams.MinArea &&
+                     p.Area <= postParams.MaxArea
+            );
+        }
+
+        if (!String.IsNullOrEmpty(postParams.Properties))
+        {
+            var properties = postParams.Properties.Split(",").Select(c => Convert.ToInt32(c));
+            foreach (var prop in properties)
+            {
+                posts = posts.Where(
+                    p => p.PostProperties.Select(c => c.PropertyId).Contains(prop)
+                );
+            }
+        }
+
         return await posts.ToPagedList(postParams.PageNumber, postParams.PageSize);
     }
 }

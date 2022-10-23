@@ -48,4 +48,5 @@ public class DataContext : DbContext
     public DbSet<PropertyGroupEntity> PropertyGroups { get; set; }
     public DbSet<PostPropertyEntity> PostProperties { get; set; }
     public DbSet<MediaEntity> Medias { get; set; }
+    public DbSet<BookmarkEntity> Bookmarks { get; set; }
 }

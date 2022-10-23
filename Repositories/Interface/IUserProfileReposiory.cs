@@ -13,4 +13,6 @@ public interface IUserProfileReposiory
     Task<bool> IsInvalidNewProfile(UserProfileEntity userProfileEntity);
 
     Task<bool> Update(int userId, UserProfileEntity userProfileEntity);
+
+    Task AddGold(int userId, long amount);
 }

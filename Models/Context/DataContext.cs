@@ -49,4 +49,5 @@ public class DataContext : DbContext
     public DbSet<PostPropertyEntity> PostProperties { get; set; }
     public DbSet<MediaEntity> Medias { get; set; }
     public DbSet<BankCodeEntity> BankCodes { get; set; }
+    public DbSet<VNPHistoryEntity> VNPHistory { get; set; }
 }

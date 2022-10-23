@@ -3,6 +3,7 @@ using Monolithic.Models.Common;
 using Monolithic.Constants;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace Monolithic.Models.Entities;
 
@@ -10,6 +11,7 @@ namespace Monolithic.Models.Entities;
 [Index(nameof(PostEntity.Slug), IsUnique = true)]
 public class PostEntity : EntityBase
 {
+    [Key]
     [Column("id")]
     public int Id { get; set; }
 

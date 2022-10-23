@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Monolithic.Models.Common;
 using Monolithic.Constants;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Monolithic.Models.Entities;
 
@@ -9,6 +10,7 @@ namespace Monolithic.Models.Entities;
 [Index(nameof(Slug), IsUnique = true)]
 public class CategoryEntity : EntityBase
 {
+    [Key]
     [Column("id")]
     public int Id { get; set; }
 

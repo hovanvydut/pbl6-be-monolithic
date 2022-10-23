@@ -67,5 +67,6 @@ public class MappingConfig : Profile
 
         // bank code
         CreateMap<BankCodeEntity, BankCodeDTO>();
+        CreateMap<VNPHistoryDTO, VNPHistoryEntity>();
     }
 }

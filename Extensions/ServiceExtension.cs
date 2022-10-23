@@ -58,7 +58,7 @@ public static class ServiceExtension
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IMediaRepository, MediaRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<IBankCodeRepository, BankCodeRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)

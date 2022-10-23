@@ -15,18 +15,21 @@ public class AuthService : IAuthService
     private readonly IUserAccountReposiory _userAccountRepository;
     private readonly IUserProfileReposiory _userProfileRepository;
     private readonly ISendMailHelper _sendMailHelper;
+    private readonly IConfiguration _configuration;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
     public AuthService(IUserAccountReposiory userAccountRepository,
                        IUserProfileReposiory userProfileRepository,
                        ISendMailHelper sendMailHelper,
+                       IConfiguration configuration,
                        ITokenService tokenService,
                        IMapper mapper)
     {
         _userAccountRepository = userAccountRepository;
         _userProfileRepository = userProfileRepository;
         _sendMailHelper = sendMailHelper;
+        _configuration = configuration;
         _tokenService = tokenService;
         _mapper = mapper;
     }
@@ -104,5 +107,55 @@ public class AuthService : IAuthService
 
         currentUser.IsVerified = true;
         return await _userAccountRepository.Update(currentUser.Id, currentUser);
+    }
+
+    public async Task<bool> ChangePassword(int userId, UserChangePasswordDTO userChangePasswordDTO)
+    {
+        var userDB = await _userAccountRepository.GetById(userId);
+        if (userDB == null || !userDB.IsVerified)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Account is unverified or not registed");
+
+        var passwordHashDB = new PasswordHash(userDB.PasswordHashed, userDB.PasswordSalt);
+        if (!PasswordSecure.IsValidPasswod(userChangePasswordDTO.OldPassword, passwordHashDB))
+            throw new BaseException(HttpCode.BAD_REQUEST, "Invalid old password");
+
+        var newPasswordHash = PasswordSecure.GetPasswordHash(userChangePasswordDTO.NewPassword);
+        userDB.PasswordHashed = newPasswordHash.PasswordHashed;
+        userDB.PasswordSalt = newPasswordHash.PasswordSalt;
+        return await _userAccountRepository.Update(userId, userDB);
+    }
+
+    public async Task ForgotPassword(string email, string scheme, string host)
+    {
+        var userDB = await _userAccountRepository.GetByEmail(email);
+        if (userDB == null || !userDB.IsVerified)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Account is unverified or not registed");
+
+        var webClientUrl = _configuration["ClientApp:Url"];
+        var webClientPath = $"{webClientUrl}/auth/recover-password";
+        var uriBuilder = new UriBuilder(webClientPath);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        query["userId"] = userDB.Id.ToString();
+        uriBuilder.Query = query.ToString();
+
+        var mailContent = new MailContent()
+        {
+            ToEmail = email,
+            Subject = "Motel Finder password recovery",
+            Body = $"Clicking on the <a href='{uriBuilder}'>link</a> to recover your password"
+        };
+        await _sendMailHelper.SendEmailAsync(mailContent);
+    }
+
+    public async Task RecoverPassword(UserRecoverPasswordDTO userRecoverPasswordDTO)
+    {
+        var userDB = await _userAccountRepository.GetById(userRecoverPasswordDTO.UserId);
+        if (userDB == null || !userDB.IsVerified)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Account is unverified or not registed");
+
+        var newPasswordHash = PasswordSecure.GetPasswordHash(userRecoverPasswordDTO.NewPassword);
+        userDB.PasswordHashed = newPasswordHash.PasswordHashed;
+        userDB.PasswordSalt = newPasswordHash.PasswordSalt;
+        await _userAccountRepository.Update(userRecoverPasswordDTO.UserId, userDB);
     }
 }

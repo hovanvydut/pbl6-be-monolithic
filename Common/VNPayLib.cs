@@ -5,6 +5,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using Monolithic.Models.DTO;
 
 namespace Monolithic.Common
 {
@@ -45,7 +46,7 @@ namespace Monolithic.Common
 
         #region Request
 
-        public string CreateRequestUrl(string baseUrl, string vnp_HashSecret)
+        public string CreateRequestUrl(string baseUrl, string vnp_HashSecret, VNPHistoryDTO vnpHistoryDTO)
         {
             StringBuilder data = new StringBuilder();
             foreach (KeyValuePair<string, string> kv in _requestData)
@@ -66,6 +67,8 @@ namespace Monolithic.Common
             }
             string vnp_SecureHash = Utils.HmacSHA512(vnp_HashSecret , signData);
             baseUrl += "vnp_SecureHash=" + vnp_SecureHash;
+
+            vnpHistoryDTO.vnp_SecureHash = vnp_SecureHash;
            
             return baseUrl;
         }

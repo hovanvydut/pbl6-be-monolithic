@@ -25,6 +25,8 @@ public class PaymentRepository : IPaymentRepository
     public async Task CreateVNPHistory(VNPHistoryDTO vnpHistoryDTO)
     {
         VNPHistoryEntity entity = _mapper.Map<VNPHistoryEntity>(vnpHistoryDTO);
+        // TODO: hardcode
+        entity.UserAccountId = 1;
         await _db.VNPHistory.AddAsync(entity);
         await _db.SaveChangesAsync();
     }

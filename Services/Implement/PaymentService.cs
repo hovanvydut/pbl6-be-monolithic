@@ -60,7 +60,7 @@ public class PaymentService : IPaymentService
                 vnpay.AddRequestData("vnp_ReturnUrl", paymentConfig.VNPReturnURL);
                 vnpay.AddRequestData("vnp_TxnRef", vnpHistoryDTO.vnp_TxnRef.ToString());
 
-                string paymentUrl = vnpay.CreateRequestUrl(paymentConfig.VNPUrl, paymentConfig.VNPHashSecret);
+                string paymentUrl = vnpay.CreateRequestUrl(paymentConfig.VNPUrl, paymentConfig.VNPHashSecret, vnpHistoryDTO);
 
                 // save payment into db
                 await _paymentRepo.CreateVNPHistory(vnpHistoryDTO);
@@ -89,6 +89,7 @@ public class PaymentService : IPaymentService
 
         // validate hash key
         bool checkSignature = vnpay.ValidateSignature(vnpayReturnDTO.vnp_SecureHash, paymentConfig.VNPHashSecret);
+
         // TODO: update gold & payment status
 
         if (checkSignature)

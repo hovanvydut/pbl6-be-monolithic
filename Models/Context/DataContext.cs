@@ -12,9 +12,10 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new UserAccountConfiguration());
-        modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
-        modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+        // modelBuilder.ApplyConfiguration(new UserAccountConfiguration());
+        // modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
+        // modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        // modelBuilder.ApplyConfiguration(new PermissionConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 

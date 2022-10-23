@@ -25,9 +25,10 @@ public class PaymentController : BaseController
     }
 
     [HttpGet("vnpay-hook-url")]
-    public async Task ReceiveDataFromVNP([FromQuery] VNPayReturnDTO vnpayData)
+    public async Task<IActionResult> ReceiveDataFromVNP([FromQuery] VNPayReturnDTO vnpayData)
     {
         await _paymentService.ReceiveDataFromVNP(vnpayData);
+        return Ok(vnpayData);
     }
 
     [HttpGet("bank-code")]

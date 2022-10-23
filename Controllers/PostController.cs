@@ -1,7 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Monolithic.Constants;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
+using Monolithic.Models.ReqParams;
 using Monolithic.Services.Interface;
 
 namespace Monolithic.Controllers;
@@ -23,24 +25,40 @@ public class PostController : BaseController
         return new BaseResponse<PostDTO>(await _postService.GetPostById(id));
     }
 
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<BaseResponse<List<PostDTO>>> GetAll()
     {
-        return new BaseResponse<List<PostDTO>>(await _postService.GetAllPost());
+        var post = await _postService.GetAllPost();
+        return new BaseResponse<List<PostDTO>>(post);
+    }
+
+    [HttpGet]
+    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParams([FromQuery] PostParams postParams)
+    {
+        var posts = await _postService.GetPostWithParams(postParams);
+        return new BaseResponse<PagedList<PostDTO>>(posts);
     }
 
     [HttpPost]
     public async Task<BaseResponse<string>> Create([FromBody] CreatePostDTO createPostDTO)
     {
-        await _postService.CreatePost(createPostDTO);
-        return new BaseResponse<string>("");
+        if (ModelState.IsValid)
+        {
+            await _postService.CreatePost(createPostDTO);
+            return new BaseResponse<string>("");
+        }
+        return new BaseResponse<string>("", HttpCode.BAD_REQUEST, "Model state is not valid", false);
     }
 
     [HttpPut("{id}")]
     public async Task<BaseResponse<string>> Update(int id, [FromBody] UpdatePostDTO updatePostDTO)
     {
-        await _postService.UpdatePost(id, updatePostDTO);
-        return new BaseResponse<string>("");
+        if (ModelState.IsValid)
+        {
+            await _postService.UpdatePost(id, updatePostDTO);
+            return new BaseResponse<string>("");
+        }
+        return new BaseResponse<string>("", HttpCode.BAD_REQUEST, "Model state is not valid", false);
     }
 
     [HttpDelete("{id}")]

@@ -6,6 +6,7 @@ using Monolithic.Models.Common;
 using Monolithic.Models.Context;
 using Monolithic.Models.DTO;
 using Monolithic.Models.Entities;
+using Monolithic.Models.ReqParams;
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
 
@@ -169,7 +170,7 @@ public class PostService : IPostService
                 CategoryEntity category = await _categoryRepo.GetHouseTypeById(updatePostDTO.CategoryId);
                 if (category == null)
                 {
-                    throw new BaseException(HttpCode.BAD_REQUEST,$"Category id = {updatePostDTO.CategoryId} not found");
+                    throw new BaseException(HttpCode.BAD_REQUEST, $"Category id = {updatePostDTO.CategoryId} not found");
                 }
 
                 // check if address exists
@@ -232,4 +233,19 @@ public class PostService : IPostService
         await _postRepo.DeletePost(postId);
     }
 
+    public async Task<PagedList<PostDTO>> GetPostWithParams(PostParams postParams)
+    {
+        PagedList<PostEntity> postEntityList = await _postRepo.GetPostWithParams(postParams);
+        List<PostDTO> postDTOList = postEntityList.Records.Select(p => _mapper.Map<PostDTO>(p)).ToList();
+
+        // attach media on PostDTO
+        foreach (var postDTO in postDTOList)
+        {
+            List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
+            postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+        }
+
+        await parsePostDTOGroup(postDTOList);
+        return new PagedList<PostDTO>(postDTOList, postEntityList.TotalRecords);
+    }
 }

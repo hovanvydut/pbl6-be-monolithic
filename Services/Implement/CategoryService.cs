@@ -4,6 +4,7 @@ using Monolithic.Services.Interface;
 using Monolithic.Repositories.Interface;
 using Monolithic.Models.Entities;
 using AutoMapper;
+using Monolithic.Models.ReqParams;
 
 namespace Monolithic.Services.Implement;
 
@@ -18,16 +19,16 @@ public class CategoryService : ICategoryService
         _mapper = mapper;
     }
 
-    public async Task<PagedList<CategoryDTO>> GetAllWithFilter(ReqParam reqParam)
-    {
-        PagedList<CategoryEntity> categoryList = await _categoryRepo.GetAllWithFilter(reqParam);
-        PagedList<CategoryDTO> categoryDTOList = new PagedList<CategoryDTO>()
-        {
-            Records = categoryList.Select(c => _mapper.Map<CategoryDTO>(c)).ToList(),
-            TotalRecords = categoryList.TotalRecords
-        };
-        return categoryDTOList;
-    }
+    // public async Task<PagedList<CategoryDTO>> GetAllWithFilter(CategoryParams categoryParams)
+    // {
+    //     PagedList<CategoryEntity> categoryList = await _categoryRepo.GetAllWithFilter(categoryParams);
+    //     PagedList<CategoryDTO> categoryDTOList = new PagedList<CategoryDTO>()
+    //     {
+    //         Records = categoryList.Select(c => _mapper.Map<CategoryDTO>(c)).ToList(),
+    //         TotalRecords = categoryList.TotalRecords
+    //     };
+    //     return categoryDTOList;
+    // }
 
     public async Task<List<CategoryDTO>> GetAllHouseType()
     {

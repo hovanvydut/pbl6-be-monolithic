@@ -18,7 +18,7 @@ public class UserController : BaseController
     }
 
     [HttpGet("Personal")]
-    [Authorize(Roles = UserPermission.ViewPersonal)]
+    // [Authorize(Roles = UserPermission.ViewPersonal)]
     public async Task<BaseResponse<UserProfilePersonalDTO>> GetUserProfilePersonal()
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
@@ -27,7 +27,7 @@ public class UserController : BaseController
     }
 
     [HttpGet("Anonymous")]
-    [Authorize(Roles = UserPermission.ViewAnonymous)]
+    // [Authorize(Roles = UserPermission.ViewAnonymous)]
     public async Task<BaseResponse<UserProfileAnonymousDTO>> GetUserProfileAnonymous(int userId)
     {
         var userProfile = await _userService.GetUserProfileAnonymous(userId);
@@ -35,7 +35,7 @@ public class UserController : BaseController
     }
 
     [HttpPut("Personal")]
-    [Authorize(Roles = UserPermission.UpdateProfile)]
+    // [Authorize(Roles = UserPermission.UpdateProfile)]
     public async Task<BaseResponse<bool>> UpdateUserProfilePersonal([FromBody] UserProfileUpdateDTO userProfileUpdateDTO)
     {
         if (ModelState.IsValid)

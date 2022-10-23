@@ -45,4 +45,35 @@ public class AuthController : BaseController
         var userConfirm = await _authService.ConfirmEmail(userId);
         return new BaseResponse<bool>(userConfirm);
     }
+
+    [HttpPut("Change-Password")]
+    public async Task<BaseResponse<bool>> ChangePassword(UserChangePasswordDTO userChangePasswordDTO)
+    {
+        if (ModelState.IsValid)
+        {
+            ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+            var passwordChanged = await _authService.ChangePassword(reqUser.Id, userChangePasswordDTO);
+            if (passwordChanged)
+                return new BaseResponse<bool>(passwordChanged, HttpCode.NO_CONTENT, "Change password success");
+            else
+                return new BaseResponse<bool>(passwordChanged, HttpCode.BAD_REQUEST, "", false);
+        }
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
+    }
+
+    [HttpGet("Forgot-Password")]
+    public async Task<BaseResponse<string>> ForgotPassword(string email)
+    {
+        var scheme = HttpContext.Request.Scheme;
+        var host = HttpContext.Request.Host.Value;
+        await _authService.ForgotPassword(email, scheme, host);
+        return new BaseResponse<string>("", HttpCode.OK, "Sent email to recover password");
+    }
+
+    [HttpPut("Recover-Password")]
+    public async Task<BaseResponse<string>> ForgotPassword(UserRecoverPasswordDTO userRecoverPasswordDTO)
+    {
+        await _authService.RecoverPassword(userRecoverPasswordDTO);
+        return new BaseResponse<string>("", HttpCode.OK, "Recover password successfully");
+    }
 }

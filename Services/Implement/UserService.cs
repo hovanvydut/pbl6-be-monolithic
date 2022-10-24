@@ -10,25 +10,25 @@ namespace Monolithic.Services.Implement;
 
 public class UserService : IUserService
 {
-    private readonly IUserAccountReposiory _userAccountRepository;
-    private readonly IUserProfileReposiory _userProfileRepository;
+    private readonly IUserAccountReposiory _userAccountRepo;
+    private readonly IUserProfileReposiory _userProfileRepo;
     private readonly IAddressService _addressService;
     private readonly IMapper _mapper;
 
-    public UserService(IUserAccountReposiory userAccountRepository,
-                       IUserProfileReposiory userProfileRepository,
+    public UserService(IUserAccountReposiory userAccountRepo,
+                       IUserProfileReposiory userProfileRepo,
                        IAddressService addressService,
                        IMapper mapper)
     {
-        _userAccountRepository = userAccountRepository;
-        _userProfileRepository = userProfileRepository;
+        _userAccountRepo = userAccountRepo;
+        _userProfileRepo = userProfileRepo;
         _addressService = addressService;
         _mapper = mapper;
     }
 
     public async Task<UserProfilePersonalDTO> GetUserProfilePersonal(int userId)
     {
-        var user = await _userProfileRepository.GetByUserId(userId);
+        var user = await _userProfileRepo.GetByUserId(userId);
         if (user == null)
             throw new BaseException(HttpCode.NOT_FOUND, "This user is not found");
         var userPersonal = _mapper.Map<UserProfilePersonalDTO>(user);
@@ -41,7 +41,7 @@ public class UserService : IUserService
 
     public async Task<UserProfileAnonymousDTO> GetUserProfileAnonymous(int userId)
     {
-        var user = await _userProfileRepository.GetByUserId(userId);
+        var user = await _userProfileRepo.GetByUserId(userId);
         if (user == null)
             throw new BaseException(HttpCode.NOT_FOUND, "This user is not found");
         var userAnonymous = _mapper.Map<UserProfileAnonymousDTO>(user);
@@ -55,6 +55,6 @@ public class UserService : IUserService
     public async Task<bool> UpdateUserProfile(int userId, UserProfileUpdateDTO userProfileUpdateDTO)
     {
         var userProfileEntity = _mapper.Map<UserProfileEntity>(userProfileUpdateDTO);
-        return await _userProfileRepository.Update(userId, userProfileEntity);
+        return await _userProfileRepo.Update(userId, userProfileEntity);
     }
 }

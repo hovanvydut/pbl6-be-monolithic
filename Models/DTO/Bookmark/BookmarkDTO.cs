@@ -13,4 +13,6 @@ public class BookmarkDTO
     public string PostPrice { get; set; }
 
     public string PostSlug { get; set; }
+
+    public List<MediaDTO> Medias { get; set; }
 }

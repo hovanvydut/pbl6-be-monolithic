@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Constants;
 using Monolithic.Models.Common;
@@ -35,36 +36,62 @@ public class PostController : BaseController
     [HttpGet]
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParams([FromQuery] PostParams postParams)
     {
-        var posts = await _postService.GetPostWithParams(postParams);
+        var posts = await _postService.GetPostWithParams(0, postParams);
+        return new BaseResponse<PagedList<PostDTO>>(posts);
+    }
+
+    [HttpGet("host/personal")]
+    [Authorize]
+    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsPersonal([FromQuery] PostParams postParams)
+    {
+        var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var posts = await _postService.GetPostWithParams(reqUser.Id, postParams);
+        return new BaseResponse<PagedList<PostDTO>>(posts);
+    }
+
+    [HttpGet("host/{hostId}")]
+    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsByHostId(int hostId, [FromQuery] PostParams postParams)
+    {
+        if (hostId <= 0)
+        {
+            return new BaseResponse<PagedList<PostDTO>>(null, HttpCode.BAD_REQUEST, "hostId is invalid", false);
+        }
+        var posts = await _postService.GetPostWithParams(hostId, postParams);
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<BaseResponse<string>> Create([FromBody] CreatePostDTO createPostDTO)
     {
         if (ModelState.IsValid)
         {
-            await _postService.CreatePost(createPostDTO);
+            var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+            await _postService.CreatePost(reqUser.Id, createPostDTO);
             return new BaseResponse<string>("");
         }
         return new BaseResponse<string>("", HttpCode.BAD_REQUEST, "Model state is not valid", false);
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<BaseResponse<string>> Update(int id, [FromBody] UpdatePostDTO updatePostDTO)
     {
         if (ModelState.IsValid)
         {
-            await _postService.UpdatePost(id, updatePostDTO);
+            var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+            await _postService.UpdatePost(reqUser.Id, id, updatePostDTO);
             return new BaseResponse<string>("");
         }
         return new BaseResponse<string>("", HttpCode.BAD_REQUEST, "Model state is not valid", false);
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<BaseResponse<string>> Delete(int id)
     {
-        await _postService.DeletePost(id);
+        var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        await _postService.DeletePost(reqUser.Id, id);
         return new BaseResponse<string>("");
     }
 }

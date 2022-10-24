@@ -98,7 +98,7 @@ public class PostService : IPostService
         }
     }
 
-    public async Task CreatePost(CreatePostDTO createPostDTO)
+    public async Task CreatePost(int hostId, CreatePostDTO createPostDTO)
     {
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
         {
@@ -120,6 +120,7 @@ public class PostService : IPostService
 
                 // save post
                 PostEntity postEntity = _mapper.Map<PostEntity>(createPostDTO);
+                postEntity.HostId = hostId;
                 PostEntity savedPostEntity = await _postRepo.CreatePost(postEntity);
 
                 // save media
@@ -160,7 +161,7 @@ public class PostService : IPostService
         }
     }
 
-    public async Task UpdatePost(int postId, UpdatePostDTO updatePostDTO)
+    public async Task UpdatePost(int hostId, int postId, UpdatePostDTO updatePostDTO)
     {
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
         {
@@ -181,7 +182,9 @@ public class PostService : IPostService
                 }
 
                 // save post
-                PostEntity updatedPostEntity = await _postRepo.UpdatePost(postId, updatePostDTO);
+                PostEntity updatedPostEntity = await _postRepo.UpdatePost(hostId, postId, updatePostDTO);
+                if (updatedPostEntity == null)
+                    throw new BaseException(HttpCode.BAD_REQUEST, "Cannot update non-exists or other host's post");
 
                 // delete all old media
                 await _mediaRepo.DeleteAllMediaOfPost(updatedPostEntity.Id);
@@ -228,14 +231,15 @@ public class PostService : IPostService
 
     }
 
-    public async Task DeletePost(int postId)
+    public async Task DeletePost(int hostId, int postId)
     {
-        await _postRepo.DeletePost(postId);
+        if (!await _postRepo.DeletePost(hostId, postId))
+            throw new BaseException(HttpCode.BAD_REQUEST, "Cannot delete non-exists or other host's post");
     }
 
-    public async Task<PagedList<PostDTO>> GetPostWithParams(PostParams postParams)
+    public async Task<PagedList<PostDTO>> GetPostWithParams(int hostId, PostParams postParams)
     {
-        PagedList<PostEntity> postEntityList = await _postRepo.GetPostWithParams(postParams);
+        PagedList<PostEntity> postEntityList = await _postRepo.GetPostWithParams(hostId, postParams);
         List<PostDTO> postDTOList = postEntityList.Records.Select(p => _mapper.Map<PostDTO>(p)).ToList();
 
         // attach media on PostDTO

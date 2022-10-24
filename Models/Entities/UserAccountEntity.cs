@@ -24,6 +24,9 @@ public class UserAccountEntity : EntityBase
     [Column("is_verified")]
     public bool IsVerified { get; set; }
 
+    [Column("security_code")]
+    public string SecurityCode { get; set; }
+
     [ForeignKey(nameof(Role))]
     [Column("role_id")]
     public int RoleId { get; set; }

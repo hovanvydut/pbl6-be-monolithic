@@ -53,6 +53,7 @@ public static class ServiceExtension
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IMediaRepository, MediaRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IBookmarkRepository, BookmarkRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)
@@ -64,6 +65,7 @@ public static class ServiceExtension
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IBookmarkService, BookmarkService>();
     }
 
     private static void ConfigCommonServiceDI(this IServiceCollection services)

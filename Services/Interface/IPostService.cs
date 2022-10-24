@@ -7,9 +7,9 @@ namespace Monolithic.Services.Interface;
 public interface IPostService
 {
     Task<PostDTO> GetPostById(int id);
-    Task<PagedList<PostDTO>> GetPostWithParams(PostParams postParams);
+    Task<PagedList<PostDTO>> GetPostWithParams(int hostId, PostParams postParams);
     Task<List<PostDTO>> GetAllPost();
-    Task CreatePost(CreatePostDTO createPostDTO);
-    Task UpdatePost(int postId, UpdatePostDTO updatePostDTO);
-    Task DeletePost(int postId);
+    Task CreatePost(int hostId, CreatePostDTO createPostDTO);
+    Task UpdatePost(int hostId, int postId, UpdatePostDTO updatePostDTO);
+    Task DeletePost(int hostId, int postId);
 }

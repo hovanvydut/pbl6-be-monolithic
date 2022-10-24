@@ -8,9 +8,9 @@ namespace Monolithic.Repositories.Interface;
 public interface IPostRepository
 {
     Task<List<PostEntity>> GetAllPost();
-    Task<PagedList<PostEntity>> GetPostWithParams(PostParams postParams);
+    Task<PagedList<PostEntity>> GetPostWithParams(int hostId, PostParams postParams);
     Task<PostEntity> GetPostById(int id);
     Task<PostEntity> CreatePost(PostEntity postEntity);
-    Task<PostEntity> UpdatePost(int postId, UpdatePostDTO updatePostDTO);
-    Task DeletePost(int postId);
+    Task<PostEntity> UpdatePost(int hostId, int postId, UpdatePostDTO updatePostDTO);
+    Task<bool> DeletePost(int hostId, int postId);
 }

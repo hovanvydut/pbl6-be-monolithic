@@ -40,9 +40,9 @@ public class AuthController : BaseController
     }
 
     [HttpGet("Confirm-Email")]
-    public async Task<BaseResponse<bool>> ConfirmEmail(int userId)
+    public async Task<BaseResponse<bool>> ConfirmEmail(int userId, string code)
     {
-        var userConfirm = await _authService.ConfirmEmail(userId);
+        var userConfirm = await _authService.ConfirmEmail(userId, code);
         return new BaseResponse<bool>(userConfirm);
     }
 
@@ -71,7 +71,7 @@ public class AuthController : BaseController
     }
 
     [HttpPut("Recover-Password")]
-    public async Task<BaseResponse<string>> ForgotPassword(UserRecoverPasswordDTO userRecoverPasswordDTO)
+    public async Task<BaseResponse<string>> RecoverPassword(UserRecoverPasswordDTO userRecoverPasswordDTO)
     {
         await _authService.RecoverPassword(userRecoverPasswordDTO);
         return new BaseResponse<string>("", HttpCode.OK, "Recover password successfully");

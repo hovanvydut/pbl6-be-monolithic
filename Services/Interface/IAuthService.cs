@@ -8,7 +8,7 @@ public interface IAuthService
 
     Task<UserLoginResponseDTO> Login(UserLoginDTO userLoginDTO);
 
-    Task<bool> ConfirmEmail(int userId);
+    Task<bool> ConfirmEmail(int userId, string code);
 
     Task<bool> ChangePassword(int userId, UserChangePasswordDTO userChangePasswordDTO);
 

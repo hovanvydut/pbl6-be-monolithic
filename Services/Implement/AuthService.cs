@@ -1,5 +1,6 @@
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
+using System.Security.Cryptography;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
@@ -49,6 +50,7 @@ public class AuthService : IAuthService
         newUserAccount.PasswordSalt = passwordHash.PasswordSalt;
         newUserAccount.PasswordHashed = passwordHash.PasswordHashed;
         newUserAccount.IsVerified = false;
+        newUserAccount.SecurityCode = CodeSecure.CreateRandomCode();
         await _userAccountRepo.Create(newUserAccount);
 
         // Create user profile with new user account Id
@@ -68,6 +70,7 @@ public class AuthService : IAuthService
         var uriBuilder = new UriBuilder(webServerPath);
         var query = HttpUtility.ParseQueryString(uriBuilder.Query);
         query["userId"] = newUserAccount.Id.ToString();
+        query["code"] = newUserAccount.SecurityCode;
         uriBuilder.Query = query.ToString();
 
         var mailContent = new MailContent()
@@ -99,13 +102,15 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<bool> ConfirmEmail(int userId)
+    public async Task<bool> ConfirmEmail(int userId, string code)
     {
         var currentUser = await _userAccountRepo.GetById(userId);
         if (currentUser == null || currentUser.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is already verified or not registed");
-
+        if (currentUser.SecurityCode != code)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Security code is invalid");
         currentUser.IsVerified = true;
+        currentUser.SecurityCode = "";
         return await _userAccountRepo.Update(currentUser.Id, currentUser);
     }
 
@@ -130,12 +135,16 @@ public class AuthService : IAuthService
         var userDB = await _userAccountRepo.GetByEmail(email);
         if (userDB == null || !userDB.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is unverified or not registed");
+        var newSecurityCode = CodeSecure.CreateRandomCode();
+        userDB.SecurityCode = newSecurityCode;
+        await _userAccountRepo.Update(userDB.Id, userDB);
 
         var webClientUrl = _configuration["ClientApp:Url"];
         var webClientPath = $"{webClientUrl}/auth/recover-password";
         var uriBuilder = new UriBuilder(webClientPath);
         var query = HttpUtility.ParseQueryString(uriBuilder.Query);
         query["userId"] = userDB.Id.ToString();
+        query["code"] = newSecurityCode;
         uriBuilder.Query = query.ToString();
 
         var mailContent = new MailContent()
@@ -152,10 +161,13 @@ public class AuthService : IAuthService
         var userDB = await _userAccountRepo.GetById(userRecoverPasswordDTO.UserId);
         if (userDB == null || !userDB.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is unverified or not registed");
+        if (userDB.SecurityCode != userRecoverPasswordDTO.Code)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Security code is invalid");
 
         var newPasswordHash = PasswordSecure.GetPasswordHash(userRecoverPasswordDTO.NewPassword);
         userDB.PasswordHashed = newPasswordHash.PasswordHashed;
         userDB.PasswordSalt = newPasswordHash.PasswordSalt;
+        userDB.SecurityCode = "";
         await _userAccountRepo.Update(userRecoverPasswordDTO.UserId, userDB);
     }
 }

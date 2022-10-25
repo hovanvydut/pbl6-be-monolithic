@@ -1,20 +1,21 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Monolithic.Services.Interface;
+using System.Security.Cryptography;
+using Microsoft.Extensions.Options;
 using Monolithic.Models.Entities;
 using System.Security.Claims;
 using Monolithic.Helpers;
-using System.Text;
 
 namespace Monolithic.Services.Implement;
 
 public class TokenService : ITokenService
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtSettings _jwtSettings;
     private readonly IRoleService _roleService;
-    public TokenService(IConfiguration configuration, IRoleService roleService)
+    public TokenService(IOptions<JwtSettings> jwtSettings, IRoleService roleService)
     {
-        _configuration = configuration;
+        _jwtSettings = jwtSettings.Value;
         _roleService = roleService;
     }
 
@@ -30,15 +31,22 @@ public class TokenService : ITokenService
             claims.Add(new Claim(CustomClaimTypes.Permission, permission.Key));
         }
 
-        var tokenKey = Encoding.UTF8.GetBytes(_configuration["JwtSettings:secretKey"]);
-        var tokenLife = Convert.ToDouble(_configuration["JwtSettings:expires"]);
+        var privateKey = _jwtSettings.PrivateKey.ToByteArray();
+        var tokenLife = _jwtSettings.Expires;
 
-        var symmetricKey = new SymmetricSecurityKey(tokenKey);
+        using RSA rsa = RSA.Create();
+        rsa.ImportRSAPrivateKey(privateKey, out var _);
+        var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
+        {
+            CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
+        };
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.Now.AddMinutes(tokenLife),
-            SigningCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha512Signature)
+            NotBefore = DateTime.Now,
+            SigningCredentials = signingCredentials,
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();

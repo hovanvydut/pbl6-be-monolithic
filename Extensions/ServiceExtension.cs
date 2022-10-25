@@ -26,6 +26,7 @@ public static class ServiceExtension
     public static void ConfigureModelSetting(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
     }
 
     public static void ConfigureDI(this IServiceCollection services, IConfigUtil configUtil)

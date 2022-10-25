@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 using Monolithic.Models.Common;
-using Monolithic.Constants;
 using Monolithic.Helpers;
 using System.Text;
 
@@ -10,12 +10,12 @@ namespace Monolithic.Middlewares;
 public class JwtMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly IConfiguration _configuration;
+    private readonly JwtSettings _jwtSettings;
 
-    public JwtMiddleware(RequestDelegate next, IConfiguration configuration)
+    public JwtMiddleware(RequestDelegate next, IOptions<JwtSettings> jwtSettings)
     {
         _next = next;
-        _configuration = configuration;
+        _jwtSettings = jwtSettings.Value;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -30,15 +30,9 @@ public class JwtMiddleware
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = Encoding.UTF8.GetBytes(_configuration["JwtSettings:secretKey"]);
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(tokenKey),
-            }, out SecurityToken validatedToken);
+            var publicKey = _jwtSettings.PrivateKey.ToByteArray();
+            tokenHandler.ValidateToken(token,
+                JwtOptions.GetTokenValidateParams(publicKey), out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
             // Get data from payload

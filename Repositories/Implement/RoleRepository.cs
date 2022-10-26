@@ -28,6 +28,7 @@ public class RoleRepository : IRoleRepository
         RoleEntity roleDB = await GetRoleById(roleId);
         if (roleDB == null) return false;
         updateRole.Id = roleId;
+        updateRole.CreatedAt = roleDB.CreatedAt;
         _db.Roles.Update(updateRole);
         return await _db.SaveChangesAsync() >= 0;
     }

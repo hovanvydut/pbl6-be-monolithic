@@ -1,4 +1,6 @@
+using Monolithic.Models.ReqParams;
 using Monolithic.Models.Entities;
+using Monolithic.Models.Common;
 
 namespace Monolithic.Repositories.Interface;
 
@@ -8,7 +10,7 @@ public interface IRoleRepository
 
     Task<bool> UpdateRole(int roleId, RoleEntity updateRole);
 
-    Task<List<RoleEntity>> GetAllRoles();
+    Task<PagedList<RoleEntity>> GetAllRoles(RoleParams roleParams);
 
     Task<RoleEntity> GetRoleById(int roleId);
 

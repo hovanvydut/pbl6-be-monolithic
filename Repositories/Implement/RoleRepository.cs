@@ -1,7 +1,10 @@
 using Monolithic.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using Monolithic.Models.ReqParams;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Context;
+using Monolithic.Models.Common;
+using Monolithic.Extensions;
 
 namespace Monolithic.Repositories.Implement;
 
@@ -29,9 +32,18 @@ public class RoleRepository : IRoleRepository
         return await _db.SaveChangesAsync() >= 0;
     }
 
-    public async Task<List<RoleEntity>> GetAllRoles()
+    public async Task<PagedList<RoleEntity>> GetAllRoles(RoleParams roleParams)
     {
-        return await _db.Roles.ToListAsync();
+        var roles = _db.Roles.OrderBy(r => r.CreatedAt).AsQueryable();
+        if (!String.IsNullOrEmpty(roleParams.SearchValue))
+        {
+            var searchValue = roleParams.SearchValue.ToLower();
+            roles = roles.Where(
+                r => r.Name.Contains(searchValue) ||
+                     r.Description.Contains(searchValue)
+            );
+        }
+        return await roles.ToPagedList(roleParams.PageNumber, roleParams.PageSize);
     }
 
     public async Task<RoleEntity> GetRoleById(int roleId)

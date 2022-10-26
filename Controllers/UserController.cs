@@ -1,6 +1,7 @@
 using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
@@ -15,6 +16,13 @@ public class UserController : BaseController
     public UserController(IUserService userService)
     {
         _userService = userService;
+    }
+
+    [HttpGet]
+    public async Task<BaseResponse<PagedList<UserDTO>>> GetAllRoles([FromQuery] UserParams userParams)
+    {
+        var users = await _userService.GetAllUsers(userParams);
+        return new BaseResponse<PagedList<UserDTO>>(users);
     }
 
     [HttpGet("Personal")]

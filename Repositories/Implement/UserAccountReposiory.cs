@@ -1,7 +1,10 @@
 using Monolithic.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using Monolithic.Models.ReqParams;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Context;
+using Monolithic.Models.Common;
+using Monolithic.Extensions;
 
 namespace Monolithic.Repositories.Implement;
 
@@ -49,5 +52,29 @@ public class UserAccountReposiory : IUserAccountReposiory
         userAccountEntity.Id = id;
         _db.UserAccounts.Update(userAccountEntity);
         return await _db.SaveChangesAsync() >= 0;
+    }
+
+    public async Task<PagedList<UserAccountEntity>> GetAllUsers(UserParams userParams)
+    {
+        var users = _db.UserAccounts
+                    .Include(u => u.UserProfile)
+                    .ThenInclude(a => a.AddressWard.AddressDistrict.AddressProvince)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .AsQueryable();
+        if (!String.IsNullOrEmpty(userParams.SearchValue))
+        {
+            var searchValue = userParams.SearchValue.ToLower();
+            users = users.Where(
+                r => r.Email.Contains(searchValue) ||
+                     r.UserProfile.DisplayName.Contains(searchValue) ||
+                     r.UserProfile.PhoneNumber.Contains(searchValue) ||
+                     r.UserProfile.IdentityNumber.Contains(searchValue) ||
+                     r.UserProfile.Address.Contains(searchValue) ||
+                     r.UserProfile.AddressWard.Name.Contains(searchValue) ||
+                     r.UserProfile.AddressWard.AddressDistrict.Name.Contains(searchValue) ||
+                     r.UserProfile.AddressWard.AddressDistrict.AddressProvince.Name.Contains(searchValue) 
+            );
+        }
+        return await users.ToPagedList(userParams.PageNumber, userParams.PageSize);
     }
 }

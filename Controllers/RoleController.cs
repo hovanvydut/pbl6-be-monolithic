@@ -1,6 +1,7 @@
 using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
@@ -47,10 +48,10 @@ public class RoleController : BaseController
     }
 
     [HttpGet]
-    public async Task<BaseResponse<List<RoleDTO>>> GetAllRoles()
+    public async Task<BaseResponse<PagedList<RoleDTO>>> GetAllRoles([FromQuery] RoleParams roleParams)
     {
-        var roles = await _roleService.GetAllRoles();
-        return new BaseResponse<List<RoleDTO>>(roles);
+        var roles = await _roleService.GetAllRoles(roleParams);
+        return new BaseResponse<PagedList<RoleDTO>>(roles);
     }
 
     [HttpGet("{roleId}")]

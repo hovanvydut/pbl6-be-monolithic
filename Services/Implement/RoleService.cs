@@ -1,5 +1,6 @@
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
@@ -32,16 +33,17 @@ public class RoleService : IRoleService
         return await _roleRepo.UpdateRole(roleId, updateRole);
     }
 
-    public async Task<List<RoleDTO>> GetAllRoles()
+    public async Task<PagedList<RoleDTO>> GetAllRoles(RoleParams roleParams)
     {
-        var listRole = await _roleRepo.GetAllRoles();
-        return listRole.Select(role => new RoleDTO()
+        var listRole = await _roleRepo.GetAllRoles(roleParams);
+        var listRoleDTO = listRole.Records.Select(role => new RoleDTO()
         {
             Id = role.Id,
             Name = role.Name,
             Description = role.Description,
             Permissions = new List<PermissionDTO>()
         }).ToList();
+        return new PagedList<RoleDTO>(listRoleDTO, listRole.TotalRecords);
     }
 
     public async Task<RoleDTO> GetRoleById(int roleId)

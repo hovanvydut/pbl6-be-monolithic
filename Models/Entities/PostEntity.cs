@@ -54,11 +54,11 @@ public class PostEntity : EntityBase
 
     public CategoryEntity Category { get; set; }
 
-    // [ForeignKey(nameof(UserAccount))]
-    // [Column("user_id")]
-    // public int UserAccountId { get; set; }
+    [ForeignKey(nameof(HostAccount))]
+    [Column("host_id")]
+    public int HostId { get; set; }
 
-    // public UserAccountEntity UserAccount { get; set; }
+    public UserAccountEntity HostAccount { get; set; }
 
     [Column("deleted_at")]
     public DateTime? DeletedAt { get; set; }

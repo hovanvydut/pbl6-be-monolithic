@@ -12,10 +12,10 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.ApplyConfiguration(new UserAccountConfiguration());
-        // modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
-        // modelBuilder.ApplyConfiguration(new RoleConfiguration());
-        // modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+        modelBuilder.ApplyConfiguration(new UserAccountConfiguration());
+        modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfiguration(new PermissionConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 
@@ -49,6 +49,7 @@ public class DataContext : DbContext
     public DbSet<PropertyGroupEntity> PropertyGroups { get; set; }
     public DbSet<PostPropertyEntity> PostProperties { get; set; }
     public DbSet<MediaEntity> Medias { get; set; }
+    public DbSet<BookmarkEntity> Bookmarks { get; set; }
     public DbSet<BankCodeEntity> BankCodes { get; set; }
     public DbSet<VNPHistoryEntity> VNPHistory { get; set; }
 }

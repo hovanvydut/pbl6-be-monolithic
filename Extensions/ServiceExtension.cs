@@ -58,6 +58,7 @@ public static class ServiceExtension
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IMediaRepository, MediaRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IBookmarkRepository, BookmarkRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
     }
 
@@ -70,6 +71,7 @@ public static class ServiceExtension
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IBookmarkService, BookmarkService>();
         services.AddScoped<IPaymentService, PaymentService>();
     }
 

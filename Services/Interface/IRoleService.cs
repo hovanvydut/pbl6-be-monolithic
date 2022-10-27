@@ -1,3 +1,5 @@
+using Monolithic.Models.ReqParams;
+using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Helpers;
 
@@ -9,13 +11,13 @@ public interface IRoleService
 
     Task<bool> UpdateRole(int roleId, UpdateRoleDTO updateRoleDTO);
 
-    Task<List<RoleDTO>> GetAllRoles();
+    Task<PagedList<RoleDTO>> GetAllRoles(RoleParams roleParams);
 
     Task<RoleDTO> GetRoleById(int roleId);
 
-    Task<List<PermissionContent>> GetPermissionsRoleNotHave(int roleId);
-
     Task<List<PermissionDTO>> GetPermissionByRoleId(int roleId);
+
+    List<PermissionGroupDTO> GroupPermission(List<PermissionDTO> listPerDTO);
 
     Task<bool> AddPermissionForRole(CreatePermissionDTO createPermissionDTO);
 

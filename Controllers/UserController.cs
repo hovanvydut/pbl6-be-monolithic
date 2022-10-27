@@ -1,6 +1,7 @@
 using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
@@ -17,8 +18,16 @@ public class UserController : BaseController
         _userService = userService;
     }
 
+    [HttpGet]
+    public async Task<BaseResponse<PagedList<UserDTO>>> GetAllRoles([FromQuery] UserParams userParams)
+    {
+        var users = await _userService.GetAllUsers(userParams);
+        return new BaseResponse<PagedList<UserDTO>>(users);
+    }
+
     [HttpGet("Personal")]
     // [Authorize(Roles = UserPermission.ViewPersonal)]
+    [Authorize]
     public async Task<BaseResponse<UserProfilePersonalDTO>> GetUserProfilePersonal()
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
@@ -28,6 +37,7 @@ public class UserController : BaseController
 
     [HttpGet("Anonymous")]
     // [Authorize(Roles = UserPermission.ViewAnonymous)]
+    [Authorize]
     public async Task<BaseResponse<UserProfileAnonymousDTO>> GetUserProfileAnonymous(int userId)
     {
         var userProfile = await _userService.GetUserProfileAnonymous(userId);
@@ -36,6 +46,7 @@ public class UserController : BaseController
 
     [HttpPut("Personal")]
     // [Authorize(Roles = UserPermission.UpdateProfile)]
+    [Authorize]
     public async Task<BaseResponse<bool>> UpdateUserProfilePersonal([FromBody] UserProfileUpdateDTO userProfileUpdateDTO)
     {
         if (ModelState.IsValid)

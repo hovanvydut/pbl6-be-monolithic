@@ -1,5 +1,6 @@
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
+using System.Security.Cryptography;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
@@ -12,22 +13,22 @@ namespace Monolithic.Services.Implement;
 
 public class AuthService : IAuthService
 {
-    private readonly IUserAccountReposiory _userAccountRepository;
-    private readonly IUserProfileReposiory _userProfileRepository;
+    private readonly IUserAccountReposiory _userAccountRepo;
+    private readonly IUserProfileReposiory _userProfileRepo;
     private readonly ISendMailHelper _sendMailHelper;
     private readonly IConfiguration _configuration;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
-    public AuthService(IUserAccountReposiory userAccountRepository,
-                       IUserProfileReposiory userProfileRepository,
+    public AuthService(IUserAccountReposiory userAccountRepo,
+                       IUserProfileReposiory userProfileRepo,
                        ISendMailHelper sendMailHelper,
                        IConfiguration configuration,
                        ITokenService tokenService,
                        IMapper mapper)
     {
-        _userAccountRepository = userAccountRepository;
-        _userProfileRepository = userProfileRepository;
+        _userAccountRepo = userAccountRepo;
+        _userProfileRepo = userProfileRepo;
         _sendMailHelper = sendMailHelper;
         _configuration = configuration;
         _tokenService = tokenService;
@@ -39,9 +40,9 @@ public class AuthService : IAuthService
         var newUserAccount = _mapper.Map<UserAccountEntity>(userRegisterDTO);
         var newUserProfile = _mapper.Map<UserProfileEntity>(userRegisterDTO);
         // Throw exception if register unique info is exists
-        if (await _userAccountRepository.GetByEmail(newUserAccount.Email) != null)
+        if (await _userAccountRepo.GetByEmail(newUserAccount.Email) != null)
             throw new BaseException(HttpCode.BAD_REQUEST, "This email is existed");
-        if (await _userProfileRepository.IsInvalidNewProfile(newUserProfile))
+        if (await _userProfileRepo.IsInvalidNewProfile(newUserProfile))
             throw new BaseException(HttpCode.BAD_REQUEST, "Phone number or identity number is existed");
 
         // Create user account
@@ -49,12 +50,13 @@ public class AuthService : IAuthService
         newUserAccount.PasswordSalt = passwordHash.PasswordSalt;
         newUserAccount.PasswordHashed = passwordHash.PasswordHashed;
         newUserAccount.IsVerified = false;
-        await _userAccountRepository.Create(newUserAccount);
+        newUserAccount.SecurityCode = CodeSecure.CreateRandomCode();
+        await _userAccountRepo.Create(newUserAccount);
 
         // Create user profile with new user account Id
         newUserProfile.CurrentCredit = 0;
         newUserProfile.UserAccountId = newUserAccount.Id;
-        await _userProfileRepository.Create(newUserProfile);
+        await _userProfileRepo.Create(newUserProfile);
 
         // Send mail
         await SendMailConfirm(newUserAccount, scheme, host);
@@ -68,6 +70,7 @@ public class AuthService : IAuthService
         var uriBuilder = new UriBuilder(webServerPath);
         var query = HttpUtility.ParseQueryString(uriBuilder.Query);
         query["userId"] = newUserAccount.Id.ToString();
+        query["code"] = newUserAccount.SecurityCode;
         uriBuilder.Query = query.ToString();
 
         var mailContent = new MailContent()
@@ -81,7 +84,7 @@ public class AuthService : IAuthService
 
     public async Task<UserLoginResponseDTO> Login(UserLoginDTO userLoginDTO)
     {
-        var currentUser = await _userAccountRepository.GetByEmail(userLoginDTO.Email);
+        var currentUser = await _userAccountRepo.GetByEmail(userLoginDTO.Email);
         if (currentUser == null || !currentUser.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is not registed or email confirmed");
 
@@ -99,19 +102,21 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<bool> ConfirmEmail(int userId)
+    public async Task<bool> ConfirmEmail(int userId, string code)
     {
-        var currentUser = await _userAccountRepository.GetById(userId);
+        var currentUser = await _userAccountRepo.GetById(userId);
         if (currentUser == null || currentUser.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is already verified or not registed");
-
+        if (currentUser.SecurityCode != code)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Security code is invalid");
         currentUser.IsVerified = true;
-        return await _userAccountRepository.Update(currentUser.Id, currentUser);
+        currentUser.SecurityCode = "";
+        return await _userAccountRepo.Update(currentUser.Id, currentUser);
     }
 
     public async Task<bool> ChangePassword(int userId, UserChangePasswordDTO userChangePasswordDTO)
     {
-        var userDB = await _userAccountRepository.GetById(userId);
+        var userDB = await _userAccountRepo.GetById(userId);
         if (userDB == null || !userDB.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is unverified or not registed");
 
@@ -122,20 +127,24 @@ public class AuthService : IAuthService
         var newPasswordHash = PasswordSecure.GetPasswordHash(userChangePasswordDTO.NewPassword);
         userDB.PasswordHashed = newPasswordHash.PasswordHashed;
         userDB.PasswordSalt = newPasswordHash.PasswordSalt;
-        return await _userAccountRepository.Update(userId, userDB);
+        return await _userAccountRepo.Update(userId, userDB);
     }
 
     public async Task ForgotPassword(string email, string scheme, string host)
     {
-        var userDB = await _userAccountRepository.GetByEmail(email);
+        var userDB = await _userAccountRepo.GetByEmail(email);
         if (userDB == null || !userDB.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is unverified or not registed");
+        var newSecurityCode = CodeSecure.CreateRandomCode();
+        userDB.SecurityCode = newSecurityCode;
+        await _userAccountRepo.Update(userDB.Id, userDB);
 
         var webClientUrl = _configuration["ClientApp:Url"];
         var webClientPath = $"{webClientUrl}/auth/recover-password";
         var uriBuilder = new UriBuilder(webClientPath);
         var query = HttpUtility.ParseQueryString(uriBuilder.Query);
         query["userId"] = userDB.Id.ToString();
+        query["code"] = newSecurityCode;
         uriBuilder.Query = query.ToString();
 
         var mailContent = new MailContent()
@@ -149,13 +158,16 @@ public class AuthService : IAuthService
 
     public async Task RecoverPassword(UserRecoverPasswordDTO userRecoverPasswordDTO)
     {
-        var userDB = await _userAccountRepository.GetById(userRecoverPasswordDTO.UserId);
+        var userDB = await _userAccountRepo.GetById(userRecoverPasswordDTO.UserId);
         if (userDB == null || !userDB.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is unverified or not registed");
+        if (userDB.SecurityCode != userRecoverPasswordDTO.Code)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Security code is invalid");
 
         var newPasswordHash = PasswordSecure.GetPasswordHash(userRecoverPasswordDTO.NewPassword);
         userDB.PasswordHashed = newPasswordHash.PasswordHashed;
         userDB.PasswordSalt = newPasswordHash.PasswordSalt;
-        await _userAccountRepository.Update(userRecoverPasswordDTO.UserId, userDB);
+        userDB.SecurityCode = "";
+        await _userAccountRepo.Update(userRecoverPasswordDTO.UserId, userDB);
     }
 }

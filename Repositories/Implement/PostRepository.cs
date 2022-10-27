@@ -28,14 +28,16 @@ public class PostRepository : IPostRepository
         return await GetPostById(postEntity.Id);
     }
 
-    public async Task DeletePost(int postId)
+    public async Task<bool> DeletePost(int hostId, int postId)
     {
         PostEntity postEntity = await GetPostById(postId);
+        if (postEntity.HostId != hostId) return false;
         if (postEntity != null)
         {
             postEntity.DeletedAt = new DateTime();
-            await _db.SaveChangesAsync();
+            return await _db.SaveChangesAsync() > 0;
         }
+        return false;
     }
 
     public async Task<List<PostEntity>> GetAllPost()
@@ -60,9 +62,10 @@ public class PostRepository : IPostRepository
         return postEntity;
     }
 
-    public async Task<PostEntity> UpdatePost(int postId, UpdatePostDTO updatePostDTO)
+    public async Task<PostEntity> UpdatePost(int hostId, int postId, UpdatePostDTO updatePostDTO)
     {
         PostEntity existPostEntity = await GetPostById(postId);
+        if (existPostEntity.HostId != hostId) return null;
         if (existPostEntity != null)
         {
             existPostEntity.Title = updatePostDTO.Title;
@@ -78,7 +81,7 @@ public class PostRepository : IPostRepository
         return existPostEntity;
     }
 
-    public async Task<PagedList<PostEntity>> GetPostWithParams(PostParams postParams)
+    public async Task<PagedList<PostEntity>> GetPostWithParams(int hostId, PostParams postParams)
     {
         var posts = _db.Posts.Include(p => p.Category)
                             .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
@@ -86,6 +89,10 @@ public class PostRepository : IPostRepository
                             .ThenInclude(prop => prop.Property)
                             .OrderByDescending(c => c.CreatedAt)
                             .Where(p => p.DeletedAt == null);
+        if (hostId > 0)
+        {
+            posts = posts.Where(p => p.HostId == hostId);
+        }
 
         if (postParams.AddressWardId > 0)
         {

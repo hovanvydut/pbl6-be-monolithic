@@ -66,6 +66,13 @@ public class MappingConfig : Profile
         CreateMap<CreatePermissionDTO, PermissionEntity>();
         CreateMap<PermissionEntity, PermissionDTO>();
 
+        // bookmark
+        CreateMap<BookmarkEntity, BookmarkDTO>()
+            .ForMember(dto => dto.PostId, prop => prop.MapFrom(entity => entity.Post.Id))
+            .ForMember(dto => dto.PostTitle, prop => prop.MapFrom(entity => entity.Post.Title))
+            .ForMember(dto => dto.PostDescription, prop => prop.MapFrom(entity => entity.Post.Description))
+            .ForMember(dto => dto.PostPrice, prop => prop.MapFrom(entity => entity.Post.Price))
+            .ForMember(dto => dto.PostSlug, prop => prop.MapFrom(entity => entity.Post.Slug));
         // bank code
         CreateMap<BankCodeEntity, BankCodeDTO>();
         CreateMap<VNPHistoryDTO, VNPHistoryEntity>();

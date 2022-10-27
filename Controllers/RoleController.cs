@@ -1,11 +1,11 @@
 using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Constants;
-using Monolithic.Helpers;
 
 namespace Monolithic.Controllers;
 
@@ -47,10 +47,10 @@ public class RoleController : BaseController
     }
 
     [HttpGet]
-    public async Task<BaseResponse<List<RoleDTO>>> GetAllRoles()
+    public async Task<BaseResponse<PagedList<RoleDTO>>> GetAllRoles([FromQuery] RoleParams roleParams)
     {
-        var roles = await _roleService.GetAllRoles();
-        return new BaseResponse<List<RoleDTO>>(roles);
+        var roles = await _roleService.GetAllRoles(roleParams);
+        return new BaseResponse<PagedList<RoleDTO>>(roles);
     }
 
     [HttpGet("{roleId}")]
@@ -60,18 +60,14 @@ public class RoleController : BaseController
         return new BaseResponse<RoleDTO>(role);
     }
 
-    [HttpGet("{roleId}/Permission/Not-Have")]
-    public async Task<BaseResponse<List<PermissionContent>>> GetPermissionsRoleNotHave(int roleId)
-    {
-        var listPermission = await _roleService.GetPermissionsRoleNotHave(roleId);
-        return new BaseResponse<List<PermissionContent>>(listPermission);
-    }
-
     [HttpGet("{roleId}/Permission")]
-    public async Task<BaseResponse<List<PermissionDTO>>> GetPermissionByRoleId(int roleId)
+    public async Task<BaseResponse<List<PermissionGroupDTO>>> GetPermissionByRoleId(int roleId)
     {
+        // permission not have => id = 0
+        // permission have => id > 0
         var listPermission = await _roleService.GetPermissionByRoleId(roleId);
-        return new BaseResponse<List<PermissionDTO>>(listPermission);
+        var listPermissionGroup = _roleService.GroupPermission(listPermission);
+        return new BaseResponse<List<PermissionGroupDTO>>(listPermissionGroup);
     }
 
     [HttpPost("Permission")]

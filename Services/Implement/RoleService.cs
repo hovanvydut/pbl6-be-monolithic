@@ -87,8 +87,8 @@ public class RoleService : IRoleService
                         Id = d.Id,
                         Key = d.Key,
                         Description = d.Description
-                    }).ToList()
-                }).OrderBy(c=>c.Name).ToList();
+                    }).OrderBy(e => e.Key).ToList()
+                }).OrderBy(c => c.Name).ToList();
     }
 
     public async Task<bool> AddPermissionForRole(CreatePermissionDTO createPermissionDTO)

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Constants;
-using Monolithic.Helpers;
 
 namespace Monolithic.Controllers;
 
@@ -62,17 +61,19 @@ public class RoleController : BaseController
     }
 
     [HttpGet("{roleId}/Permission/Not-Have")]
-    public async Task<BaseResponse<List<PermissionContent>>> GetPermissionsRoleNotHave(int roleId)
+    public async Task<BaseResponse<List<PermissionGroupDTO>>> GetPermissionsRoleNotHave(int roleId)
     {
         var listPermission = await _roleService.GetPermissionsRoleNotHave(roleId);
-        return new BaseResponse<List<PermissionContent>>(listPermission);
+        var listPermissionGroup = _roleService.GroupPermission(listPermission);
+        return new BaseResponse<List<PermissionGroupDTO>>(listPermissionGroup);
     }
 
     [HttpGet("{roleId}/Permission")]
-    public async Task<BaseResponse<List<PermissionDTO>>> GetPermissionByRoleId(int roleId)
+    public async Task<BaseResponse<List<PermissionGroupDTO>>> GetPermissionByRoleId(int roleId)
     {
         var listPermission = await _roleService.GetPermissionByRoleId(roleId);
-        return new BaseResponse<List<PermissionDTO>>(listPermission);
+        var listPermissionGroup = _roleService.GroupPermission(listPermission);
+        return new BaseResponse<List<PermissionGroupDTO>>(listPermissionGroup);
     }
 
     [HttpPost("Permission")]

@@ -5,7 +5,6 @@ using Monolithic.Models.Entities;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Constants;
-using Monolithic.Helpers;
 using AutoMapper;
 
 namespace Monolithic.Services.Implement;
@@ -60,18 +59,39 @@ public class RoleService : IRoleService
         };
     }
 
-    public async Task<List<PermissionContent>> GetPermissionsRoleNotHave(int roleId)
-    {
-        var allPermission = PermissionPolicy.AllPermissions;
-        var rolePermission = (await _roleRepo.GetPermissionByRoleId(roleId))
-                                .Select(c => c.Key);
-        return allPermission.Where(c => !rolePermission.Contains(c.Key)).ToList();
-    }
-
     public async Task<List<PermissionDTO>> GetPermissionByRoleId(int roleId)
     {
         List<PermissionEntity> listPermission = await _roleRepo.GetPermissionByRoleId(roleId);
         return listPermission.Select(c => _mapper.Map<PermissionDTO>(c)).ToList();
+    }
+
+    public async Task<List<PermissionDTO>> GetPermissionsRoleNotHave(int roleId)
+    {
+        var allPermission = PermissionPolicy.AllPermissions;
+        var rolePermission = (await _roleRepo.GetPermissionByRoleId(roleId))
+                                .Select(c => c.Key);
+        return allPermission.Where(c => !rolePermission.Contains(c.Key))
+                .Select(c => new PermissionDTO()
+                {
+                    Id = 0,
+                    Key = c.Key,
+                    Description = c.Description,
+                }).ToList();
+    }
+
+    public List<PermissionGroupDTO> GroupPermission(List<PermissionDTO> listPerDTO)
+    {
+        return listPerDTO.GroupBy(c => c.Key.Split(".")[0])
+                .Select(c => new PermissionGroupDTO()
+                {
+                    Name = c.Key,
+                    Children = c.Select(d => new PermissionDTO()
+                    {
+                        Id = d.Id,
+                        Key = d.Key,
+                        Description = d.Description
+                    }).ToList()
+                }).ToList();
     }
 
     public async Task<bool> AddPermissionForRole(CreatePermissionDTO createPermissionDTO)

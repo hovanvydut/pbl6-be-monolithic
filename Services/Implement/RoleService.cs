@@ -61,22 +61,19 @@ public class RoleService : IRoleService
 
     public async Task<List<PermissionDTO>> GetPermissionByRoleId(int roleId)
     {
-        List<PermissionEntity> listPermission = await _roleRepo.GetPermissionByRoleId(roleId);
-        return listPermission.Select(c => _mapper.Map<PermissionDTO>(c)).ToList();
-    }
-
-    public async Task<List<PermissionDTO>> GetPermissionsRoleNotHave(int roleId)
-    {
         var allPermission = PermissionPolicy.AllPermissions;
-        var rolePermission = (await _roleRepo.GetPermissionByRoleId(roleId))
-                                .Select(c => c.Key);
-        return allPermission.Where(c => !rolePermission.Contains(c.Key))
+        var permissionHave = await _roleRepo.GetPermissionByRoleId(roleId);
+        var permissionHaveKey = permissionHave.Select(c => c.Key);
+
+        var permissionNotHaveDTO = allPermission.Where(c => !permissionHaveKey.Contains(c.Key))
                 .Select(c => new PermissionDTO()
                 {
                     Id = 0,
                     Key = c.Key,
                     Description = c.Description,
                 }).ToList();
+        var permissionHaveDTO = permissionHave.Select(c => _mapper.Map<PermissionDTO>(c)).ToList();
+        return permissionNotHaveDTO.Concat(permissionHaveDTO).ToList();
     }
 
     public List<PermissionGroupDTO> GroupPermission(List<PermissionDTO> listPerDTO)
@@ -91,7 +88,7 @@ public class RoleService : IRoleService
                         Key = d.Key,
                         Description = d.Description
                     }).ToList()
-                }).ToList();
+                }).OrderBy(c=>c.Name).ToList();
     }
 
     public async Task<bool> AddPermissionForRole(CreatePermissionDTO createPermissionDTO)

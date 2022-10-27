@@ -60,17 +60,11 @@ public class RoleController : BaseController
         return new BaseResponse<RoleDTO>(role);
     }
 
-    [HttpGet("{roleId}/Permission/Not-Have")]
-    public async Task<BaseResponse<List<PermissionGroupDTO>>> GetPermissionsRoleNotHave(int roleId)
-    {
-        var listPermission = await _roleService.GetPermissionsRoleNotHave(roleId);
-        var listPermissionGroup = _roleService.GroupPermission(listPermission);
-        return new BaseResponse<List<PermissionGroupDTO>>(listPermissionGroup);
-    }
-
     [HttpGet("{roleId}/Permission")]
     public async Task<BaseResponse<List<PermissionGroupDTO>>> GetPermissionByRoleId(int roleId)
     {
+        // permission not have => id = 0
+        // permission have => id > 0
         var listPermission = await _roleService.GetPermissionByRoleId(roleId);
         var listPermissionGroup = _roleService.GroupPermission(listPermission);
         return new BaseResponse<List<PermissionGroupDTO>>(listPermissionGroup);

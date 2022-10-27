@@ -40,7 +40,7 @@ public class PostController : BaseController
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
 
-    [HttpGet("host/personal")]
+    [HttpGet("/api/host/personal/post")]
     [Authorize]
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsPersonal([FromQuery] PostParams postParams)
     {
@@ -49,7 +49,7 @@ public class PostController : BaseController
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
 
-    [HttpGet("host/{hostId}")]
+    [HttpGet("/api/host/{hostId}/post")]
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsByHostId(int hostId, [FromQuery] PostParams postParams)
     {
         if (hostId <= 0)

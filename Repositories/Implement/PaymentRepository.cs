@@ -22,11 +22,11 @@ public class PaymentRepository : IPaymentRepository
         return await _db.BankCodes.ToListAsync();
     }
 
-    public async Task CreateVNPHistory(VNPHistoryDTO vnpHistoryDTO)
+    public async Task CreateVNPHistory(int userId, VNPHistoryDTO vnpHistoryDTO)
     {
         VNPHistoryEntity entity = _mapper.Map<VNPHistoryEntity>(vnpHistoryDTO);
         // TODO: hardcode
-        entity.UserAccountId = 1;
+        entity.UserAccountId = userId;
         await _db.VNPHistory.AddAsync(entity);
         await _db.SaveChangesAsync();
     }
@@ -34,5 +34,14 @@ public class PaymentRepository : IPaymentRepository
     public async Task<VNPHistoryEntity> GetByTxnRef(long txtRef)
     {
         return await _db.VNPHistory.FindAsync(txtRef);
+    }
+
+    public async Task updateStatusTransaction(long txtRef, string status)
+    {
+        var entity = await GetByTxnRef(txtRef);
+        if (entity != null) {
+            entity.vnp_TransactionStatus = status;
+            await _db.SaveChangesAsync();
+        }
     }
 }

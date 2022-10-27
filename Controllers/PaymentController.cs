@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Monolithic.Common;
@@ -18,9 +19,11 @@ public class PaymentController : BaseController
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<BaseResponse<string>> CreatePayment([FromBody] CreatePaymentDTO createPaymentDTO)
     {
-        string url = await _paymentService.CreatePayement(createPaymentDTO);
+        ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        string url = await _paymentService.CreatePayement(reqUser.Id, createPaymentDTO);
         return new BaseResponse<string>(url, HttpCode.OK);
     }
 

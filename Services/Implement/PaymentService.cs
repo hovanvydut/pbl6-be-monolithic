@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Monolithic.Common;
+using Monolithic.Constants;
 using Monolithic.Models.Common;
 using Monolithic.Models.Context;
 using Monolithic.Models.DTO;
@@ -30,7 +31,7 @@ public class PaymentService : IPaymentService
         _userProfileRepo = userProfileReposiory;
     }
 
-    public async Task<string> CreatePayement(CreatePaymentDTO createPaymentDTO)
+    public async Task<string> CreatePayement(int userId, CreatePaymentDTO createPaymentDTO)
     {
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
         {
@@ -63,7 +64,7 @@ public class PaymentService : IPaymentService
                 string paymentUrl = vnpay.CreateRequestUrl(paymentConfig.VNPUrl, paymentConfig.VNPHashSecret, vnpHistoryDTO);
 
                 // save payment into db
-                await _paymentRepo.CreateVNPHistory(vnpHistoryDTO);
+                await _paymentRepo.CreateVNPHistory(userId, vnpHistoryDTO);
 
                 transaction.Commit();
 
@@ -88,30 +89,34 @@ public class PaymentService : IPaymentService
         VnPayLibrary vnpay = new VnPayLibrary();
 
         // validate hash key
-        bool checkSignature = vnpay.ValidateSignature(vnpayReturnDTO.vnp_SecureHash, paymentConfig.VNPHashSecret);
 
         // TODO: update gold & payment status
-
-        if (checkSignature)
+        if (PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS.Equals(vnpayReturnDTO.vnp_ResponseCode) 
+            && PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS.Equals(vnpayReturnDTO.vnp_TransactionStatus))
         {
-            if (vnpayReturnDTO.vnp_ResponseCode == "00" && vnpayReturnDTO.vnp_TransactionNo == "00")
+
+            Console.WriteLine("giao dich thanh cong");
+            VNPHistoryEntity vnpHistoryEntity = await _paymentRepo.GetByTxnRef(vnpayReturnDTO.vnp_TxnRef);
+            if (vnpHistoryEntity == null)
             {
-                Console.WriteLine("giao dich thanh cong");
-                VNPHistoryEntity vnpHistoryEntity = await _paymentRepo.GetByTxnRef(vnpayReturnDTO.vnp_TxnRef);
-                if (vnpHistoryEntity == null) {
-                    Console.WriteLine("Khong ton tai payment #" + vnpayReturnDTO.vnp_TxnRef);
-                    return;
-                }
-                await _userProfileRepo.AddGold(vnpHistoryEntity.UserAccountId, vnpayReturnDTO.vnp_Amount);
+                Console.WriteLine("Khong ton tai payment #" + vnpayReturnDTO.vnp_TxnRef);
+                return;
             }
-            else
-            {
-                Console.WriteLine("Co loi xay ra trong qua trinh xu ly");
+
+            // bool checkSignature = vnpay.ValidateSignature(vnpayReturnDTO.vnp_SecureHash, paymentConfig.VNPHashSecret);
+            bool checkSignature = vnpHistoryEntity.vnp_SecureHash.Equals(vnpHistoryEntity.vnp_SecureHash);
+            bool isHandledOrder = PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS.Equals(vnpHistoryEntity.vnp_TransactionStatus);
+
+            if (checkSignature && !isHandledOrder) {
+                await _userProfileRepo.AddGold(vnpHistoryEntity.UserAccountId, vnpayReturnDTO.vnp_Amount);
+                await _paymentRepo.updateStatusTransaction(vnpHistoryEntity.vnp_TxnRef, PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS);
+            } else {
+                Console.WriteLine("signature: " + checkSignature + ", order was handled: " + isHandledOrder);
             }
         }
         else
         {
-            Console.WriteLine("Co loi xay ra trong qua trinh xu ly");
+            Console.WriteLine("Co loi xay ra trong qua trinh xu ly111");
         }
     }
 }

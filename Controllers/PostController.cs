@@ -40,6 +40,13 @@ public class PostController : BaseController
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
 
+    [HttpGet("related")]
+    public async Task<BaseResponse<List<PostDTO>>> GetRelatedPosts([FromQuery] RelatedPostParams relatedPostParams)
+    {
+        var posts = await _postService.GetRelatedPost(relatedPostParams);
+        return new BaseResponse<List<PostDTO>>(posts);
+    }
+
     [HttpGet("/api/host/personal/post")]
     [Authorize]
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsPersonal([FromQuery] PostParams postParams)

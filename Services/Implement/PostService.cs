@@ -18,18 +18,20 @@ public class PostService : IPostService
     private readonly IMediaRepository _mediaRepo;
     private readonly IPropertyRepository _propertyRepo;
     private readonly IMapper _mapper;
+    private readonly IBookmarkRepository _bookmarkRepo;
     private readonly DataContext _db;
     private readonly ICategoryRepository _categoryRepo;
     private readonly IAddressRepository _addressRepo;
     private readonly IPropertyService _propService;
 
-    public PostService(IPostRepository postRepo, IMapper mapper,
+    public PostService(IPostRepository postRepo, IMapper mapper, IBookmarkRepository bookmarkRepo,
                         IMediaRepository mediaRepo, IPropertyRepository propertyRepo,
                         DataContext db, ICategoryRepository categoryRepo,
                         IAddressRepository addressRepo, IPropertyService propService)
     {
         _postRepo = postRepo;
         _mapper = mapper;
+        _bookmarkRepo = bookmarkRepo;
         _mediaRepo = mediaRepo;
         _propertyRepo = propertyRepo;
         _db = db;
@@ -237,7 +239,7 @@ public class PostService : IPostService
             throw new BaseException(HttpCode.BAD_REQUEST, "Cannot delete non-exists or other host's post");
     }
 
-    public async Task<PagedList<PostDTO>> GetPostWithParams(int hostId, PostParams postParams)
+    public async Task<PagedList<PostDTO>> GetPostWithParams(int hostId, int guestId, PostParams postParams)
     {
         PagedList<PostEntity> postEntityList = await _postRepo.GetPostWithParams(hostId, postParams);
         List<PostDTO> postDTOList = postEntityList.Records.Select(p => _mapper.Map<PostDTO>(p)).ToList();
@@ -247,6 +249,15 @@ public class PostService : IPostService
         {
             List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
             postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+        }
+
+        if (guestId > 0)
+        {
+            var bookmarkIds = await _bookmarkRepo.GetBookmarkedPostIds(guestId);
+            foreach (var postDTO in postDTOList)
+            {
+                postDTO.isBookmarked = bookmarkIds.Contains(postDTO.Id);
+            }
         }
 
         await parsePostDTOGroup(postDTOList);

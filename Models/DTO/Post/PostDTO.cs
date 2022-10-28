@@ -17,4 +17,5 @@ public class PostDTO
     public List<PropertyDTO> Properties { get; set; }
     public List<PropertyGroupDTO> PropertyGroup { get; set; }
     public List<MediaDTO> Medias { get; set; }
+    public bool isBookmarked { get; set; }
 }

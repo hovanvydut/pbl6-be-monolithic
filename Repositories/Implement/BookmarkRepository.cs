@@ -56,4 +56,10 @@ public class BookmarkRepository : IBookmarkRepository
         _db.Bookmarks.Remove(bookmarkDB);
         return await _db.SaveChangesAsync() > 0;
     }
+
+    public async Task<List<int>> GetBookmarkedPostIds(int guessId)
+    {
+        return await _db.Bookmarks.Where(c => c.GuestId == guessId)
+                            .Select(c => c.PostId).ToListAsync();
+    }
 }

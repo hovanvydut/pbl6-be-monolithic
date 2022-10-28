@@ -8,6 +8,7 @@ namespace Monolithic.Repositories.Interface;
 public interface IPostRepository
 {
     Task<List<PostEntity>> GetAllPost();
+    Task<List<PostEntity>> GetRelatedPost(RelatedPostParams relatedPostParams);
     Task<PagedList<PostEntity>> GetPostWithParams(int hostId, PostParams postParams);
     Task<PostEntity> GetPostById(int id);
     Task<PostEntity> CreatePost(PostEntity postEntity);

@@ -252,4 +252,20 @@ public class PostService : IPostService
         await parsePostDTOGroup(postDTOList);
         return new PagedList<PostDTO>(postDTOList, postEntityList.TotalRecords);
     }
+
+    public async Task<List<PostDTO>> GetRelatedPost(RelatedPostParams relatedPostParams)
+    {
+        List<PostEntity> postEntityList = await _postRepo.GetRelatedPost(relatedPostParams);
+        List<PostDTO> postDTOList = postEntityList.Select(p => _mapper.Map<PostDTO>(p)).ToList();
+
+        // attach media on PostDTO
+        foreach (var postDTO in postDTOList)
+        {
+            List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
+            postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+        }
+
+        await parsePostDTOGroup(postDTOList);
+        return postDTOList;
+    }
 }

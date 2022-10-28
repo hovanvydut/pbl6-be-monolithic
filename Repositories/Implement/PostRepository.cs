@@ -147,4 +147,17 @@ public class PostRepository : IPostRepository
 
         return await posts.ToPagedList(postParams.PageNumber, postParams.PageSize);
     }
+
+    public async Task<List<PostEntity>> GetRelatedPost(RelatedPostParams relatedPostParams)
+    {
+        var posts = await _db.Posts.Include(p => p.Category)
+                            .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
+                            .Include(p => p.PostProperties)
+                            .ThenInclude(prop => prop.Property)
+                            .Where(p => p.DeletedAt == null)
+                            .Where(p => p.Id != relatedPostParams.CurrentPostId)
+                            .Where(p => p.AddressWardId == relatedPostParams.AddressWardId).ToListAsync();
+        // Use guid sort for random
+        return posts.OrderBy(_ => Guid.NewGuid()).Take(relatedPostParams.Quantity).ToList();
+    }
 }

@@ -58,6 +58,12 @@ public class BookmarkRepository : IBookmarkRepository
         return await _db.SaveChangesAsync() > 0;
     }
 
+    public async Task<List<int>> GetBookmarkedPostIds(int guessId)
+    {
+        return await _db.Bookmarks.Where(c => c.GuestId == guessId)
+                            .Select(c => c.PostId).ToListAsync();
+    }
+    
     public async Task<bool> IsExistsPostBookmarked(int guessId, int postId)
     {
         return await _db.Bookmarks.AnyAsync(c => c.GuestId == guessId && c.PostId == postId);

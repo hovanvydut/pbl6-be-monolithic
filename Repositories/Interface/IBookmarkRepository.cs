@@ -13,4 +13,6 @@ public interface IBookmarkRepository
     Task<bool> CreateBookmark(BookmarkEntity bookmarkEntity);
 
     Task<bool> RemoveBookmark(int guessId, int postId);
+
+    Task<List<int>> GetBookmarkedPostIds(int guessId);
 }

@@ -73,6 +73,8 @@ public class MappingConfig : Profile
             .ForMember(dto => dto.FullAddress, prop => prop.MapFrom(entity => entity.Post.AddressWard))
             .ForMember(dto => dto.Price, prop => prop.MapFrom(entity => entity.Post.Price))
             .ForMember(dto => dto.Slug, prop => prop.MapFrom(entity => entity.Post.Slug))
+            .ForMember(dto => dto.Address, prop => prop.MapFrom(entity => entity.Post.Address))
+            .ForMember(dto => dto.Area, prop => prop.MapFrom(entity => entity.Post.Area))
             .ForMember(dto => dto.Category, prop => prop.MapFrom(entity => entity.Post.Category))
             .PreserveReferences();
         // bank code

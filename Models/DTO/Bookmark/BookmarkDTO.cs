@@ -10,6 +10,10 @@ public class BookmarkDTO
 
     public string Slug { get; set; }
 
+    public float Area { get; set; }
+
+    public string Address { get; set; }
+
     public FullAddressDTO FullAddress { get; set; }
 
     public CategoryDTO Category { get; set; }

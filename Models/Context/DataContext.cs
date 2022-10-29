@@ -52,4 +52,5 @@ public class DataContext : DbContext
     public DbSet<BookmarkEntity> Bookmarks { get; set; }
     public DbSet<BankCodeEntity> BankCodes { get; set; }
     public DbSet<VNPHistoryEntity> VNPHistory { get; set; }
+    public DbSet<ConfigSettingEntity> ConfigSettings { get; set; }
 }

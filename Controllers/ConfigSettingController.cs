@@ -17,21 +17,21 @@ public class ConfigSettingController : BaseController
         _configSettingService = configSettingService;
     }
 
-    [HttpGet]
+    [HttpGet("/api/config-setting/")]
     public async Task<BaseResponse<List<ConfigSettingDTO>>> GetAllConfigSettings()
     {
         var settings = await _configSettingService.GetAllConfigSettings();
         return new BaseResponse<List<ConfigSettingDTO>>(settings);
     }
 
-    [HttpGet("{key}")]
+    [HttpGet("/api/config-setting/{key}")]
     public async Task<BaseResponse<ConfigSettingDTO>> GetConfigSettingByKey(string key)
     {
         var setting = await _configSettingService.GetByKey(key);
         return new BaseResponse<ConfigSettingDTO>(setting);
     }
 
-    [HttpPut("{key}")]
+    [HttpPut("/api/config-setting/{key}")]
     public async Task<BaseResponse<bool>> UpdateConfigSetting(string key, ConfigSettingUpdateDTO configSettingUpdateDTO)
     {
         if (ModelState.IsValid)

@@ -16,4 +16,6 @@ public class TableName
     public const string POST_PROPERTY = "post_property";
     public const string MEDIA = "media";
     public const string BOOKMARK = "bookmark";
+    public const string BANK_CODE = "bank_code";
+    public const string VNP_HISTORY = "vnp_history";
 }

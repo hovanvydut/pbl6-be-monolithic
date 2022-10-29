@@ -69,4 +69,15 @@ public class UserProfileReposiory : IUserProfileReposiory
         _db.UserProfiles.Update(userProfileDB);
         return await _db.SaveChangesAsync() >= 0;
     }
+
+    public async Task AddGold(int userId, long amount)
+    {
+        UserProfileEntity userEntity = await this.GetById(userId);
+        if (userEntity == null) {
+            throw new Exception("UserProfile id = " + userId + " doesn't found");
+        }
+        userEntity.CurrentCredit += amount;
+        _db.UserProfiles.Update(userEntity);
+        await _db.SaveChangesAsync();
+    }
 }

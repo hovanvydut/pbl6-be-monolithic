@@ -9,7 +9,7 @@ public class PermissionConfiguration : IEntityTypeConfiguration<PermissionEntity
 {
     public void Configure(EntityTypeBuilder<PermissionEntity> builder)
     {
-        builder.HasIndex(c => new { c.Key }).IsUnique();
+        // builder.HasIndex(c => new { c.Key }).IsUnique();
 
         // Seed permission for admin role
         // var allPermission = PermissionPolicy.AllPermissions;

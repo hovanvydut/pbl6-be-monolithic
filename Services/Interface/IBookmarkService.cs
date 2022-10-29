@@ -10,5 +10,5 @@ public interface IBookmarkService
 
     Task<bool> CreateBookmark(int guessId, CreateBookmarkDTO createBookmarkDTO);
 
-    Task<bool> RemoveBookmark(int guessId, int bookmarkId);
+    Task<bool> RemoveBookmark(int guessId, int postId);
 }

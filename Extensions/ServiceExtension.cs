@@ -8,6 +8,7 @@ using Monolithic.Models.Mapper;
 using Microsoft.OpenApi.Models;
 using Monolithic.Helpers;
 using Monolithic.Common;
+using Monolithic.Models.DTO;
 
 namespace Monolithic.Extensions;
 
@@ -27,6 +28,10 @@ public static class ServiceExtension
     {
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+
+        string currentDatabaseConfig = configuration.GetSection("CurrentDatabaseConfig").Value;
+        Console.WriteLine(configuration.GetSection("PaymentConfig").GetSection(currentDatabaseConfig).Value);
+        services.Configure<PaymentConfig>(configuration.GetSection("PaymentConfig").GetSection(currentDatabaseConfig));
     }
 
     public static void ConfigureDI(this IServiceCollection services, IConfigUtil configUtil)
@@ -55,6 +60,7 @@ public static class ServiceExtension
         services.AddScoped<IMediaRepository, MediaRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IBookmarkRepository, BookmarkRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)
@@ -67,6 +73,7 @@ public static class ServiceExtension
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IBookmarkService, BookmarkService>();
+        services.AddScoped<IPaymentService, PaymentService>();
     }
 
     private static void ConfigCommonServiceDI(this IServiceCollection services)

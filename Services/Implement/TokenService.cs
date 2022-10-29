@@ -1,3 +1,4 @@
+using Monolithic.Repositories.Interface;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Monolithic.Services.Interface;
@@ -12,16 +13,16 @@ namespace Monolithic.Services.Implement;
 public class TokenService : ITokenService
 {
     private readonly JwtSettings _jwtSettings;
-    private readonly IRoleService _roleService;
-    public TokenService(IOptions<JwtSettings> jwtSettings, IRoleService roleService)
+    private readonly IRoleRepository _roleRepo;
+    public TokenService(IOptions<JwtSettings> jwtSettings, IRoleRepository roleRepo)
     {
         _jwtSettings = jwtSettings.Value;
-        _roleService = roleService;
+        _roleRepo = roleRepo;
     }
 
     public async Task<string> CreateToken(UserAccountEntity user)
     {
-        var listPermission = await _roleService.GetPermissionByRoleId(user.RoleId);
+        var listPermission = await _roleRepo.GetPermissionByRoleId(user.RoleId);
 
         var claims = new List<Claim>();
         claims.Add(new Claim(CustomClaimTypes.UserId, user.Id.ToString()));

@@ -19,6 +19,7 @@ public class BookmarkController : BaseController
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<BaseResponse<PagedList<BookmarkDTO>>> GetWithParams([FromQuery] BookmarkParams bookmarkParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
@@ -27,6 +28,7 @@ public class BookmarkController : BaseController
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<BaseResponse<bool>> CreateBookmark([FromBody] CreateBookmarkDTO createBookmarkDTO)
     {
         if (ModelState.IsValid)
@@ -41,11 +43,12 @@ public class BookmarkController : BaseController
         return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "Model state is not valid", false);
     }
 
-    [HttpDelete("{bookmarkId}")]
-    public async Task<BaseResponse<bool>> RemoveBookmark(int bookmarkId)
+    [HttpDelete("{postId}")]
+    [Authorize]
+    public async Task<BaseResponse<bool>> RemoveBookmark(int postId)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        var bookmarkDeleted = await _bookmarkService.RemoveBookmark(reqUser.Id, bookmarkId);
+        var bookmarkDeleted = await _bookmarkService.RemoveBookmark(reqUser.Id, postId);
         if (bookmarkDeleted)
             return new BaseResponse<bool>(bookmarkDeleted, HttpCode.NO_CONTENT);
         else

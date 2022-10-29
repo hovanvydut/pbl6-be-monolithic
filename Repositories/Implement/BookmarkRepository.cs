@@ -23,6 +23,7 @@ public class BookmarkRepository : IBookmarkRepository
                             .ThenInclude(p => p.Category)
                             .Include(p => p.Post.AddressWard.AddressDistrict.AddressProvince)
                             .OrderByDescending(c => c.CreatedAt)
+                            .Where(p => p.GuestId == guessId)
                             .Where(p => p.Post.DeletedAt == null);
 
         if (!String.IsNullOrEmpty(bookmarkParams.SearchValue))
@@ -47,10 +48,10 @@ public class BookmarkRepository : IBookmarkRepository
         return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveBookmark(int guessId, int bookmarkId)
+    public async Task<bool> RemoveBookmark(int guessId, int postId)
     {
         var bookmarkDB = await _db.Bookmarks
-                        .FirstOrDefaultAsync(c => c.Id == bookmarkId && c.GuestId == guessId);
+                        .FirstOrDefaultAsync(c => c.PostId == postId && c.GuestId == guessId);
         if (bookmarkDB == null) return false;
         _db.Entry(bookmarkDB).State = EntityState.Detached;
         _db.Bookmarks.Remove(bookmarkDB);
@@ -61,5 +62,10 @@ public class BookmarkRepository : IBookmarkRepository
     {
         return await _db.Bookmarks.Where(c => c.GuestId == guessId)
                             .Select(c => c.PostId).ToListAsync();
+    }
+    
+    public async Task<bool> IsExistsPostBookmarked(int guessId, int postId)
+    {
+        return await _db.Bookmarks.AnyAsync(c => c.GuestId == guessId && c.PostId == postId);
     }
 }

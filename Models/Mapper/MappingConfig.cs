@@ -80,5 +80,9 @@ public class MappingConfig : Profile
         // bank code
         CreateMap<BankCodeEntity, BankCodeDTO>();
         CreateMap<VNPHistoryDTO, VNPHistoryEntity>();
+
+        // config setting
+        CreateMap<ConfigSettingEntity, ConfigSettingDTO>();
+        CreateMap<ConfigSettingUpdateDTO, ConfigSettingEntity>();
     }
 }

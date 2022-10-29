@@ -2,17 +2,17 @@ namespace Monolithic.Models.DTO;
 
 public class BookmarkDTO
 {
-    public int Id {get;set;}
+    public int Id { get; set; }
 
-    public int PostId { get; set; }
+    public string Title { get; set; }
 
-    public string PostTitle { get; set; }
+    public string Price { get; set; }
 
-    public string PostDescription { get; set; }
+    public string Slug { get; set; }
 
-    public string PostPrice { get; set; }
+    public FullAddressDTO FullAddress { get; set; }
 
-    public string PostSlug { get; set; }
+    public CategoryDTO Category { get; set; }
 
     public List<MediaDTO> Medias { get; set; }
 }

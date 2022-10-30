@@ -6,7 +6,7 @@ namespace Monolithic.Repositories.Interface;
 
 public interface ICategoryRepository
 {
-    Task<PagedList<CategoryEntity>> GetAllWithFilter(CategoryParams categoryParams);
+    // Task<PagedList<CategoryEntity>> GetAllWithFilter(CategoryParams categoryParams);
     Task<List<CategoryEntity>> GetAllHouseType();
     Task<CategoryEntity> GetHouseTypeById(int id);
 }

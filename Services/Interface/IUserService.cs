@@ -13,4 +13,6 @@ public interface IUserService
     Task<UserProfileAnonymousDTO> GetUserProfileAnonymous(int userId);
 
     Task<bool> UpdateUserProfile(int userId, UserProfileUpdateDTO userProfileUpdateDTO);
+
+    Task<bool> UserMakePayment(int userId, double amount);
 }

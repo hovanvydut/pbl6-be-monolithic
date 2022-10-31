@@ -14,5 +14,7 @@ public interface IUserProfileReposiory
 
     Task<bool> Update(int userId, UserProfileEntity userProfileEntity);
 
-    Task AddGold(int userId, long amount);
+    Task<bool> AddGold(int userId, long amount);
+
+    Task<bool> UserMakePayment(int userId, double amount);
 }

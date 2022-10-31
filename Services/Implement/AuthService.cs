@@ -1,6 +1,5 @@
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
-using System.Security.Cryptography;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
@@ -13,6 +12,7 @@ namespace Monolithic.Services.Implement;
 
 public class AuthService : IAuthService
 {
+    private readonly IConfigSettingService _configSettingService;
     private readonly IUserAccountReposiory _userAccountRepo;
     private readonly IUserProfileReposiory _userProfileRepo;
     private readonly ISendMailHelper _sendMailHelper;
@@ -20,13 +20,15 @@ public class AuthService : IAuthService
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
 
-    public AuthService(IUserAccountReposiory userAccountRepo,
+    public AuthService(IConfigSettingService configSettingService,
+                       IUserAccountReposiory userAccountRepo,
                        IUserProfileReposiory userProfileRepo,
                        ISendMailHelper sendMailHelper,
                        IConfiguration configuration,
                        ITokenService tokenService,
                        IMapper mapper)
     {
+        _configSettingService = configSettingService;
         _userAccountRepo = userAccountRepo;
         _userProfileRepo = userProfileRepo;
         _sendMailHelper = sendMailHelper;
@@ -54,17 +56,21 @@ public class AuthService : IAuthService
         await _userAccountRepo.Create(newUserAccount);
 
         // Create user profile with new user account Id
-        newUserProfile.CurrentCredit = 0;
+        var postPrice = await _configSettingService.GetValueByKey(ConfigSetting.POST_PRICE);
+        var freePost = await _configSettingService.GetValueByKey(ConfigSetting.FREE_POST);
+        var freeCredit = postPrice * freePost;
+        newUserProfile.CurrentCredit = freeCredit;
         newUserProfile.UserAccountId = newUserAccount.Id;
         await _userProfileRepo.Create(newUserProfile);
 
         // Send mail
-        await SendMailConfirm(newUserAccount, scheme, host);
+        await SendMailConfirm(newUserAccount, freeCredit, scheme, host);
 
         return _mapper.Map<UserRegisterResponseDTO>(newUserAccount);
     }
 
-    private async Task SendMailConfirm(UserAccountEntity newUserAccount, string scheme, string host)
+    private async Task SendMailConfirm(UserAccountEntity newUserAccount, double freeCredit,
+                                        string scheme, string host)
     {
         var webServerPath = $"{scheme}://{host}/api/auth/confirm-email";
         var uriBuilder = new UriBuilder(webServerPath);
@@ -77,7 +83,7 @@ public class AuthService : IAuthService
         {
             ToEmail = newUserAccount.Email,
             Subject = "Confirm email to use Motel Finder",
-            Body = $"Confirm the registration by clicking on the <a href='{uriBuilder}'>link</a>."
+            Body = $"Confirm the registration by clicking on the <a href='{uriBuilder}'>link</a> and receive {freeCredit} credit"
         };
         await _sendMailHelper.SendEmailAsync(mailContent);
     }

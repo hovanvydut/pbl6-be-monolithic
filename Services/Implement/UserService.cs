@@ -78,4 +78,9 @@ public class UserService : IUserService
         }).ToList();
         return new PagedList<UserDTO>(listUserDTO, listUser.TotalRecords);
     }
+
+    public async Task<bool> UserMakePayment(int userId, double amount)
+    {
+        return await _userProfileRepo.UserMakePayment(userId, amount);
+    }
 }

@@ -84,5 +84,9 @@ public class MappingConfig : Profile
         // config setting
         CreateMap<ConfigSettingEntity, ConfigSettingDTO>();
         CreateMap<ConfigSettingUpdateDTO, ConfigSettingEntity>();
+
+        // payment history
+        CreateMap<PaymentHistoryEntity, PaymentHistoryDTO>()
+            .ForMember(dto => dto.HostEmail, prop => prop.MapFrom(entity => entity.HostAccount.Email));
     }
 }

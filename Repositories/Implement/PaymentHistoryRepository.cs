@@ -1,7 +1,10 @@
 using Monolithic.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using Monolithic.Models.ReqParams;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Context;
+using Monolithic.Models.Common;
+using Monolithic.Extensions;
 
 namespace Monolithic.Repositories.Implement;
 
@@ -13,9 +16,27 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
         _db = db;
     }
 
-    public async Task<List<PaymentHistoryEntity>> GetAllByHostId(int hostId)
+    public async Task<PagedList<PaymentHistoryEntity>> GetWithParams(int hostId, PaymentHistoryParams paymentHistoryParams)
     {
-        return await _db.PaymentHistories.Where(c => c.HostId == hostId).ToListAsync();
+        var histories = _db.PaymentHistories.Include(b => b.HostAccount)
+                            .OrderByDescending(c => c.CreatedAt)
+                            .Where(p => p.Post.DeletedAt == null);
+
+        if (hostId > 0)
+        {
+            histories = histories.Where(h => h.HostId == hostId);
+        }
+
+        if (!String.IsNullOrEmpty(paymentHistoryParams.SearchValue))
+        {
+            var searchValue = paymentHistoryParams.SearchValue.ToLower();
+            histories = histories.Where(
+                h => h.HostAccount.Email.ToLower().Contains(searchValue) ||
+                     h.PaymentCode.ToLower().Contains(searchValue) ||
+                     h.Description.ToLower().Contains(searchValue)
+            );
+        }
+        return await histories.ToPagedList(paymentHistoryParams.PageNumber, paymentHistoryParams.PageSize);
     }
 
     public async Task<PaymentHistoryEntity> GetById(int id)

@@ -6,6 +6,7 @@ using Monolithic.Constants;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Models.Entities;
+using Monolithic.Models.ReqParams;
 using Monolithic.Services.Interface;
 
 namespace Monolithic.Controllers;
@@ -39,5 +40,22 @@ public class PaymentController : BaseController
     {
         var result = await _paymentService.GetAllBankCode();
         return new BaseResponse<List<BankCodeDTO>>(result, HttpCode.OK);
+    }
+
+    [HttpGet("history")]
+    [Authorize]
+    public async Task<BaseResponse<PagedList<UserVNPHistoryDTO>>> GetWithParams([FromQuery] VNPParams vnpParams)
+    {
+        var histories = await _paymentService.GetVNPHistories(0, vnpParams);
+        return new BaseResponse<PagedList<UserVNPHistoryDTO>>(histories);
+    }
+
+    [HttpGet("history/personal")]
+    [Authorize]
+    public async Task<BaseResponse<PagedList<UserVNPHistoryDTO>>> GetWithParamsPersonal([FromQuery] VNPParams vnpParams)
+    {
+        var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var histories = await _paymentService.GetVNPHistories(reqUser.Id, vnpParams);
+        return new BaseResponse<PagedList<UserVNPHistoryDTO>>(histories);
     }
 }

@@ -80,6 +80,8 @@ public class MappingConfig : Profile
         // bank code
         CreateMap<BankCodeEntity, BankCodeDTO>();
         CreateMap<VNPHistoryDTO, VNPHistoryEntity>();
+        CreateMap<VNPHistoryEntity, UserVNPHistoryDTO>()
+            .ForMember(dto => dto.UserEmail, prop => prop.MapFrom(entity => entity.UserAccount.Email));
 
         // config setting
         CreateMap<ConfigSettingEntity, ConfigSettingDTO>();

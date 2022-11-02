@@ -82,6 +82,9 @@ public class MappingConfig : Profile
         CreateMap<BankCodeEntity, BankCodeDTO>();
         CreateMap<VNPHistoryDTO, VNPHistoryEntity>();
         CreateMap<VNPHistoryEntity, UserVNPHistoryDTO>()
+            .ForMember(dto => dto.OrderInfo, prop => prop.MapFrom(entity => entity.vnp_OrderInfo))
+            .ForMember(dto => dto.Amount, prop => prop.MapFrom(entity => entity.vnp_Amount))
+            .ForMember(dto => dto.BankCode, prop => prop.MapFrom(entity => entity.vnp_BankCode))
             .ForMember(dto => dto.UserEmail, prop => prop.MapFrom(entity => entity.UserAccount.Email))
             .ForMember(dto => dto.TransactionStatus, prop => prop.MapFrom(entity =>
                                                 VNPStatus.GetVNPStatus(entity.vnp_TransactionStatus)));

@@ -19,7 +19,7 @@ public class UserController : BaseController
     }
 
     [HttpGet]
-    public async Task<BaseResponse<PagedList<UserDTO>>> GetAllRoles([FromQuery] UserParams userParams)
+    public async Task<BaseResponse<PagedList<UserDTO>>> GetAllUsers([FromQuery] UserParams userParams)
     {
         var users = await _userService.GetAllUsers(userParams);
         return new BaseResponse<PagedList<UserDTO>>(users);

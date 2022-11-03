@@ -81,14 +81,14 @@ public class RoleService : IRoleService
         return listPerDTO.GroupBy(c => c.Key.Split(".")[0])
                 .Select(c => new PermissionGroupDTO()
                 {
-                    Name = c.Key,
+                    Key = c.Key,
                     Children = c.Select(d => new PermissionDTO()
                     {
                         Id = d.Id,
                         Key = d.Key,
                         Description = d.Description
                     }).OrderBy(e => e.Key).ToList()
-                }).OrderBy(c => c.Name).ToList();
+                }).OrderBy(c => c.Key).ToList();
     }
 
     public async Task<bool> AddPermissionForRole(CreatePermissionDTO createPermissionDTO)

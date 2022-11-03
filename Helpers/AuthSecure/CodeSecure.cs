@@ -4,9 +4,9 @@ namespace Monolithic.Helpers;
 
 public static class CodeSecure
 {
-    public static string CreateRandomCode()
+    public static string CreateRandomCode(int length = 32)
     {
-        byte[] randomNumber = new byte[32];
+        byte[] randomNumber = new byte[length];
         using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
         {
             rng.GetBytes(randomNumber);

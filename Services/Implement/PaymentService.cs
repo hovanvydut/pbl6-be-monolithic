@@ -7,6 +7,7 @@ using Monolithic.Models.Common;
 using Monolithic.Models.Context;
 using Monolithic.Models.DTO;
 using Monolithic.Models.Entities;
+using Monolithic.Models.ReqParams;
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
 
@@ -91,7 +92,7 @@ public class PaymentService : IPaymentService
         // validate hash key
 
         // TODO: update gold & payment status
-        if (PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS.Equals(vnpayReturnDTO.vnp_ResponseCode) 
+        if (PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS.Equals(vnpayReturnDTO.vnp_ResponseCode)
             && PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS.Equals(vnpayReturnDTO.vnp_TransactionStatus))
         {
 
@@ -107,10 +108,13 @@ public class PaymentService : IPaymentService
             bool checkSignature = vnpHistoryEntity.vnp_SecureHash.Equals(vnpHistoryEntity.vnp_SecureHash);
             bool isHandledOrder = PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS.Equals(vnpHistoryEntity.vnp_TransactionStatus);
 
-            if (checkSignature && !isHandledOrder) {
+            if (checkSignature && !isHandledOrder)
+            {
                 await _userProfileRepo.AddGold(vnpHistoryEntity.UserAccountId, vnpayReturnDTO.vnp_Amount);
                 await _paymentRepo.updateStatusTransaction(vnpHistoryEntity.vnp_TxnRef, PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS);
-            } else {
+            }
+            else
+            {
                 Console.WriteLine("signature: " + checkSignature + ", order was handled: " + isHandledOrder);
             }
         }
@@ -118,5 +122,12 @@ public class PaymentService : IPaymentService
         {
             Console.WriteLine("Co loi xay ra trong qua trinh xu ly111");
         }
+    }
+
+    public async Task<PagedList<UserVNPHistoryDTO>> GetVNPHistories(int userId, VNPParams vnpParams)
+    {
+        PagedList<VNPHistoryEntity> vnpHistoryEntityList = await _paymentRepo.GetVNPHistories(userId, vnpParams);
+        List<UserVNPHistoryDTO> vnpHistoryDTOList = vnpHistoryEntityList.Records.Select(v => _mapper.Map<UserVNPHistoryDTO>(v)).ToList();
+        return new PagedList<UserVNPHistoryDTO>(vnpHistoryDTOList, vnpHistoryEntityList.TotalRecords);
     }
 }

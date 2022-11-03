@@ -1,5 +1,6 @@
 using Monolithic.Models.Entities;
 using Monolithic.Models.DTO;
+using Monolithic.Helpers;
 using AutoMapper;
 
 namespace Monolithic.Models.Mapper;
@@ -80,11 +81,21 @@ public class MappingConfig : Profile
         // bank code
         CreateMap<BankCodeEntity, BankCodeDTO>();
         CreateMap<VNPHistoryDTO, VNPHistoryEntity>();
+        CreateMap<VNPHistoryEntity, UserVNPHistoryDTO>()
+            .ForMember(dto => dto.OrderInfo, prop => prop.MapFrom(entity => entity.vnp_OrderInfo))
+            .ForMember(dto => dto.Amount, prop => prop.MapFrom(entity => entity.vnp_Amount))
+            .ForMember(dto => dto.BankCode, prop => prop.MapFrom(entity => entity.vnp_BankCode))
+            .ForMember(dto => dto.UserEmail, prop => prop.MapFrom(entity => entity.UserAccount.Email))
+            .ForMember(dto => dto.TransactionStatus, prop => prop.MapFrom(entity =>
+                                                VNPStatus.GetVNPStatus(entity.vnp_TransactionStatus)));
 
         // config setting
         CreateMap<ConfigSettingEntity, ConfigSettingDTO>();
         CreateMap<ConfigSettingUpdateDTO, ConfigSettingEntity>();
 
+        // payment history
+        CreateMap<PaymentHistoryEntity, PaymentHistoryDTO>()
+            .ForMember(dto => dto.HostEmail, prop => prop.MapFrom(entity => entity.HostAccount.Email));
         // booking
         CreateMap<FreeTimeDTO, FreeTimeEntity>();
         CreateMap<FreeTimeEntity, FreeTimeDTO>();

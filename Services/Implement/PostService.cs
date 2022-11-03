@@ -166,7 +166,7 @@ public class PostService : IPostService
                 var postPrice = await _configSettingService.GetValueByKey(ConfigSetting.POST_PRICE);
                 await _userService.UserMakePayment(hostId, postPrice);
                 // Save payment history
-                
+                await _paymentHistoryService.PayForCreatePost(hostId, savedPostEntity.Id, postPrice);
 
                 transaction.Commit();
             }

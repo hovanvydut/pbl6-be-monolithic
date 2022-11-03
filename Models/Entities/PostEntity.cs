@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Monolithic.Models.Entities;
 
 [Table(TableName.POST)]
-[Index(nameof(PostEntity.Slug), IsUnique = true)]
+// [Index(nameof(PostEntity.Slug), IsUnique = true)]
 public class PostEntity : EntityBase
 {
     [Key]

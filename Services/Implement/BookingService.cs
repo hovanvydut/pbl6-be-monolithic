@@ -18,15 +18,17 @@ public class BookingService : IBookingService
     private readonly IBookingRepository _bookingRepo;
     private readonly IPostRepository _postRepo;
     private readonly IMapper _mapper;
+    private ILogger<BookingService> _logger;
 
     public BookingService(IUserService userService, IBookingRepository bookingRepo, DataContext db,
-                        IPostRepository postRepo, IMapper mapper)
+                        IPostRepository postRepo, IMapper mapper, ILogger<BookingService> logger)
     {
         this._userService = userService;
         this._bookingRepo = bookingRepo;
         this._db = db;
         this._postRepo = postRepo;
         this._mapper = mapper;
+        this._logger = logger;
     }
 
     public async Task ApproveMeeting(int userId, int meetingId)
@@ -36,17 +38,25 @@ public class BookingService : IBookingService
             try
             {
                 MeetingEntity meetingEntity = await _bookingRepo.GetMeetingById(meetingId);
-                if (meetingEntity == null) {
-                    throw new BaseException(HttpCode.NOT_FOUND, "Meeting id = " + meetingId + " doesn't found");
+                if (meetingEntity == null)
+                {
+                    string msgErr = "Meeting id = " + meetingId + " doesn't found";
+                    _logger.LogError(msgErr);
+                    throw new BaseException(HttpCode.NOT_FOUND, msgErr);
                 }
 
                 if (meetingEntity.Post.HostId != userId)
                 {
-                    throw new BaseException(HttpCode.BAD_REQUEST, "You can't approve this meeting");
+                    string msgErr = "You can't approve this meeting";
+                    _logger.LogError(msgErr);
+                    throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
-                if (meetingEntity.ApproveTime != null) {
-                    throw new BaseException(HttpCode.BAD_REQUEST, "This meeting is approved");
+                if (meetingEntity.ApproveTime != null)
+                {
+                    string msgErr = "This meeting is approved";
+                    _logger.LogError(msgErr);
+                    throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
                 await _bookingRepo.Approve(meetingId);
@@ -55,6 +65,7 @@ public class BookingService : IBookingService
             }
             catch (BaseException ex)
             {
+                _logger.LogError(ex.Message);
                 transaction.Rollback();
                 throw ex;
             }
@@ -68,17 +79,25 @@ public class BookingService : IBookingService
             try
             {
                 MeetingEntity meetingEntity = await _bookingRepo.GetMeetingById(meetingId);
-                if (meetingEntity == null) {
-                    throw new BaseException(HttpCode.NOT_FOUND, "Meeting id = " + meetingId + " doesn't found");
+                if (meetingEntity == null)
+                {
+                    string msgErr = "Meeting id = " + meetingId + " doesn't found";
+                    _logger.LogError(msgErr);
+                    throw new BaseException(HttpCode.NOT_FOUND, msgErr);
                 }
 
                 if (meetingEntity.Post.HostId != userId)
                 {
-                    throw new BaseException(HttpCode.BAD_REQUEST, "You can't approve this meeting");
+                    string msgErr = "You can't approve this meeting";
+                    _logger.LogError(msgErr);
+                    throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
-                if (meetingEntity.Met == true) {
-                    throw new BaseException(HttpCode.BAD_REQUEST, "This meeting is confirmed");
+                if (meetingEntity.Met == true)
+                {
+                    string msgErr = "This meeting is confirmed";
+                    _logger.LogError(msgErr);
+                    throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
                 await _bookingRepo.ConfirmMeet(meetingId);
@@ -87,6 +106,7 @@ public class BookingService : IBookingService
             }
             catch (BaseException ex)
             {
+                _logger.LogError(ex.Message);
                 transaction.Rollback();
                 throw ex;
             }
@@ -124,12 +144,18 @@ public class BookingService : IBookingService
             try
             {
                 PostEntity postEntity = await _postRepo.GetPostById(dto.PostId);
-                if (postEntity == null) 
-                    throw new BaseException(HttpCode.NOT_FOUND, "Post id = " + postEntity.Id + " doesn't found");
+                if (postEntity == null)
+                {
+                    string msgErr = "Post id = " + postEntity.Id + " doesn't found";
+                    _logger.LogError(msgErr);
+                    throw new BaseException(HttpCode.NOT_FOUND, msgErr);
+                }
 
                 if (postEntity.HostId == userId)
                 {
-                    throw new BaseException(HttpCode.BAD_REQUEST, "You doesn't allow to create meeting for this post");
+                    string msgErr = "You doesn't allow to create meeting for this post";
+                    _logger.LogError(msgErr);
+                    throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
                 await _bookingRepo.CreateMeeting(userId, dto);
@@ -138,6 +164,7 @@ public class BookingService : IBookingService
             }
             catch (BaseException ex)
             {
+                _logger.LogError(ex.Message);
                 transaction.Rollback();
                 Console.WriteLine(ex.Message);
                 throw ex;

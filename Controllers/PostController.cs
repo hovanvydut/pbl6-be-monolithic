@@ -34,11 +34,18 @@ public class PostController : BaseController
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParams([FromQuery] PostParams postParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        var posts = await _postService.GetPostWithParams(0, reqUser.Id, postParams);
+        var posts = new PagedList<PostDTO>();
+        if (reqUser == null)
+        {
+            posts = await _postService.GetPostWithParams(0, 0, postParams);
+        }
+        else
+        {
+            posts = await _postService.GetPostWithParams(0, reqUser.Id, postParams);
+        }
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
 
@@ -59,7 +66,6 @@ public class PostController : BaseController
     }
 
     [HttpGet("/api/host/{hostId}/post")]
-    [Authorize]
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsByHostId(int hostId, [FromQuery] PostParams postParams)
     {
         if (hostId <= 0)
@@ -67,7 +73,15 @@ public class PostController : BaseController
             return new BaseResponse<PagedList<PostDTO>>(null, HttpCode.BAD_REQUEST, "hostId is invalid", false);
         }
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        var posts = await _postService.GetPostWithParams(hostId, reqUser.Id, postParams);
+        var posts = new PagedList<PostDTO>();
+        if (reqUser == null)
+        {
+            posts = await _postService.GetPostWithParams(hostId, 0, postParams);
+        }
+        else
+        {
+            posts = await _postService.GetPostWithParams(hostId, reqUser.Id, postParams);
+        }
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
 

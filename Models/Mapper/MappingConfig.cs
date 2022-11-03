@@ -103,5 +103,10 @@ public class MappingConfig : Profile
         CreateMap<UserProfileEntity, GuestMeetingDTO>();
         CreateMap<MeetingEntity, MeetingDTO>()
             .ForMember(dto => dto.GuestInfo, prop => prop.MapFrom(entity => entity.GuestAccount.UserProfile));
+
+        // review
+        CreateMap<CreateReviewDTO, ReviewEntity>();
+        CreateMap<ReviewEntity, ReviewDTO>()
+            .ForMember(dto => dto.UserInfo, prop => prop.MapFrom(e => e.UserAccount.UserProfile));
     }
 }

@@ -56,4 +56,5 @@ public class DataContext : DbContext
     public DbSet<PaymentHistoryEntity> PaymentHistories { get; set; }
     public DbSet<MeetingEntity> Meetings { get; set; }
     public DbSet<FreeTimeEntity> FreeTimes { get; set; }
+    public DbSet<ReviewEntity> Reviews { get; set; }
 }

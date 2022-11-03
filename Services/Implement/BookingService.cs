@@ -72,6 +72,32 @@ public class BookingService : IBookingService
         }
     }
 
+    public async Task<bool> CheckMetBooking(int userId, int postId)
+    {
+        try {
+            // check userId exists
+            await _userService.GetUserProfilePersonal(userId);
+
+            List<MeetingEntity> listMeetings = await _bookingRepo.GetMeetingBy(userId, postId);
+            if (listMeetings.Count <= 0) return false;
+
+            foreach (MeetingEntity meeting in listMeetings)
+            {   
+                bool hasMet = meeting.Met;
+                bool less15Days = (int) DateTime.Now.Subtract(meeting.Time).TotalDays <= 15;
+                if (hasMet && less15Days)
+                {
+                    return true;
+                }
+            }
+
+            return true;
+        } catch (BaseException ex)
+        {
+            return false;
+        }
+    }
+
     public async Task ConfirmMeeting(int userId, int meetingId)
     {
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())

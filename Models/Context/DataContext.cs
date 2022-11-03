@@ -54,4 +54,6 @@ public class DataContext : DbContext
     public DbSet<VNPHistoryEntity> VNPHistory { get; set; }
     public DbSet<ConfigSettingEntity> ConfigSettings { get; set; }
     public DbSet<PaymentHistoryEntity> PaymentHistories { get; set; }
+    public DbSet<MeetingEntity> Meetings { get; set; }
+    public DbSet<FreeTimeEntity> FreeTimes { get; set; }
 }

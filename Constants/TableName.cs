@@ -20,4 +20,6 @@ public class TableName
     public const string VNP_HISTORY = "vnp_history";
     public const string CONFIG_SETTING = "config_setting";
     public const string PAYMENT_HISTORY = "payment_history";
+    public const string MEETING = "meeting";
+    public const string FREE_TIME = "free_time";
 }

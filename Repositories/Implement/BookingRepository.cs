@@ -84,9 +84,14 @@ public class BookingRepository : IBookingRepository
         return await meetings.ToPagedList(reqParams.PageNumber, reqParams.PageSize);
     }
 
+    public async Task<List<MeetingEntity>> GetMeetingBy(int userId, int postId)
+    {
+        return await _db.Meetings.Where(m => m.PostId == postId && m.GuestId == userId).ToListAsync();
+    }
+
     public async Task<MeetingEntity> GetMeetingById(int meetingId)
     {
-        return await _db.Meetings.Include(m => m.Post).Where(m => m.Id == meetingId).FirstAsync();
+        return await _db.Meetings.Include(m => m.Post).Where(m => m.Id == meetingId).FirstOrDefaultAsync();
     }
 
     public async Task InsertAllFreeTime(int userId, CreateFreeTimeDTO dto)

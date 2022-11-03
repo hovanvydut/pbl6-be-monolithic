@@ -15,4 +15,5 @@ public interface IBookingRepository
     Task Approve(int meetingId);
     Task ConfirmMeet(int meetingId);
     Task<PagedList<MeetingEntity>> GetAllMeeting(int userId, BookingParams reqParams);
+    Task<List<MeetingEntity>> GetMeetingBy(int userId, int postId);
 }

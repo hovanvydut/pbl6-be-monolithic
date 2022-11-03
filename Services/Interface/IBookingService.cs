@@ -7,6 +7,7 @@ namespace Monolithic.Services.Interface;
 public interface IBookingService
 {
     Task<List<FreeTimeDTO>> GetAllFreeTime(int userId);
+    Task<bool> CheckMetBooking(int userId, int postId);
     Task CreateFreeTime(int userId, CreateFreeTimeDTO dto);
     Task<PagedList<MeetingDTO>> GetAllMeeting(int userId, BookingParams reqParams);
     Task CreateMeeting(int userId, CreateMeetingDTO dto);

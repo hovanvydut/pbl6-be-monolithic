@@ -48,4 +48,11 @@ public class MediaRepository : IMediaRepository
                                         && m.EntityType == EntityType.POST)
                                         .ToListAsync();
     }
+
+    public async Task<List<MediaEntity>> GetAllMediaOfReview(int reviewId)
+    {
+        return await _db.Medias.Where(m => m.EntityId == reviewId
+                                        && m.EntityType == EntityType.REVIEW)
+                                        .ToListAsync();
+    }
 }

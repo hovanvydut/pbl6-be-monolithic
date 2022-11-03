@@ -22,4 +22,5 @@ public class TableName
     public const string PAYMENT_HISTORY = "payment_history";
     public const string MEETING = "meeting";
     public const string FREE_TIME = "free_time";
+    public const string REVIEW = "review";
 }

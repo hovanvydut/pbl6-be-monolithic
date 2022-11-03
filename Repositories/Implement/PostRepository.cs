@@ -55,6 +55,7 @@ public class PostRepository : IPostRepository
     {
         var postEntity = await _db.Posts.Where(p => p.DeletedAt == null && p.Id == id)
                             .Include(p => p.Category)
+                            .Include(p => p.HostAccount.UserProfile)
                             .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
                             .Include(p => p.PostProperties)
                             .ThenInclude(prop => prop.Property)

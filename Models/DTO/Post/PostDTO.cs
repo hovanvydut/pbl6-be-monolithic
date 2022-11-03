@@ -18,4 +18,5 @@ public class PostDTO
     public List<PropertyGroupDTO> PropertyGroup { get; set; }
     public List<MediaDTO> Medias { get; set; }
     public bool isBookmarked { get; set; }
+    public UserProfileAnonymousDTO AuthorInfo { get; set; }
 }

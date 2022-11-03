@@ -84,5 +84,13 @@ public class MappingConfig : Profile
         // config setting
         CreateMap<ConfigSettingEntity, ConfigSettingDTO>();
         CreateMap<ConfigSettingUpdateDTO, ConfigSettingEntity>();
+
+        // booking
+        CreateMap<FreeTimeDTO, FreeTimeEntity>();
+        CreateMap<FreeTimeEntity, FreeTimeDTO>();
+        CreateMap<CreateMeetingDTO, MeetingEntity>();
+        CreateMap<UserProfileEntity, GuestMeetingDTO>();
+        CreateMap<MeetingEntity, MeetingDTO>()
+            .ForMember(dto => dto.GuestInfo, prop => prop.MapFrom(entity => entity.GuestAccount.UserProfile));
     }
 }

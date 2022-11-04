@@ -36,11 +36,11 @@ public class ReviewService : IReviewService
         {
             try
             {
-                bool hasMet = await _bookingService.CheckMetBooking(userId, postId);
-                if (!hasMet)
-                {
-                    throw new BaseException(HttpCode.BAD_REQUEST, "You must be visited this inn before reviewing");
-                }
+                // bool hasMet = await _bookingService.CheckMetBooking(userId, postId);
+                // if (!hasMet)
+                // {
+                //     throw new BaseException(HttpCode.BAD_REQUEST, "You must be visited this inn before reviewing");
+                // }
 
                 if (dto.Rating < 1 || dto.Rating > 4)
                 {

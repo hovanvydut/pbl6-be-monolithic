@@ -100,8 +100,6 @@ public class BookingRepository : IBookingRepository
         {
             FreeTimeEntity entity = _mapper.Map<FreeTimeEntity>(freeTime);
             entity.UserId = userId;
-            Console.WriteLine("day = " + entity.Day + ", hour = " + entity.Hour);
-
             _db.FreeTimes.Add(entity);
         }
         await _db.SaveChangesAsync();

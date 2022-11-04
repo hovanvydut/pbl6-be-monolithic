@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations;
 namespace Monolithic.Models.Entities;
 
 [Table(TableName.FREE_TIME)]
-[Index(nameof(UserId), nameof(Hour), nameof(Day), IsUnique = true)]
 public class FreeTimeEntity : EntityBase
 {
     [Key]
@@ -16,13 +15,16 @@ public class FreeTimeEntity : EntityBase
 
     [ForeignKey(nameof(UserAccount))]
     [Column("user_id")]
-    public int UserId {get; set;}
-    
-    public UserAccountEntity UserAccount {get; set;}
+    public int UserId { get; set; }
 
-    [Column("hour")]
-    public int Hour {get; set;}
+    public UserAccountEntity UserAccount { get; set; }
+
+    [Column("start")]
+    public string Start { get; set; }
+
+    [Column("end")]
+    public string End { get; set; }
 
     [Column("day")]
-    public int Day {get; set;}
+    public int Day { get; set; }
 }

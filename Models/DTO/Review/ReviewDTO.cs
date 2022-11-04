@@ -8,4 +8,6 @@ public class ReviewDTO
     public string Content { get; set; }
     public int Rating { get; set; }
     public List<MediaDTO> Medias { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

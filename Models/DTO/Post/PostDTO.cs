@@ -19,4 +19,6 @@ public class PostDTO
     public List<MediaDTO> Medias { get; set; }
     public bool isBookmarked { get; set; }
     public UserProfileAnonymousDTO AuthorInfo { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

@@ -24,7 +24,7 @@ public static class JwtOptions
 
     public static SigningCredentials GetPrivateKey(JwtSettings jwtSettings)
     {
-        var dirPath = string.Join("/", AppContext.BaseDirectory.Split("/").SkipLast(4));
+        var dirPath = AppDomain.CurrentDomain.BaseDirectory;
         var fileName = Path.Combine(dirPath, "Certificate", jwtSettings.PrivateKeyPath);
         string privateKeyPem = File.ReadAllText(fileName);
 
@@ -41,7 +41,7 @@ public static class JwtOptions
 
     public static SecurityKey GetPublicKey(JwtSettings jwtSettings)
     {
-        var dirPath = string.Join("/", AppContext.BaseDirectory.Split("/").SkipLast(4));
+        var dirPath = AppDomain.CurrentDomain.BaseDirectory;
         var fileName = Path.Combine(dirPath, "Certificate", jwtSettings.PublicKeyPath);
         var cert = new X509Certificate2(fileName);
         var rsaSecurityKey = new RsaSecurityKey(cert.GetRSAPublicKey());

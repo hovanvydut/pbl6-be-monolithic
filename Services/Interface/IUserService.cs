@@ -14,5 +14,7 @@ public interface IUserService
 
     Task<bool> UpdateUserProfile(int userId, UserProfileUpdateDTO userProfileUpdateDTO);
 
+    Task<bool> UpdateUserAccount(int userId, UserAccountUpdateDTO userAccountUpdateDTO);
+
     Task<bool> UserMakePayment(int userId, double amount);
 }

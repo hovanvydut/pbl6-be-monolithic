@@ -59,6 +59,17 @@ public class UserService : IUserService
         return await _userProfileRepo.Update(userId, userProfileEntity);
     }
 
+    public async Task<bool> UpdateUserAccount(int userId, UserAccountUpdateDTO userAccountUpdateDTO)
+    {
+        var userDB = await _userAccountRepo.GetById(userId);
+        if (userDB == null)
+            throw new BaseException(HttpCode.NOT_FOUND, "This user is not found");
+        userDB.IsActived = userAccountUpdateDTO.IsActived;
+        userDB.RoleId = userAccountUpdateDTO.RoleId;
+        userDB.Role = null;
+        return await _userAccountRepo.Update(userId, userDB);
+    }
+
     public async Task<PagedList<UserDTO>> GetAllUsers(UserParams userParams)
     {
         var listUser = await _userAccountRepo.GetAllUsers(userParams);

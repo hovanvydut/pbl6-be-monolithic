@@ -91,8 +91,12 @@ public class AuthService : IAuthService
     public async Task<UserLoginResponseDTO> Login(UserLoginDTO userLoginDTO)
     {
         var currentUser = await _userAccountRepo.GetByEmail(userLoginDTO.Email);
-        if (currentUser == null || !currentUser.IsVerified)
-            throw new BaseException(HttpCode.BAD_REQUEST, "Account is not registed or email confirmed");
+        if (currentUser == null)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Account has not registed yet");
+        if (!currentUser.IsVerified)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Account has not email confirmed yet");
+        if (!currentUser.IsActived)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Account is blocked");
 
         var passwordHash = new PasswordHash(currentUser.PasswordHashed, currentUser.PasswordSalt);
         if (!PasswordSecure.IsValidPasswod(userLoginDTO.Password, passwordHash))

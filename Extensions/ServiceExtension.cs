@@ -27,6 +27,7 @@ public static class ServiceExtension
     public static void ConfigureModelSetting(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
         string currentDatabaseConfig = configuration.GetSection("CurrentDatabaseConfig").Value;
         Console.WriteLine(configuration.GetSection("PaymentConfig").GetSection(currentDatabaseConfig).Value);

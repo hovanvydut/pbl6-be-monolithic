@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Monolithic.Helpers;
 using System.Text;
 
 namespace Monolithic.Extensions;
@@ -15,19 +15,21 @@ public static class AuthExtension
 
     private static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
     {
-        var tokenKey = Encoding.UTF8.GetBytes(configuration["JwtSettings:secretKey"]);
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(tokenKey)
-                };
-            });
+        var tokenSection = configuration.GetSection("JwtSettings");
+        var tokenSettings = tokenSection.Get<JwtSettings>();
+
+        var publicKey = JwtOptions.GetPublicKey(tokenSettings);
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = JwtOptions.GetTokenParams(tokenSettings, publicKey);
+        });
     }
 
     private static void ConfigureSwaggerForAuth(this IServiceCollection services)

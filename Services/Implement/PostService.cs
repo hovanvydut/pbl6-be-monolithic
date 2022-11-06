@@ -23,11 +23,16 @@ public class PostService : IPostService
     private readonly ICategoryRepository _categoryRepo;
     private readonly IAddressRepository _addressRepo;
     private readonly IPropertyService _propService;
+    private readonly IConfigSettingService _configSettingService;
+    private readonly IUserService _userService;
+    private readonly IPaymentHistoryService _paymentHistoryService;
 
     public PostService(IPostRepository postRepo, IMapper mapper, IBookmarkRepository bookmarkRepo,
                         IMediaRepository mediaRepo, IPropertyRepository propertyRepo,
                         DataContext db, ICategoryRepository categoryRepo,
-                        IAddressRepository addressRepo, IPropertyService propService)
+                        IAddressRepository addressRepo, IPropertyService propService,
+                        IConfigSettingService configSettingService, IUserService userService,
+                        IPaymentHistoryService paymentHistoryService)
     {
         _postRepo = postRepo;
         _mapper = mapper;
@@ -38,6 +43,9 @@ public class PostService : IPostService
         _categoryRepo = categoryRepo;
         _addressRepo = addressRepo;
         _propService = propService;
+        _configSettingService = configSettingService;
+        _userService = userService;
+        _paymentHistoryService = paymentHistoryService;
     }
 
     public async Task<PostDTO> GetPostById(int id)
@@ -153,6 +161,13 @@ public class PostService : IPostService
                     postPropertyEntityList.Add(postPropertyEntity);
                 }
                 await _propertyRepo.CreatePostProperty(postPropertyEntityList);
+
+                // Pay for create post
+                var postPrice = await _configSettingService.GetValueByKey(ConfigSetting.POST_PRICE);
+                await _userService.UserMakePayment(hostId, postPrice);
+                // Save payment history
+                await _paymentHistoryService.PayForCreatePost(hostId, savedPostEntity.Id, postPrice);
+
                 transaction.Commit();
             }
             catch (BaseException ex)

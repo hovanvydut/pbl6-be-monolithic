@@ -70,14 +70,25 @@ public class UserProfileReposiory : IUserProfileReposiory
         return await _db.SaveChangesAsync() >= 0;
     }
 
-    public async Task AddGold(int userId, long amount)
+    public async Task<bool> AddGold(int userId, long amount)
     {
         UserProfileEntity userEntity = await this.GetById(userId);
-        if (userEntity == null) {
-            throw new Exception("UserProfile id = " + userId + " doesn't found");
-        }
+        if (userEntity == null)
+            throw new BaseException(HttpCode.BAD_REQUEST, "UserProfile id = " + userId + " doesn't found");
         userEntity.CurrentCredit += amount;
         _db.UserProfiles.Update(userEntity);
-        await _db.SaveChangesAsync();
+        return await _db.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> UserMakePayment(int userId, double amount)
+    {
+        UserProfileEntity userEntity = await this.GetById(userId);
+        if (userEntity == null)
+            throw new BaseException(HttpCode.BAD_REQUEST, "UserProfile id = " + userId + " doesn't found");
+        if (userEntity.CurrentCredit < amount)
+            throw new BaseException(HttpCode.BAD_REQUEST, "This user has not enough credit to pay");
+        userEntity.CurrentCredit -= amount;
+        _db.UserProfiles.Update(userEntity);
+        return await _db.SaveChangesAsync() > 0;
     }
 }

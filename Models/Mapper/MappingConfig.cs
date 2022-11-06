@@ -1,5 +1,6 @@
 using Monolithic.Models.Entities;
 using Monolithic.Models.DTO;
+using Monolithic.Helpers;
 using AutoMapper;
 
 namespace Monolithic.Models.Mapper;
@@ -44,7 +45,6 @@ public class MappingConfig : Profile
         // post
         CreateMap<CreatePostDTO, PostEntity>().PreserveReferences();
         CreateMap<UpdatePostDTO, PostEntity>().PreserveReferences();
-
         CreateMap<PostPropertyEntity, PropertyDTO>()
             .ForMember(dest => dest.Id, act => act.MapFrom(src => src.Property.Id))
             .ForMember(dest => dest.DisplayName, act => act.MapFrom(src => src.Property.DisplayName))
@@ -54,6 +54,7 @@ public class MappingConfig : Profile
             .ForMember(dest => dest.Properties, act => act.MapFrom(src => src.PostProperties))
             .ForMember(dest => dest.FullAddress, act => act.MapFrom(src => src.AddressWard))
             .ForMember(dest => dest.Address, act => act.MapFrom(src => src.Address))
+            .ForMember(dto => dto.AuthorInfo, act => act.MapFrom(src => src.HostAccount.UserProfile))
             .PreserveReferences();
 
         // media
@@ -73,10 +74,39 @@ public class MappingConfig : Profile
             .ForMember(dto => dto.FullAddress, prop => prop.MapFrom(entity => entity.Post.AddressWard))
             .ForMember(dto => dto.Price, prop => prop.MapFrom(entity => entity.Post.Price))
             .ForMember(dto => dto.Slug, prop => prop.MapFrom(entity => entity.Post.Slug))
+            .ForMember(dto => dto.Address, prop => prop.MapFrom(entity => entity.Post.Address))
+            .ForMember(dto => dto.Area, prop => prop.MapFrom(entity => entity.Post.Area))
             .ForMember(dto => dto.Category, prop => prop.MapFrom(entity => entity.Post.Category))
             .PreserveReferences();
         // bank code
         CreateMap<BankCodeEntity, BankCodeDTO>();
         CreateMap<VNPHistoryDTO, VNPHistoryEntity>();
+        CreateMap<VNPHistoryEntity, UserVNPHistoryDTO>()
+            .ForMember(dto => dto.OrderInfo, prop => prop.MapFrom(entity => entity.vnp_OrderInfo))
+            .ForMember(dto => dto.Amount, prop => prop.MapFrom(entity => entity.vnp_Amount))
+            .ForMember(dto => dto.BankCode, prop => prop.MapFrom(entity => entity.vnp_BankCode))
+            .ForMember(dto => dto.UserEmail, prop => prop.MapFrom(entity => entity.UserAccount.Email))
+            .ForMember(dto => dto.TransactionStatus, prop => prop.MapFrom(entity =>
+                                                VNPStatus.GetVNPStatus(entity.vnp_TransactionStatus)));
+
+        // config setting
+        CreateMap<ConfigSettingEntity, ConfigSettingDTO>();
+        CreateMap<ConfigSettingUpdateDTO, ConfigSettingEntity>();
+
+        // payment history
+        CreateMap<PaymentHistoryEntity, PaymentHistoryDTO>()
+            .ForMember(dto => dto.HostEmail, prop => prop.MapFrom(entity => entity.HostAccount.Email));
+        // booking
+        CreateMap<FreeTimeDTO, FreeTimeEntity>();
+        CreateMap<FreeTimeEntity, FreeTimeDTO>();
+        CreateMap<CreateMeetingDTO, MeetingEntity>();
+        CreateMap<UserProfileEntity, GuestMeetingDTO>();
+        CreateMap<MeetingEntity, MeetingDTO>()
+            .ForMember(dto => dto.GuestInfo, prop => prop.MapFrom(entity => entity.GuestAccount.UserProfile));
+
+        // review
+        CreateMap<CreateReviewDTO, ReviewEntity>();
+        CreateMap<ReviewEntity, ReviewDTO>()
+            .ForMember(dto => dto.UserInfo, prop => prop.MapFrom(e => e.UserAccount.UserProfile));
     }
 }

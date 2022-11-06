@@ -16,13 +16,13 @@ public class CategoryRepository : ICategoryRepository
         _db = db;
     }
 
-    public async Task<PagedList<CategoryEntity>> GetAllWithFilter(CategoryParams categoryParams)
-    {
-        // PagedList<CategoryEntity> categoryList = await _db.Categories.Where(c => c.CreatedAt == null)
-        //                             .ToPagedList(categoryParams.PageNumber, categoryParams.PageSize);
-        // return categoryList;
-        return null;
-    }
+    // public async Task<PagedList<CategoryEntity>> GetAllWithFilter(CategoryParams categoryParams)
+    // {
+    //     // PagedList<CategoryEntity> categoryList = await _db.Categories.Where(c => c.CreatedAt == null)
+    //     //                             .ToPagedList(categoryParams.PageNumber, categoryParams.PageSize);
+    //     // return categoryList;
+    //     return null;
+    // }
 
     public async Task<List<CategoryEntity>> GetAllHouseType()
     {

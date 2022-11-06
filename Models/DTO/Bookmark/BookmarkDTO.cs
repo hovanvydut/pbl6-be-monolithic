@@ -6,9 +6,13 @@ public class BookmarkDTO
 
     public string Title { get; set; }
 
-    public string Price { get; set; }
+    public float Price { get; set; }
 
     public string Slug { get; set; }
+
+    public float Area { get; set; }
+
+    public string Address { get; set; }
 
     public FullAddressDTO FullAddress { get; set; }
 

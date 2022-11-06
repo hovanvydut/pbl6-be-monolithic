@@ -28,7 +28,7 @@ builder.Services.AddControllers();
 // generate lowercase URLs
 builder.Services.Configure<RouteOptions>(options =>
 {
-   options.LowercaseUrls = true;
+    options.LowercaseUrls = true;
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -36,7 +36,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // s3
-AWSOptions awsOptions = new AWSOptions 
+AWSOptions awsOptions = new AWSOptions
 {
     Credentials = new BasicAWSCredentials("AKIAXVARHJLQETQ5NGF2", "hFY184c9ff+IX3HW40VJXaaIIPFw32tzHYW+D0db")
 };
@@ -44,7 +44,13 @@ builder.Services.AddDefaultAWSOptions(awsOptions);
 // builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 
+// sentry
+builder.WebHost.UseSentry();
+
 var app = builder.Build();
+
+// sentry
+app.UseSentryTracing();
 
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 

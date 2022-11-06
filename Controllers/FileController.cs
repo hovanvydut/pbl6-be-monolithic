@@ -25,7 +25,7 @@ public class FileControler : BaseController
     }
 
     [HttpPost("upload")]
-    public async Task<BaseResponse<string>> UploadFileAsync(IFormFile file, string? prefix)
+    public async Task<BaseResponse<string>> UploadFileAsync(IFormFile file, string prefix = "")
     {
         string bucketName = _configUtil.getAWSBucketName();
         string region = _configUtil.getAWSRegion();

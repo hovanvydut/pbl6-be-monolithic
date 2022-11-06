@@ -31,7 +31,7 @@ public class UserService : IUserService
     {
         var user = await _userProfileRepo.GetByUserId(userId);
         if (user == null)
-            throw new BaseException(HttpCode.NOT_FOUND, "This user is not found");
+            throw new BaseException(HttpCode.NOT_FOUND, "This user id = " + userId + " is not found");
         var userPersonal = _mapper.Map<UserProfilePersonalDTO>(user);
         var userAddress = await _addressService.GetAddress(userPersonal.AddressWardId);
         userPersonal.AddressWard = userAddress.ward.Name;
@@ -77,5 +77,10 @@ public class UserService : IUserService
             AddressProvince = user.UserProfile.AddressWard.AddressDistrict.AddressProvince.Name
         }).ToList();
         return new PagedList<UserDTO>(listUserDTO, listUser.TotalRecords);
+    }
+
+    public async Task<bool> UserMakePayment(int userId, double amount)
+    {
+        return await _userProfileRepo.UserMakePayment(userId, amount);
     }
 }

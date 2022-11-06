@@ -1,0 +1,43 @@
+using Monolithic.Repositories.Interface;
+using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
+using Monolithic.Models.Entities;
+using Monolithic.Models.Common;
+using Monolithic.Models.DTO;
+using Monolithic.Constants;
+using AutoMapper;
+
+namespace Monolithic.Services.Implement;
+
+public class PaymentHistoryService : IPaymentHistoryService
+{
+    private readonly IPaymentHistoryRepository _paymentHistoryRepo;
+    private readonly IMapper _mapper;
+    public PaymentHistoryService(IPaymentHistoryRepository paymentHistoryRepo, IMapper mapper)
+    {
+        _paymentHistoryRepo = paymentHistoryRepo;
+        _mapper = mapper;
+    }
+
+    public async Task<PagedList<PaymentHistoryDTO>> GetWithParams(int hostId, PaymentHistoryParams paymentHistoryParams)
+    {
+        PagedList<PaymentHistoryEntity> historyEntityList = await _paymentHistoryRepo.GetWithParams(hostId, paymentHistoryParams);
+        List<PaymentHistoryDTO> historyDTOList = historyEntityList.Records.Select(h => _mapper.Map<PaymentHistoryDTO>(h)).ToList();
+        return new PagedList<PaymentHistoryDTO>(historyDTOList, historyEntityList.TotalRecords);
+    }
+
+    public async Task<PaymentHistoryDTO> PayForCreatePost(int hostId, int postId, double postPrice)
+    {
+        var paymentHistory = new PaymentHistoryEntity()
+        {
+            PaymentCode = Guid.NewGuid().ToString("N").ToUpper(),
+            HostId = hostId,
+            PostId = postId,
+            PaymentType = PaymentType.CREATE_POST,
+            Amount = postPrice,
+            Description = "Thanh toán cho việc đăng bài viết",
+        };
+        var paymentHistoryCreated = await _paymentHistoryRepo.Create(paymentHistory);
+        return _mapper.Map<PaymentHistoryDTO>(paymentHistoryCreated);
+    }
+}

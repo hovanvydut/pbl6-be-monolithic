@@ -30,9 +30,10 @@ public class JwtMiddleware
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var publicKey = _jwtSettings.PrivateKey.ToByteArray();
+            var publicKey = JwtOptions.GetPublicKey(_jwtSettings);
+            var tokenValidationParameters = JwtOptions.GetTokenParams(_jwtSettings, publicKey);
             tokenHandler.ValidateToken(token,
-                JwtOptions.GetTokenValidateParams(publicKey), out SecurityToken validatedToken);
+                tokenValidationParameters, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
             // Get data from payload

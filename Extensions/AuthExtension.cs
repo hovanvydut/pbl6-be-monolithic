@@ -15,7 +15,10 @@ public static class AuthExtension
 
     private static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
     {
-        var publicKey = configuration["JwtSettings:PublicKey"].ToByteArray();
+        var tokenSection = configuration.GetSection("JwtSettings");
+        var tokenSettings = tokenSection.Get<JwtSettings>();
+
+        var publicKey = JwtOptions.GetPublicKey(tokenSettings);
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -25,7 +28,7 @@ public static class AuthExtension
         {
             options.RequireHttpsMetadata = false;
             options.SaveToken = true;
-            options.TokenValidationParameters = JwtOptions.GetTokenValidateParams(publicKey);
+            options.TokenValidationParameters = JwtOptions.GetTokenParams(tokenSettings, publicKey);
         });
     }
 

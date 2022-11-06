@@ -32,26 +32,15 @@ public class TokenService : ITokenService
             claims.Add(new Claim(CustomClaimTypes.Permission, permission.Key));
         }
 
-        var privateKey = _jwtSettings.PrivateKey.ToByteArray();
-        var tokenLife = _jwtSettings.Expires;
-
-        using RSA rsa = RSA.Create();
-        rsa.ImportRSAPrivateKey(privateKey, out var _);
-        var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
-        {
-            CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
-        };
-
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddMinutes(tokenLife),
-            NotBefore = DateTime.Now,
-            SigningCredentials = signingCredentials,
+            Expires = DateTime.Now.AddMinutes(_jwtSettings.Expires),
+            SigningCredentials = JwtOptions.GetPrivateKey(_jwtSettings),
+            Audience = _jwtSettings.ValidateAudience ? _jwtSettings.ValidAudience : null,
+            Issuer = _jwtSettings.ValidateIssuer ? _jwtSettings.ValidIssuer : null,
         };
-
         var tokenHandler = new JwtSecurityTokenHandler();
-
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);

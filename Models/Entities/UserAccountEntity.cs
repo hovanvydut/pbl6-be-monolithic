@@ -27,6 +27,9 @@ public class UserAccountEntity : EntityBase
     [Column("security_code")]
     public string SecurityCode { get; set; }
 
+    [Column("is_actived")]
+    public bool IsActived { get; set; }
+
     [ForeignKey(nameof(Role))]
     [Column("role_id")]
     public int RoleId { get; set; }

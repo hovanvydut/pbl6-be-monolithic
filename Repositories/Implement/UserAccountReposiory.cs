@@ -47,10 +47,6 @@ public class UserAccountReposiory : IUserAccountReposiory
 
     public async Task<bool> Update(int id, UserAccountEntity userAccountEntity)
     {
-        UserAccountEntity userAccountDB = await GetById(id);
-        if (userAccountDB == null) return false;
-        userAccountEntity.Id = id;
-        userAccountEntity.CreatedAt = userAccountDB.CreatedAt;
         _db.UserAccounts.Update(userAccountEntity);
         return await _db.SaveChangesAsync() >= 0;
     }

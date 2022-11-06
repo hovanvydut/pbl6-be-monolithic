@@ -60,4 +60,19 @@ public class UserController : BaseController
         }
         return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
     }
+
+    [HttpPut("Account/{userId}")]
+    [Authorize]
+    public async Task<BaseResponse<bool>> UpdateUserAccount(int userId, [FromBody] UserAccountUpdateDTO userAccountUpdateDTO)
+    {
+        if (ModelState.IsValid)
+        {
+            var accountUpdated = await _userService.UpdateUserAccount(userId, userAccountUpdateDTO);
+            if (accountUpdated)
+                return new BaseResponse<bool>(accountUpdated, HttpCode.NO_CONTENT);
+            else
+                return new BaseResponse<bool>(accountUpdated, HttpCode.BAD_REQUEST, "", false);
+        }
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
+    }
 }

@@ -11,7 +11,9 @@ public interface IRoleService
 
     Task<bool> UpdateRole(int roleId, UpdateRoleDTO updateRoleDTO);
 
-    Task<PagedList<RoleDTO>> GetAllRoles(RoleParams roleParams);
+    Task<PagedList<RoleDTO>> GetWithParams(RoleParams roleParams);
+
+    Task<List<RoleDTO>> GetAllRoles();
 
     Task<RoleDTO> GetRoleById(int roleId);
 

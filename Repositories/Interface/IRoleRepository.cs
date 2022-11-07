@@ -10,7 +10,9 @@ public interface IRoleRepository
 
     Task<bool> UpdateRole(int roleId, RoleEntity updateRole);
 
-    Task<PagedList<RoleEntity>> GetAllRoles(RoleParams roleParams);
+    Task<PagedList<RoleEntity>> GetWithParams(RoleParams roleParams);
+
+    Task<List<RoleEntity>> GetAllRoles();
 
     Task<RoleEntity> GetRoleById(int roleId);
 

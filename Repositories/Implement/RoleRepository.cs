@@ -33,7 +33,7 @@ public class RoleRepository : IRoleRepository
         return await _db.SaveChangesAsync() >= 0;
     }
 
-    public async Task<PagedList<RoleEntity>> GetAllRoles(RoleParams roleParams)
+    public async Task<PagedList<RoleEntity>> GetWithParams(RoleParams roleParams)
     {
         var roles = _db.Roles.OrderBy(r => r.CreatedAt).AsQueryable();
         if (!String.IsNullOrEmpty(roleParams.SearchValue))
@@ -45,6 +45,11 @@ public class RoleRepository : IRoleRepository
             );
         }
         return await roles.ToPagedList(roleParams.PageNumber, roleParams.PageSize);
+    }
+
+    public async Task<List<RoleEntity>> GetAllRoles()
+    {
+        return await _db.Roles.ToListAsync();
     }
 
     public async Task<RoleEntity> GetRoleById(int roleId)

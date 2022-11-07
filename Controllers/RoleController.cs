@@ -47,10 +47,17 @@ public class RoleController : BaseController
     }
 
     [HttpGet]
-    public async Task<BaseResponse<PagedList<RoleDTO>>> GetAllRoles([FromQuery] RoleParams roleParams)
+    public async Task<BaseResponse<PagedList<RoleDTO>>> GetWithParams([FromQuery] RoleParams roleParams)
     {
-        var roles = await _roleService.GetAllRoles(roleParams);
+        var roles = await _roleService.GetWithParams(roleParams);
         return new BaseResponse<PagedList<RoleDTO>>(roles);
+    }
+
+    [HttpGet("all")]
+    public async Task<BaseResponse<List<RoleDTO>>> GetAllRoles()
+    {
+        var roles = await _roleService.GetAllRoles();
+        return new BaseResponse<List<RoleDTO>>(roles);
     }
 
     [HttpGet("{roleId}")]

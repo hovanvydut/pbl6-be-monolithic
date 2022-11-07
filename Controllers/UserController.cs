@@ -75,4 +75,12 @@ public class UserController : BaseController
         }
         return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
     }
+
+    [HttpGet("Account/{userId}")]
+    [Authorize]
+    public async Task<BaseResponse<UserAccountDTO>> GetUserAccount(int userId)
+    {
+        var userAccount = await _userService.GetUserAccountById(userId);
+        return new BaseResponse<UserAccountDTO>(userAccount);
+    }
 }

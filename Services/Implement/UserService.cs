@@ -44,13 +44,21 @@ public class UserService : IUserService
     {
         var user = await _userProfileRepo.GetByUserId(userId);
         if (user == null)
-            throw new BaseException(HttpCode.NOT_FOUND, "This user is not found");
+            throw new BaseException(HttpCode.NOT_FOUND, "This user id = " + userId + " is not found");
         var userAnonymous = _mapper.Map<UserProfileAnonymousDTO>(user);
         var userAddress = await _addressService.GetAddress(userAnonymous.AddressWardId);
         userAnonymous.AddressWard = userAddress.ward.Name;
         userAnonymous.AddressDistrict = userAddress.district.Name;
         userAnonymous.AddressProvince = userAddress.province.Name;
         return userAnonymous;
+    }
+
+    public async Task<UserAccountDTO> GetUserAccountById(int userId)
+    {
+        var userAccount = await _userAccountRepo.GetById(userId);
+        if (userAccount == null)
+            throw new BaseException(HttpCode.NOT_FOUND, "This user account id = " + userId + " is not found");
+        return _mapper.Map<UserAccountDTO>(userAccount);
     }
 
     public async Task<bool> UpdateUserProfile(int userId, UserProfileUpdateDTO userProfileUpdateDTO)

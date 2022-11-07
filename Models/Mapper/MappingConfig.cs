@@ -17,6 +17,8 @@ public class MappingConfig : Profile
             .ForMember(dto => dto.RoleName, prop => prop.MapFrom(entity => entity.Role.Name));
         CreateMap<UserRegisterDTO, UserAccountEntity>();
         CreateMap<UserRegisterDTO, UserProfileEntity>();
+        CreateMap<UserAccountEntity, UserAccountDTO>()
+            .ForMember(dto => dto.RoleName, prop => prop.MapFrom(entity => entity.Role.Name));
 
         // User manager
         CreateMap<UserProfileEntity, UserProfilePersonalDTO>()

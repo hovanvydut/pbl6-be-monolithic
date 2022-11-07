@@ -12,6 +12,8 @@ public interface IUserService
 
     Task<UserProfileAnonymousDTO> GetUserProfileAnonymous(int userId);
 
+    Task<UserAccountDTO> GetUserAccountById(int userId);
+
     Task<bool> UpdateUserProfile(int userId, UserProfileUpdateDTO userProfileUpdateDTO);
 
     Task<bool> UpdateUserAccount(int userId, UserAccountUpdateDTO userAccountUpdateDTO);

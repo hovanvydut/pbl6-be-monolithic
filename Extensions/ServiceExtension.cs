@@ -65,6 +65,7 @@ public static class ServiceExtension
         services.AddScoped<IPaymentHistoryRepository, PaymentHistoryRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IPriorityPostRepository, PriorityPostRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)
@@ -82,6 +83,7 @@ public static class ServiceExtension
         services.AddScoped<IPaymentHistoryService, PaymentHistoryService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IPriorityPostService, PriorityPostService>();
     }
 
     private static void ConfigCommonServiceDI(this IServiceCollection services)

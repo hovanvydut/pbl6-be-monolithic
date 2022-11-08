@@ -110,5 +110,13 @@ public class MappingConfig : Profile
         CreateMap<CreateReviewDTO, ReviewEntity>();
         CreateMap<ReviewEntity, ReviewDTO>()
             .ForMember(dto => dto.UserInfo, prop => prop.MapFrom(e => e.UserAccount.UserProfile));
+
+        // priority post
+        CreateMap<PriorityPostCreateDTO, PriorityPostEntity>();
+        CreateMap<PriorityPostEntity, PriorityPostDTO>()
+            .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.Post.Id))
+            .ForMember(dto => dto.Title, prop => prop.MapFrom(entity => entity.Post.Title))
+            .ForMember(dto => dto.Slug, prop => prop.MapFrom(entity => entity.Post.Slug))
+            .ForMember(dto => dto.Address, prop => prop.MapFrom(entity => entity.Post.Address));
     }
 }

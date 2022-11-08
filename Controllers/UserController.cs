@@ -37,7 +37,6 @@ public class UserController : BaseController
 
     [HttpGet("Anonymous")]
     // [Authorize(Roles = UserPermission.ViewAnonymous)]
-    [Authorize]
     public async Task<BaseResponse<UserProfileAnonymousDTO>> GetUserProfileAnonymous(int userId)
     {
         var userProfile = await _userService.GetUserProfileAnonymous(userId);

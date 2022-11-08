@@ -23,4 +23,5 @@ public class TableName
     public const string MEETING = "meeting";
     public const string FREE_TIME = "free_time";
     public const string REVIEW = "review";
+    public const string PRIORITY_POST = "priority_post";
 }

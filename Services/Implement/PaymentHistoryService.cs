@@ -26,7 +26,7 @@ public class PaymentHistoryService : IPaymentHistoryService
         return new PagedList<PaymentHistoryDTO>(historyDTOList, historyEntityList.TotalRecords);
     }
 
-    public async Task<PaymentHistoryDTO> PayForCreatePost(int hostId, int postId, double postPrice)
+    public async Task<PaymentHistoryDTO> PayForCreatePost(int hostId, int postId, double postPaid)
     {
         var paymentHistory = new PaymentHistoryEntity()
         {
@@ -34,8 +34,23 @@ public class PaymentHistoryService : IPaymentHistoryService
             HostId = hostId,
             PostId = postId,
             PaymentType = PaymentType.CREATE_POST,
-            Amount = postPrice,
+            Amount = postPaid,
             Description = "Thanh toán cho việc đăng bài viết",
+        };
+        var paymentHistoryCreated = await _paymentHistoryRepo.Create(paymentHistory);
+        return _mapper.Map<PaymentHistoryDTO>(paymentHistoryCreated);
+    }
+
+    public async Task<PaymentHistoryDTO> PayForUptopPost(int hostId, int postId, double uptopPaid, int days)
+    {
+        var paymentHistory = new PaymentHistoryEntity()
+        {
+            PaymentCode = Guid.NewGuid().ToString("N").ToUpper(),
+            HostId = hostId,
+            PostId = postId,
+            PaymentType = PaymentType.UPTOP_POST,
+            Amount = uptopPaid,
+            Description = $"Thanh toán cho việc đưa bài viết lên mục ưu tiên trong {days} ngày",
         };
         var paymentHistoryCreated = await _paymentHistoryRepo.Create(paymentHistory);
         return _mapper.Map<PaymentHistoryDTO>(paymentHistoryCreated);

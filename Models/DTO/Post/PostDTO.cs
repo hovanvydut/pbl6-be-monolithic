@@ -18,6 +18,7 @@ public class PostDTO
     public List<PropertyGroupDTO> PropertyGroup { get; set; }
     public List<MediaDTO> Medias { get; set; }
     public bool isBookmarked { get; set; }
+    public bool isPriorityPost { get; set; }
     public UserProfileAnonymousDTO AuthorInfo { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

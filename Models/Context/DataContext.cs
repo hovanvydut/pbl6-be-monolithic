@@ -57,4 +57,5 @@ public class DataContext : DbContext
     public DbSet<MeetingEntity> Meetings { get; set; }
     public DbSet<FreeTimeEntity> FreeTimes { get; set; }
     public DbSet<ReviewEntity> Reviews { get; set; }
+    public DbSet<PriorityPostEntity> PriorityPosts { get; set; }
 }

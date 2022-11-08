@@ -26,13 +26,15 @@ public class PostService : IPostService
     private readonly IConfigSettingService _configSettingService;
     private readonly IUserService _userService;
     private readonly IPaymentHistoryService _paymentHistoryService;
+    private readonly IPriorityPostRepository _priorityPostRepo;
 
     public PostService(IPostRepository postRepo, IMapper mapper, IBookmarkRepository bookmarkRepo,
                         IMediaRepository mediaRepo, IPropertyRepository propertyRepo,
                         DataContext db, ICategoryRepository categoryRepo,
                         IAddressRepository addressRepo, IPropertyService propService,
                         IConfigSettingService configSettingService, IUserService userService,
-                        IPaymentHistoryService paymentHistoryService)
+                        IPaymentHistoryService paymentHistoryService,
+                        IPriorityPostRepository priorityPostRepo)
     {
         _postRepo = postRepo;
         _mapper = mapper;
@@ -46,6 +48,7 @@ public class PostService : IPostService
         _configSettingService = configSettingService;
         _userService = userService;
         _paymentHistoryService = paymentHistoryService;
+        _priorityPostRepo = priorityPostRepo;
     }
 
     public async Task<PostDTO> GetPostById(int id)
@@ -256,16 +259,34 @@ public class PostService : IPostService
 
     public async Task<PagedList<PostDTO>> GetPostWithParams(int hostId, int guestId, PostParams postParams)
     {
-        PagedList<PostEntity> postEntityList = await _postRepo.GetPostWithParams(hostId, postParams);
-        List<PostDTO> postDTOList = postEntityList.Records.Select(p => _mapper.Map<PostDTO>(p)).ToList();
+        // Priority post
+        var maxPriorityPostInSearch = await _configSettingService.GetValueByKey(ConfigSetting.PRIORITY_IN_SEARCH);
+        var priorityPostParams = new PriorityPostParams()
+        {
+            AddressWardId = postParams.AddressWardId,
+            PageNumber = postParams.PageNumber,
+            PageSize = Convert.ToInt32(maxPriorityPostInSearch),
+        };
+        PagedList<PriorityPostEntity> priorities = await _priorityPostRepo.GetListAvailable(priorityPostParams);
+        var priorityPosts = priorities.Records.Select(p => p.Post);
+        var priorityPostIds = priorityPosts.Select(p => p.Id);
 
-        // attach media on PostDTO
+        postParams.PageSize -= priorityPosts.Count();
+        PagedList<PostEntity> postEntityList = await _postRepo.GetPostWithParams(hostId, postParams, priorityPostIds);
+
+        IEnumerable<PostEntity> postList = priorityPosts.Concat(postEntityList.Records);
+        List<PostDTO> postDTOList = postList.Select(p => _mapper.Map<PostDTO>(p)).ToList();
+
         foreach (var postDTO in postDTOList)
         {
+            // attach media on PostDTO
             List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
             postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+            // set priority post flag
+            postDTO.isPriorityPost = priorityPostIds.Contains(postDTO.Id);
         }
 
+        // Bookmark
         if (guestId > 0)
         {
             var bookmarkIds = await _bookmarkRepo.GetBookmarkedPostIds(guestId);
@@ -276,7 +297,7 @@ public class PostService : IPostService
         }
 
         await parsePostDTOGroup(postDTOList);
-        return new PagedList<PostDTO>(postDTOList, postEntityList.TotalRecords);
+        return new PagedList<PostDTO>(postDTOList, postEntityList.TotalRecords + priorities.TotalRecords);
     }
 
     public async Task<List<PostDTO>> GetRelatedPost(RelatedPostParams relatedPostParams)

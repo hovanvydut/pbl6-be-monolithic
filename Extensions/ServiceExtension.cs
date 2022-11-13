@@ -66,6 +66,7 @@ public static class ServiceExtension
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<IPriorityPostRepository, PriorityPostRepository>();
+        services.AddScoped<IStatisticRepository, StatisticRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)
@@ -84,6 +85,7 @@ public static class ServiceExtension
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IPriorityPostService, PriorityPostService>();
+        services.AddScoped<IStatisticService, StatisticService>();
     }
 
     private static void ConfigCommonServiceDI(this IServiceCollection services)

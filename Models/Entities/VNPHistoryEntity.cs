@@ -49,5 +49,5 @@ public class VNPHistoryEntity : EntityBase
     [ForeignKey(nameof(UserAccount))]
     [Column("user_id")]
     public int UserAccountId { get; set; }
-    public UserAccountEntity UserAccount { get; set; }    
+    public UserAccountEntity UserAccount { get; set; }
 }

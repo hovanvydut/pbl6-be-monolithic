@@ -9,7 +9,7 @@ public interface IPostRepository
 {
     Task<List<PostEntity>> GetAllPost();
     Task<List<PostEntity>> GetRelatedPost(RelatedPostParams relatedPostParams);
-    Task<PagedList<PostEntity>> GetPostWithParams(int hostId, PostParams postParams);
+    Task<PagedList<PostEntity>> GetPostWithParams(int hostId, PostParams postParams, IEnumerable<int> exceptIds);
     Task<PostEntity> GetPostById(int id);
     Task<PostEntity> CreatePost(PostEntity postEntity);
     Task<PostEntity> UpdatePost(int hostId, int postId, UpdatePostDTO updatePostDTO);

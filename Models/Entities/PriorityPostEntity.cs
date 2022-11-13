@@ -1,14 +1,16 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Monolithic.Models.Common;
 using Monolithic.Constants;
 
 namespace Monolithic.Models.Entities;
 
-[Table(TableName.BOOKMARK)]
-[Index(nameof(BookmarkEntity.PostId))]
-public class BookmarkEntity : EntityBase
+[Table(TableName.PRIORITY_POST)]
+[Index(nameof(PriorityPostEntity.PostId))]
+public class PriorityPostEntity : EntityBase
 {
+    [Key]
     [Column("id")]
     public int Id { get; set; }
 
@@ -17,8 +19,9 @@ public class BookmarkEntity : EntityBase
     public int PostId { get; set; }
     public PostEntity Post { get; set; }
 
-    [ForeignKey(nameof(GuestAccount))]
-    [Column("guest_id")]
-    public int GuestId { get; set; }
-    public UserAccountEntity GuestAccount { get; set; }
+    [Column("start_time")]
+    public DateTime StartTime { get; set; }
+
+    [Column("end_time")]
+    public DateTime EndTime { get; set; }
 }

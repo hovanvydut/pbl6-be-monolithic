@@ -8,5 +8,7 @@ public interface IPaymentHistoryService
 {
     Task<PagedList<PaymentHistoryDTO>> GetWithParams(int hostId, PaymentHistoryParams paymentHistoryParams);
 
-    Task<PaymentHistoryDTO> PayForCreatePost(int hostId, int postId, double postPrice);
+    Task<PaymentHistoryDTO> PayForCreatePost(int hostId, int postId, double postPaid);
+
+    Task<PaymentHistoryDTO> PayForUptopPost(int hostId, int postId, double uptopPaid, int days);
 }

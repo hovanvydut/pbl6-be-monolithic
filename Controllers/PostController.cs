@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Constants;
@@ -12,12 +11,13 @@ namespace Monolithic.Controllers;
 public class PostController : BaseController
 {
     private readonly IPostService _postService;
-    private readonly IMapper _mapper;
+    private readonly IPriorityPostService _priorityPostService;
 
-    public PostController(IPostService postService, IMapper mapper)
+    public PostController(IPostService postService,
+                          IPriorityPostService priorityPostService)
     {
-        this._postService = postService;
-        this._mapper = mapper;
+        _postService = postService;
+        _priorityPostService = priorityPostService;
     }
 
     [HttpGet("{id}")]
@@ -118,5 +118,37 @@ public class PostController : BaseController
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
         await _postService.DeletePost(reqUser.Id, id);
         return new BaseResponse<string>("");
+    }
+
+    [HttpPost("uptop")]
+    [Authorize]
+    public async Task<BaseResponse<bool>> UpTopPost(PriorityPostCreateDTO priorityCreateDTO)
+    {
+        if (ModelState.IsValid)
+        {
+            var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+            var priorityPost = await _priorityPostService.CreatePriorityPost(reqUser.Id, priorityCreateDTO);
+            if (priorityPost)
+                return new BaseResponse<bool>(priorityPost, HttpCode.NO_CONTENT);
+            else
+                return new BaseResponse<bool>(priorityPost, HttpCode.BAD_REQUEST, "", false);
+        }
+        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
+    }
+
+    [HttpGet("uptop/{postId}")]
+    [Authorize]
+    public async Task<BaseResponse<PriorityPostDTO>> GetUpTopPost(int postId)
+    {
+        var priority = await _priorityPostService.GetByPostId(postId);
+        return new BaseResponse<PriorityPostDTO>(priority);
+    }
+
+    [HttpGet("uptop/duplicate")]
+    [Authorize]
+    public async Task<BaseResponse<List<PriorityPostDTO>>> GetDuplicateTimePriorityPost([FromQuery] PriorityPostParams priorityPostParams)
+    {
+        var duplicate = await _priorityPostService.GetPriorityDuplicateTime(priorityPostParams);
+        return new BaseResponse<List<PriorityPostDTO>>(duplicate);
     }
 }

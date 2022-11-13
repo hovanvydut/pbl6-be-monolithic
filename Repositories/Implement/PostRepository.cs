@@ -82,14 +82,15 @@ public class PostRepository : IPostRepository
         return existPostEntity;
     }
 
-    public async Task<PagedList<PostEntity>> GetPostWithParams(int hostId, PostParams postParams)
+    public async Task<PagedList<PostEntity>> GetPostWithParams(int hostId, PostParams postParams, IEnumerable<int> exceptIds)
     {
         var posts = _db.Posts.Include(p => p.Category)
                             .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
                             .Include(p => p.PostProperties)
                             .ThenInclude(prop => prop.Property)
                             .OrderByDescending(c => c.CreatedAt)
-                            .Where(p => p.DeletedAt == null);
+                            .Where(p => p.DeletedAt == null)
+                            .Where(p => !exceptIds.Contains(p.Id));
         if (hostId > 0)
         {
             posts = posts.Where(p => p.HostId == hostId);

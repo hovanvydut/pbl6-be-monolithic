@@ -27,6 +27,12 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
             histories = histories.Where(h => h.HostId == hostId);
         }
 
+        if (paymentHistoryParams.FromDate != null && paymentHistoryParams.ToDate != null)
+        {
+            histories = histories.Where(h => paymentHistoryParams.FromDate <= h.CreatedAt &&
+                                            h.CreatedAt <= paymentHistoryParams.ToDate);
+        }
+
         if (!String.IsNullOrEmpty(paymentHistoryParams.SearchValue))
         {
             var searchValue = paymentHistoryParams.SearchValue.ToLower();

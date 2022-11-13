@@ -59,6 +59,12 @@ public class PaymentRepository : IPaymentRepository
             histories = histories.Where(v => v.UserAccountId == userId);
         }
 
+        if (vnpParams.FromDate != null && vnpParams.ToDate != null)
+        {
+            histories = histories.Where(h => vnpParams.FromDate <= h.CreatedAt &&
+                                            h.CreatedAt <= vnpParams.ToDate);
+        }
+
         if (!String.IsNullOrEmpty(vnpParams.SearchValue))
         {
             var searchValue = vnpParams.SearchValue.ToLower();

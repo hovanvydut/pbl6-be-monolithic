@@ -118,5 +118,8 @@ public class MappingConfig : Profile
             .ForMember(dto => dto.Title, prop => prop.MapFrom(entity => entity.Post.Title))
             .ForMember(dto => dto.Slug, prop => prop.MapFrom(entity => entity.Post.Slug))
             .ForMember(dto => dto.Address, prop => prop.MapFrom(entity => entity.Post.Address));
+        
+        // statistic
+        CreateMap<StatisticEntity, StatisticDTO>();
     }
 }

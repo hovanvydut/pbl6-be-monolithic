@@ -82,7 +82,7 @@ public class PostRepository : IPostRepository
         return existPostEntity;
     }
 
-    public async Task<PagedList<PostEntity>> GetPostWithParams(int hostId, PostParams postParams, IEnumerable<int> exceptIds)
+    public async Task<PagedList<PostEntity>> GetWithParamsInSearchAndFilter(PostSearchFilterParams postParams, IEnumerable<int> priorityIds)
     {
         var posts = _db.Posts.Include(p => p.Category)
                             .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
@@ -90,11 +90,7 @@ public class PostRepository : IPostRepository
                             .ThenInclude(prop => prop.Property)
                             .OrderByDescending(c => c.CreatedAt)
                             .Where(p => p.DeletedAt == null)
-                            .Where(p => !exceptIds.Contains(p.Id));
-        if (hostId > 0)
-        {
-            posts = posts.Where(p => p.HostId == hostId);
-        }
+                            .Where(p => !priorityIds.Contains(p.Id));
 
         if (postParams.AddressWardId > 0)
         {
@@ -146,7 +142,40 @@ public class PostRepository : IPostRepository
                 );
             }
         }
+        return await posts.ToPagedList(postParams.PageNumber, postParams.PageSize);
+    }
 
+    public async Task<PagedList<PostEntity>> GetWithParamsInTableAndList(int hostId, PostTableListParams postParams, IEnumerable<int> priorityIds)
+    {
+        var posts = _db.Posts.Include(p => p.Category)
+                            .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
+                            .Include(p => p.PostProperties)
+                            .ThenInclude(prop => prop.Property)
+                            .OrderByDescending(c => c.CreatedAt)
+                            .Where(p => p.DeletedAt == null);
+        if (hostId > 0)
+        {
+            posts = posts.Where(p => p.HostId == hostId);
+        }
+
+        if (priorityIds.Count() > 0)
+        {
+            posts = posts.Where(p => priorityIds.Contains(p.Id));
+        }
+
+        if (!String.IsNullOrEmpty(postParams.SearchValue))
+        {
+            var searchValue = postParams.SearchValue.ToLower();
+            posts = posts.Where(
+                p => p.Title.ToLower().Contains(searchValue) ||
+                     p.Description.ToLower().Contains(searchValue) ||
+                     p.Address.ToLower().Contains(searchValue) ||
+                     p.AddressWard.Name.ToLower().Contains(searchValue) ||
+                     p.AddressWard.AddressDistrict.Name.ToLower().Contains(searchValue) ||
+                     p.AddressWard.AddressDistrict.AddressProvince.Name.ToLower().Contains(searchValue) ||
+                     p.Category.Name.ToLower().Contains(searchValue)
+            );
+        }
         return await posts.ToPagedList(postParams.PageNumber, postParams.PageSize);
     }
 

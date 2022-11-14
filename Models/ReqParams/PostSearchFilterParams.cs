@@ -2,7 +2,7 @@ using Monolithic.Models.Common;
 
 namespace Monolithic.Models.ReqParams;
 
-public class PostParams : ReqParam
+public class PostSearchFilterParams : ReqParam
 {
     public string Properties { get; set; }
 

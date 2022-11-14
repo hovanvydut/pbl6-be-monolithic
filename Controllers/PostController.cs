@@ -11,13 +11,10 @@ namespace Monolithic.Controllers;
 public class PostController : BaseController
 {
     private readonly IPostService _postService;
-    private readonly IPriorityPostService _priorityPostService;
 
-    public PostController(IPostService postService,
-                          IPriorityPostService priorityPostService)
+    public PostController(IPostService postService)
     {
         _postService = postService;
-        _priorityPostService = priorityPostService;
     }
 
     [HttpGet("{id}")]
@@ -34,17 +31,17 @@ public class PostController : BaseController
     }
 
     [HttpGet]
-    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParams([FromQuery] PostParams postParams)
+    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParams([FromQuery] PostSearchFilterParams postParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
         var posts = new PagedList<PostDTO>();
         if (reqUser == null)
         {
-            posts = await _postService.GetPostWithParams(0, 0, postParams);
+            posts = await _postService.GetWithParamsInSearchAndFilter(0, postParams);
         }
         else
         {
-            posts = await _postService.GetPostWithParams(0, reqUser.Id, postParams);
+            posts = await _postService.GetWithParamsInSearchAndFilter(reqUser.Id, postParams);
         }
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
@@ -58,15 +55,15 @@ public class PostController : BaseController
 
     [HttpGet("/api/host/personal/post")]
     [Authorize]
-    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsPersonal([FromQuery] PostParams postParams)
+    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsPersonal([FromQuery] PostTableListParams postParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        var posts = await _postService.GetPostWithParams(reqUser.Id, 0, postParams);
+        var posts = await _postService.GetWithParamsInTableAndList(reqUser.Id, 0, postParams);
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
 
     [HttpGet("/api/host/{hostId}/post")]
-    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsByHostId(int hostId, [FromQuery] PostParams postParams)
+    public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsByHostId(int hostId, [FromQuery] PostTableListParams postParams)
     {
         if (hostId <= 0)
         {
@@ -76,11 +73,11 @@ public class PostController : BaseController
         var posts = new PagedList<PostDTO>();
         if (reqUser == null)
         {
-            posts = await _postService.GetPostWithParams(hostId, 0, postParams);
+            posts = await _postService.GetWithParamsInTableAndList(hostId, 0, postParams);
         }
         else
         {
-            posts = await _postService.GetPostWithParams(hostId, reqUser.Id, postParams);
+            posts = await _postService.GetWithParamsInTableAndList(hostId, reqUser.Id, postParams);
         }
         return new BaseResponse<PagedList<PostDTO>>(posts);
     }
@@ -118,37 +115,5 @@ public class PostController : BaseController
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
         await _postService.DeletePost(reqUser.Id, id);
         return new BaseResponse<string>("");
-    }
-
-    [HttpPost("uptop")]
-    [Authorize]
-    public async Task<BaseResponse<bool>> UpTopPost(PriorityPostCreateDTO priorityCreateDTO)
-    {
-        if (ModelState.IsValid)
-        {
-            var reqUser = HttpContext.Items["reqUser"] as ReqUser;
-            var priorityPost = await _priorityPostService.CreatePriorityPost(reqUser.Id, priorityCreateDTO);
-            if (priorityPost)
-                return new BaseResponse<bool>(priorityPost, HttpCode.NO_CONTENT);
-            else
-                return new BaseResponse<bool>(priorityPost, HttpCode.BAD_REQUEST, "", false);
-        }
-        return new BaseResponse<bool>(false, HttpCode.BAD_REQUEST, "", false);
-    }
-
-    [HttpGet("uptop/{postId}")]
-    [Authorize]
-    public async Task<BaseResponse<PriorityPostDTO>> GetUpTopPost(int postId)
-    {
-        var priority = await _priorityPostService.GetByPostId(postId);
-        return new BaseResponse<PriorityPostDTO>(priority);
-    }
-
-    [HttpGet("uptop/duplicate")]
-    [Authorize]
-    public async Task<BaseResponse<List<PriorityPostDTO>>> GetDuplicateTimePriorityPost([FromQuery] PriorityPostParams priorityPostParams)
-    {
-        var duplicate = await _priorityPostService.GetPriorityDuplicateTime(priorityPostParams);
-        return new BaseResponse<List<PriorityPostDTO>>(duplicate);
     }
 }

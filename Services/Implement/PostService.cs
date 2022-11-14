@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Storage;
-using Monolithic.Common;
 using Monolithic.Constants;
 using Monolithic.Models.Common;
 using Monolithic.Models.Context;
@@ -257,7 +256,23 @@ public class PostService : IPostService
             throw new BaseException(HttpCode.BAD_REQUEST, "Cannot delete non-exists or other host's post");
     }
 
-    public async Task<PagedList<PostDTO>> GetPostWithParams(int hostId, int guestId, PostParams postParams)
+    public async Task<List<PostDTO>> GetRelatedPost(RelatedPostParams relatedPostParams)
+    {
+        List<PostEntity> postEntityList = await _postRepo.GetRelatedPost(relatedPostParams);
+        List<PostDTO> postDTOList = postEntityList.Select(p => _mapper.Map<PostDTO>(p)).ToList();
+
+        // attach media on PostDTO
+        foreach (var postDTO in postDTOList)
+        {
+            List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
+            postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+        }
+
+        await parsePostDTOGroup(postDTOList);
+        return postDTOList;
+    }
+
+    public async Task<PagedList<PostDTO>> GetWithParamsInSearchAndFilter(int guestId, PostSearchFilterParams postParams)
     {
         // Priority post
         var maxPriorityPostInSearch = await _configSettingService.GetValueByKey(ConfigSetting.PRIORITY_IN_SEARCH);
@@ -272,7 +287,7 @@ public class PostService : IPostService
         var priorityPostIds = priorityPosts.Select(p => p.Id);
 
         postParams.PageSize -= priorityPosts.Count();
-        PagedList<PostEntity> postEntityList = await _postRepo.GetPostWithParams(hostId, postParams, priorityPostIds);
+        PagedList<PostEntity> postEntityList = await _postRepo.GetWithParamsInSearchAndFilter(postParams, priorityPostIds);
 
         IEnumerable<PostEntity> postList = priorityPosts.Concat(postEntityList.Records);
         List<PostDTO> postDTOList = postList.Select(p => _mapper.Map<PostDTO>(p)).ToList();
@@ -300,19 +315,44 @@ public class PostService : IPostService
         return new PagedList<PostDTO>(postDTOList, postEntityList.TotalRecords + priorities.TotalRecords);
     }
 
-    public async Task<List<PostDTO>> GetRelatedPost(RelatedPostParams relatedPostParams)
+    public async Task<PagedList<PostDTO>> GetWithParamsInTableAndList(int hostId, int guestId, PostTableListParams postParams)
     {
-        List<PostEntity> postEntityList = await _postRepo.GetRelatedPost(relatedPostParams);
-        List<PostDTO> postDTOList = postEntityList.Select(p => _mapper.Map<PostDTO>(p)).ToList();
+        List<int> priorityIds = await _priorityPostRepo.GetAllPostIdAvailable();
+        PagedList<PostEntity> postEntityList = new PagedList<PostEntity>();
 
-        // attach media on PostDTO
+        if (postParams.Priority)
+        {
+            postEntityList = await _postRepo.GetWithParamsInTableAndList(hostId, postParams, priorityIds);
+        }
+        else
+        {
+            postEntityList = await _postRepo.GetWithParamsInTableAndList(hostId, postParams, Enumerable.Empty<int>());
+        }
+
+        List<PostDTO> postDTOList = postEntityList.Records.Select(p => _mapper.Map<PostDTO>(p)).ToList();
+
         foreach (var postDTO in postDTOList)
         {
+            // attach media on PostDTO
             List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
             postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
         }
 
+        // Bookmark
+        if (guestId > 0)
+        {
+            var bookmarkIds = await _bookmarkRepo.GetBookmarkedPostIds(guestId);
+            foreach (var postDTO in postDTOList)
+            {
+                postDTO.isBookmarked = bookmarkIds.Contains(postDTO.Id);
+            }
+        }
+        foreach (var postDTO in postDTOList)
+        {
+            postDTO.isPriorityPost = priorityIds.Contains(postDTO.Id);
+        }
+
         await parsePostDTOGroup(postDTOList);
-        return postDTOList;
+        return new PagedList<PostDTO>(postDTOList, postEntityList.TotalRecords);
     }
 }

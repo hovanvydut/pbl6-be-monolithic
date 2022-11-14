@@ -13,4 +13,6 @@ public interface IPriorityPostRepository
     Task<PriorityPostEntity> GetByPostId(int postId);
 
     Task<PriorityPostEntity> Create(PriorityPostEntity priorityPostEntity);
+
+    Task<List<int>> GetAllPostIdAvailable();
 }

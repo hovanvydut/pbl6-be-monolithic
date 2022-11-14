@@ -58,4 +58,11 @@ public class PriorityPostRepository : IPriorityPostRepository
         await _db.SaveChangesAsync();
         return await GetByPostId(priorityPostEntity.PostId);
     }
+
+    public async Task<List<int>> GetAllPostIdAvailable()
+    {
+        return await _db.PriorityPosts
+                        .Where(c => c.StartTime <= DateTime.Now && DateTime.Now <= c.EndTime)
+                        .Select(c => c.PostId).ToListAsync();
+    }
 }

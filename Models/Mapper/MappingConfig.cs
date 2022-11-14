@@ -120,6 +120,7 @@ public class MappingConfig : Profile
             .ForMember(dto => dto.Address, prop => prop.MapFrom(entity => entity.Post.Address));
         
         // statistic
-        CreateMap<StatisticEntity, StatisticDTO>();
+        CreateMap<PostStatisticEntity, PostStatisticDTO>();
+        CreateMap<UserStatisticEntity, UserStatisticDTO>();
     }
 }

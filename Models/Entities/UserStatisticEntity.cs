@@ -5,8 +5,8 @@ using Monolithic.Constants;
 
 namespace Monolithic.Models.Entities;
 
-[Table(TableName.STATISTIC)]
-public class StatisticEntity : EntityBase
+[Table(TableName.USER_STATISTIC)]
+public class UserStatisticEntity : EntityBase
 {
     [Key]
     [Column("id")]
@@ -20,6 +20,6 @@ public class StatisticEntity : EntityBase
 
     [ForeignKey(nameof(UserAccount))]
     [Column("user_id")]
-    public int UserAccountId { get; set; }
+    public int UserId { get; set; }
     public UserAccountEntity UserAccount { get; set; }
 }

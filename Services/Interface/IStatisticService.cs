@@ -5,7 +5,12 @@ namespace Monolithic.Services.Interface;
 
 public interface IStatisticService
 {
-    Task<List<StatisticDTO>> GetWithParams(StatisticParams statisticParams);
+    #region PostStatistic
+    Task<List<PostStatisticDTO>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
+    Task<bool> SaveBookmarkStatistic(int userAccountId);
+    #endregion
 
-    Task<bool> HandleStatistic(string key, double value, int userAccountId);
+    #region UserStatistic
+    Task<List<UserStatisticDTO>> GetUserStatisticWithParams(UserStatisticParams statisticParams);
+    #endregion
 }

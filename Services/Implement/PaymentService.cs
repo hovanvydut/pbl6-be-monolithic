@@ -42,7 +42,7 @@ public class PaymentService : IPaymentService
                 VNPHistoryDTO vnpHistoryDTO = new VNPHistoryDTO();
                 vnpHistoryDTO.vnp_TxnRef = DateTime.Now.Ticks;
                 vnpHistoryDTO.vnp_OrderInfo = "#" + vnpHistoryDTO.vnp_TxnRef.ToString() + " | " + createPaymentDTO.OrderDesc;
-                vnpHistoryDTO.vnp_Amount = createPaymentDTO.Amount * 100;
+                vnpHistoryDTO.vnp_Amount = createPaymentDTO.Amount;
                 vnpHistoryDTO.vnp_BankCode = createPaymentDTO.BankCode;
                 vnpHistoryDTO.vnp_TmnCode = paymentConfig.VNPTmnCode;
                 vnpHistoryDTO.vnp_CreateDate = DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -52,7 +52,8 @@ public class PaymentService : IPaymentService
                 vnpay.AddRequestData("vnp_Version", VnPayLibrary.VERSION);
                 vnpay.AddRequestData("vnp_Command", "pay");
                 vnpay.AddRequestData("vnp_TmnCode", vnpHistoryDTO.vnp_TmnCode);
-                vnpay.AddRequestData("vnp_Amount", vnpHistoryDTO.vnp_Amount.ToString());
+                // Must multiply by 100 to send to vnpay system
+                vnpay.AddRequestData("vnp_Amount", (vnpHistoryDTO.vnp_Amount * 100).ToString());
                 vnpay.AddRequestData("vnp_BankCode", vnpHistoryDTO.vnp_BankCode);
                 vnpay.AddRequestData("vnp_CreateDate", vnpHistoryDTO.vnp_CreateDate);
                 vnpay.AddRequestData("vnp_CurrCode", "VND");

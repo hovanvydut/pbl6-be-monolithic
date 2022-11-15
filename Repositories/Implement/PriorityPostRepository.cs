@@ -36,7 +36,7 @@ public class PriorityPostRepository : IPriorityPostRepository
                                 .Include(p => p.Post.PostProperties)
                                 .ThenInclude(prop => prop.Property)
                                 .OrderBy(c => c.CreatedAt)
-                                .Where(c => c.StartTime <= DateTime.Now && DateTime.Now <= c.EndTime);
+                                .Where(c => DateTime.Now <= c.EndTime);
         if (priorityPostParams.AddressWardId > 0)
             listPriorities = listPriorities.Where(c => c.Post.AddressWardId == priorityPostParams.AddressWardId);
         return await listPriorities.ToPagedList(priorityPostParams.PageNumber, priorityPostParams.PageSize);
@@ -46,7 +46,7 @@ public class PriorityPostRepository : IPriorityPostRepository
     {
         PriorityPostEntity priorityPost = await _db.PriorityPosts
                                 .Include(c => c.Post)
-                                .FirstOrDefaultAsync(c => c.PostId == postId && c.EndTime >= DateTime.Now);
+                                .FirstOrDefaultAsync(c => c.PostId == postId && DateTime.Now <= c.EndTime);
         if (priorityPost == null) return null;
         _db.Entry(priorityPost).State = EntityState.Detached;
         return priorityPost;
@@ -62,7 +62,7 @@ public class PriorityPostRepository : IPriorityPostRepository
     public async Task<List<int>> GetAllPostIdAvailable()
     {
         return await _db.PriorityPosts
-                        .Where(c => c.StartTime <= DateTime.Now && DateTime.Now <= c.EndTime)
+                        .Where(c => DateTime.Now <= c.EndTime)
                         .Select(c => c.PostId).ToListAsync();
     }
 }

@@ -20,8 +20,8 @@ public class StatisticRepository : IStatisticRepository
         var statistics = _db.PostStatistics.Include(s => s.Post).Where(s =>
                                                 s.Post.HostId == hostId &&
                                                 s.Key == statisticParams.Key &&
-                                                statisticParams.FromDate <= s.CreatedAt &&
-                                                s.CreatedAt <= statisticParams.ToDate);
+                                                statisticParams.FromDate.Date <= s.CreatedAt.Date &&
+                                                s.CreatedAt.Date <= statisticParams.ToDate.Date);
         if (!String.IsNullOrEmpty(statisticParams.PostIds))
         {
             var postIds = statisticParams.PostIds.Split(",").Select(c => Convert.ToInt32(c));
@@ -60,8 +60,8 @@ public class StatisticRepository : IStatisticRepository
     {
         var statistics = _db.UserStatistics.Include(s => s.UserAccount).Where(s =>
                                 s.Key == statisticParams.Key &&
-                                statisticParams.FromDate <= s.CreatedAt &&
-                                s.CreatedAt <= statisticParams.ToDate);
+                                statisticParams.FromDate.Date <= s.CreatedAt.Date &&
+                                s.CreatedAt.Date <= statisticParams.ToDate.Date);
         if (!String.IsNullOrEmpty(statisticParams.UserIds))
         {
             var userIds = statisticParams.UserIds.Split(",").Select(c => Convert.ToInt32(c));

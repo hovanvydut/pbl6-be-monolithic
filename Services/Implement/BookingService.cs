@@ -18,16 +18,19 @@ public class BookingService : IBookingService
     private readonly IBookingRepository _bookingRepo;
     private readonly IPostRepository _postRepo;
     private readonly IMapper _mapper;
+    private readonly IStatisticService _statisticService;
     private ILogger<BookingService> _logger;
 
     public BookingService(IUserService userService, IBookingRepository bookingRepo, DataContext db,
-                        IPostRepository postRepo, IMapper mapper, ILogger<BookingService> logger)
+                        IPostRepository postRepo, IMapper mapper, ILogger<BookingService> logger,
+                        IStatisticService statisticService)
     {
         this._userService = userService;
         this._bookingRepo = bookingRepo;
         this._db = db;
         this._postRepo = postRepo;
         this._mapper = mapper;
+        this._statisticService = statisticService;
         this._logger = logger;
     }
 
@@ -185,6 +188,7 @@ public class BookingService : IBookingService
                 }
 
                 await _bookingRepo.CreateMeeting(userId, dto);
+                await _statisticService.SaveBookingStatistic(dto.PostId);
 
                 transaction.Commit();
             }

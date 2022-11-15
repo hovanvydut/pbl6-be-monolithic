@@ -9,6 +9,7 @@ public interface IStatisticService
     Task<List<PostStatisticDTO>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
     Task<bool> SaveBookmarkStatistic(int postId);
     Task<bool> SaveViewPostDetailStatistic(int postId);
+    Task<bool> SaveBookingStatistic(int postId);
     #endregion
 
     #region UserStatistic

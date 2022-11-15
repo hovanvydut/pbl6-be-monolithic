@@ -52,6 +52,7 @@ public class AuthService : IAuthService
         newUserAccount.PasswordSalt = passwordHash.PasswordSalt;
         newUserAccount.PasswordHashed = passwordHash.PasswordHashed;
         newUserAccount.IsVerified = false;
+        newUserAccount.IsActived = true;
         newUserAccount.SecurityCode = CodeSecure.CreateRandomCode();
         await _userAccountRepo.Create(newUserAccount);
 

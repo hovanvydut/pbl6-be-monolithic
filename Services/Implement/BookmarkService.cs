@@ -13,14 +13,17 @@ public class BookmarkService : IBookmarkService
 {
     private readonly IBookmarkRepository _bookmarkRepo;
     private readonly IMediaRepository _mediaRepo;
+    private readonly IStatisticService _statisticService;
     private readonly IMapper _mapper;
 
     public BookmarkService(IBookmarkRepository bookmarkRepo,
                            IMediaRepository mediaRepo,
+                           IStatisticService statisticService,
                            IMapper mapper)
     {
         _bookmarkRepo = bookmarkRepo;
         _mediaRepo = mediaRepo;
+        _statisticService = statisticService;
         _mapper = mapper;
     }
 
@@ -46,6 +49,7 @@ public class BookmarkService : IBookmarkService
             GuestId = guessId,
             PostId = createBookmarkDTO.PostId
         };
+        await _statisticService.SaveBookmarkStatistic(createBookmarkDTO.PostId);
         return await _bookmarkRepo.CreateBookmark(bookmarkEntity);
     }
 

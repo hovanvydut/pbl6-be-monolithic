@@ -10,6 +10,7 @@ public interface IStatisticService
     Task<bool> SaveBookmarkStatistic(int postId);
     Task<bool> SaveViewPostDetailStatistic(int postId);
     Task<bool> SaveBookingStatistic(int postId);
+    Task<bool> SaveGuestMetMotelStatistic(int postId);
     #endregion
 
     #region UserStatistic

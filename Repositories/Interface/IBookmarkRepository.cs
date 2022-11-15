@@ -6,13 +6,13 @@ namespace Monolithic.Repositories.Interface;
 
 public interface IBookmarkRepository
 {
-    Task<bool> IsExistsPostBookmarked(int guessId, int postId);
+    Task<bool> IsExistsPostBookmarked(int guestId, int postId);
 
-    Task<PagedList<BookmarkEntity>> GetBookmarks(int guessId, BookmarkParams bookmarkParams);
+    Task<PagedList<BookmarkEntity>> GetBookmarks(int guestId, BookmarkParams bookmarkParams);
 
     Task<bool> CreateBookmark(BookmarkEntity bookmarkEntity);
 
-    Task<bool> RemoveBookmark(int guessId, int postId);
+    Task<bool> RemoveBookmark(int guestId, int postId);
 
-    Task<List<int>> GetBookmarkedPostIds(int guessId);
+    Task<List<int>> GetBookmarkedPostIds(int guestId);
 }

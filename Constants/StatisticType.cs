@@ -6,7 +6,7 @@ public class StatisticType
 
     public const string BOOKMARK = "bookmark";
 
-    public const string MET_MOTEL = "met_motel";
+    public const string GUEST_MET_MOTEL = "guest_met_motel";
 
     public const string VIEW_POST_DETAIL = "view_post_detail";
 

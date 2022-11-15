@@ -42,6 +42,11 @@ public class StatisticService : IStatisticService
         return await HandlePostStatistic(StatisticType.BOOKING, 1, postId);
     }
 
+    public async Task<bool> SaveGuestMetMotelStatistic(int postId)
+    {
+        return await HandlePostStatistic(StatisticType.GUEST_MET_MOTEL, 1, postId);
+    }
+
     private async Task<bool> HandlePostStatistic(string key, double value, int postId)
     {
         var statisticNow = await _statisticRepo.GetPostStatisticInNow(key, postId);

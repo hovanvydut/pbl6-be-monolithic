@@ -32,6 +32,11 @@ public class StatisticService : IStatisticService
         return await HandlePostStatistic(StatisticType.BOOKMARK, 1, postId);
     }
 
+    public async Task<bool> SaveViewPostDetailStatistic(int postId)
+    {
+        return await HandlePostStatistic(StatisticType.VIEW_POST_DETAIL, 1, postId);
+    }
+
     private async Task<bool> HandlePostStatistic(string key, double value, int postId)
     {
         var statisticNow = await _statisticRepo.GetPostStatisticInNow(key, postId);

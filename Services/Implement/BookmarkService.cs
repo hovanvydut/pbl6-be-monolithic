@@ -27,9 +27,9 @@ public class BookmarkService : IBookmarkService
         _mapper = mapper;
     }
 
-    public async Task<PagedList<BookmarkDTO>> GetBookmarks(int guessId, BookmarkParams bookmarkParams)
+    public async Task<PagedList<BookmarkDTO>> GetBookmarks(int guestId, BookmarkParams bookmarkParams)
     {
-        PagedList<BookmarkEntity> bookmarkEntityList = await _bookmarkRepo.GetBookmarks(guessId, bookmarkParams);
+        PagedList<BookmarkEntity> bookmarkEntityList = await _bookmarkRepo.GetBookmarks(guestId, bookmarkParams);
         List<BookmarkDTO> bookmarkDTOList = bookmarkEntityList.Records.Select(b => _mapper.Map<BookmarkDTO>(b)).ToList();
         foreach (var bookmarkDTO in bookmarkDTOList)
         {
@@ -39,24 +39,24 @@ public class BookmarkService : IBookmarkService
         return new PagedList<BookmarkDTO>(bookmarkDTOList, bookmarkEntityList.TotalRecords);
     }
 
-    public async Task<bool> CreateBookmark(int guessId, CreateBookmarkDTO createBookmarkDTO)
+    public async Task<bool> CreateBookmark(int guestId, CreateBookmarkDTO createBookmarkDTO)
     {
-        if (await _bookmarkRepo.IsExistsPostBookmarked(guessId, createBookmarkDTO.PostId))
+        if (await _bookmarkRepo.IsExistsPostBookmarked(guestId, createBookmarkDTO.PostId))
             throw new BaseException(HttpCode.BAD_REQUEST, "This post have already bookmarked");
 
         var bookmarkEntity = new BookmarkEntity()
         {
-            GuestId = guessId,
+            GuestId = guestId,
             PostId = createBookmarkDTO.PostId
         };
         await _statisticService.SaveBookmarkStatistic(createBookmarkDTO.PostId);
         return await _bookmarkRepo.CreateBookmark(bookmarkEntity);
     }
 
-    public async Task<bool> RemoveBookmark(int guessId, int postId)
+    public async Task<bool> RemoveBookmark(int guestId, int postId)
     {
-        if (!await _bookmarkRepo.IsExistsPostBookmarked(guessId, postId))
+        if (!await _bookmarkRepo.IsExistsPostBookmarked(guestId, postId))
             throw new BaseException(HttpCode.BAD_REQUEST, "This post is not bookmarked to remove");
-        return await _bookmarkRepo.RemoveBookmark(guessId, postId);
+        return await _bookmarkRepo.RemoveBookmark(guestId, postId);
     }
 }

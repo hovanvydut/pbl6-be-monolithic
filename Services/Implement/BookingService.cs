@@ -130,6 +130,7 @@ public class BookingService : IBookingService
                 }
 
                 await _bookingRepo.ConfirmMeet(meetingId);
+                await _statisticService.SaveGuestMetMotelStatistic(meetingEntity.PostId);
 
                 transaction.Commit();
             }

@@ -17,13 +17,13 @@ public class BookmarkRepository : IBookmarkRepository
         _db = db;
     }
 
-    public async Task<PagedList<BookmarkEntity>> GetBookmarks(int guessId, BookmarkParams bookmarkParams)
+    public async Task<PagedList<BookmarkEntity>> GetBookmarks(int guestId, BookmarkParams bookmarkParams)
     {
         var bookmarks = _db.Bookmarks.Include(b => b.Post)
                             .ThenInclude(p => p.Category)
                             .Include(p => p.Post.AddressWard.AddressDistrict.AddressProvince)
                             .OrderByDescending(c => c.CreatedAt)
-                            .Where(p => p.GuestId == guessId)
+                            .Where(p => p.GuestId == guestId)
                             .Where(p => p.Post.DeletedAt == null);
 
         if (!String.IsNullOrEmpty(bookmarkParams.SearchValue))
@@ -48,24 +48,24 @@ public class BookmarkRepository : IBookmarkRepository
         return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> RemoveBookmark(int guessId, int postId)
+    public async Task<bool> RemoveBookmark(int guestId, int postId)
     {
         var bookmarkDB = await _db.Bookmarks
-                        .FirstOrDefaultAsync(c => c.PostId == postId && c.GuestId == guessId);
+                        .FirstOrDefaultAsync(c => c.PostId == postId && c.GuestId == guestId);
         if (bookmarkDB == null) return false;
         _db.Entry(bookmarkDB).State = EntityState.Detached;
         _db.Bookmarks.Remove(bookmarkDB);
         return await _db.SaveChangesAsync() > 0;
     }
 
-    public async Task<List<int>> GetBookmarkedPostIds(int guessId)
+    public async Task<List<int>> GetBookmarkedPostIds(int guestId)
     {
-        return await _db.Bookmarks.Where(c => c.GuestId == guessId)
+        return await _db.Bookmarks.Where(c => c.GuestId == guestId)
                             .Select(c => c.PostId).ToListAsync();
     }
     
-    public async Task<bool> IsExistsPostBookmarked(int guessId, int postId)
+    public async Task<bool> IsExistsPostBookmarked(int guestId, int postId)
     {
-        return await _db.Bookmarks.AnyAsync(c => c.GuestId == guessId && c.PostId == postId);
+        return await _db.Bookmarks.AnyAsync(c => c.GuestId == guestId && c.PostId == postId);
     }
 }

@@ -26,6 +26,7 @@ public class PostService : IPostService
     private readonly IUserService _userService;
     private readonly IPaymentHistoryService _paymentHistoryService;
     private readonly IPriorityPostRepository _priorityPostRepo;
+    private readonly IStatisticService _statisticService;
 
     public PostService(IPostRepository postRepo, IMapper mapper, IBookmarkRepository bookmarkRepo,
                         IMediaRepository mediaRepo, IPropertyRepository propertyRepo,
@@ -33,7 +34,8 @@ public class PostService : IPostService
                         IAddressRepository addressRepo, IPropertyService propService,
                         IConfigSettingService configSettingService, IUserService userService,
                         IPaymentHistoryService paymentHistoryService,
-                        IPriorityPostRepository priorityPostRepo)
+                        IPriorityPostRepository priorityPostRepo,
+                        IStatisticService statisticService)
     {
         _postRepo = postRepo;
         _mapper = mapper;
@@ -48,12 +50,15 @@ public class PostService : IPostService
         _userService = userService;
         _paymentHistoryService = paymentHistoryService;
         _priorityPostRepo = priorityPostRepo;
+        _statisticService = statisticService;
     }
 
     public async Task<PostDTO> GetPostById(int id)
     {
         PostEntity postEntity = await _postRepo.GetPostById(id);
         if (postEntity == null) return null;
+
+        await _statisticService.SaveViewPostDetailStatistic(id);
 
         PostDTO postDTO = _mapper.Map<PostDTO>(postEntity);
 

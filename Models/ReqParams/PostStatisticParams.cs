@@ -6,7 +6,7 @@ public class PostStatisticParams
 
     public string PostIds { get; set; }
 
-    public DateTime? FromDate { get; set; }
+    public DateTime FromDate { get; set; }
 
-    public DateTime? ToDate { get; set; }
+    public DateTime ToDate { get; set; }
 }

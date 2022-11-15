@@ -1,12 +1,20 @@
-namespace Monolithic.Models.DTO;
-
-public class PostStatisticDTO
+namespace Monolithic.Models.DTO
 {
-    public string Key { get; set; }
+    public class PostStatisticDTO
+    {
+        public IEnumerable<PostStatisticDetail> Posts { get; set; }
 
-    public double Value { get; set; }
+        public string StatisticDate { get; set; }
+    }
 
-    public int PostId { get; set; }
+    public class PostStatisticDetail
+    {
+        public int Id { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+        public string Title { get; set; }
+
+        public string Slug { get; set; }
+
+        public double StatisticValue { get; set; }
+    }
 }

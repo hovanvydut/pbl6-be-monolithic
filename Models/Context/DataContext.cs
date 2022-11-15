@@ -58,5 +58,6 @@ public class DataContext : DbContext
     public DbSet<FreeTimeEntity> FreeTimes { get; set; }
     public DbSet<ReviewEntity> Reviews { get; set; }
     public DbSet<PriorityPostEntity> PriorityPosts { get; set; }
-    public DbSet<StatisticEntity> Statistics { get; set; }
+    public DbSet<PostStatisticEntity> PostStatistics { get; set; }
+    public DbSet<UserStatisticEntity> UserStatistics { get; set; }
 }

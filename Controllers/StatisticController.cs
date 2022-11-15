@@ -18,21 +18,21 @@ public class StatisticController : BaseController
         _statisticService = statisticService;
     }
 
-    [HttpGet("personal")]
-    [Authorize]
-    public async Task<BaseResponse<List<StatisticDTO>>> GetStatisticDataPersonal([FromQuery] StatisticParams statisticParams)
-    {
-        var reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        statisticParams.UserAccountIds = reqUser.Id.ToString();
-        var result = await _statisticService.GetWithParams(statisticParams);
-        return new BaseResponse<List<StatisticDTO>>(result);
-    }
+    // [HttpGet("personal")]
+    // [Authorize]
+    // public async Task<BaseResponse<List<StatisticDTO>>> GetStatisticDataPersonal([FromQuery] StatisticParams statisticParams)
+    // {
+    //     var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+    //     statisticParams.UserAccountIds = reqUser.Id.ToString();
+    //     var result = await _statisticService.GetWithParams(statisticParams);
+    //     return new BaseResponse<List<StatisticDTO>>(result);
+    // }
 
-    [HttpGet("admin")]
-    [Authorize]
-    public async Task<BaseResponse<List<StatisticDTO>>> GetStatisticDataAdmin([FromQuery] StatisticParams statisticParams)
-    {
-        var result = await _statisticService.GetWithParams(statisticParams);
-        return new BaseResponse<List<StatisticDTO>>(result);
-    }
+    // [HttpGet("admin")]
+    // [Authorize]
+    // public async Task<BaseResponse<List<StatisticDTO>>> GetStatisticDataAdmin([FromQuery] StatisticParams statisticParams)
+    // {
+    //     var result = await _statisticService.GetWithParams(statisticParams);
+    //     return new BaseResponse<List<StatisticDTO>>(result);
+    // }
 }

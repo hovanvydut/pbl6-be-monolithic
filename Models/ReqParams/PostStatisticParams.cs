@@ -1,10 +1,10 @@
 namespace Monolithic.Models.ReqParams;
 
-public class StatisticParams
+public class PostStatisticParams
 {
     public string Key { get; set; }
 
-    public string UserAccountIds { get; set; }
+    public string PostIds { get; set; }
 
     public DateTime? FromDate { get; set; }
 

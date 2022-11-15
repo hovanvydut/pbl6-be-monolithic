@@ -5,11 +5,23 @@ namespace Monolithic.Repositories.Interface;
 
 public interface IStatisticRepository
 {
-    Task<List<StatisticEntity>> GetWithParams(StatisticParams statisticParams);
+    #region PostStatistic
+    Task<List<PostStatisticEntity>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
 
-    Task<StatisticEntity> GetStatisticInNow(string key, int userAccountId);
+    Task<PostStatisticEntity> GetPostStatisticInNow(string key, int postId);
 
-    Task<bool> Create(StatisticEntity statisticEntity);
+    Task<bool> CreatePostStatistic(PostStatisticEntity postStatisticEntity);
 
-    Task<bool> Update(StatisticEntity statisticEntity);
+    Task<bool> UpdatePostStatistic(PostStatisticEntity postStatisticEntity);
+    #endregion
+
+    #region PostStatistic
+    Task<List<UserStatisticEntity>> GetUserStatisticWithParams(UserStatisticParams statisticParams);
+
+    Task<UserStatisticEntity> GetUserStatisticInNow(string key, int userId);
+
+    Task<bool> CreateUserStatistic(UserStatisticEntity userStatisticEntity);
+
+    Task<bool> UpdateUserStatistic(UserStatisticEntity userStatisticEntity);
+    #endregion
 }

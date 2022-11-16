@@ -22,6 +22,10 @@ public class StatisticRepository : IStatisticRepository
                                                 s.Key == statisticParams.Key &&
                                                 statisticParams.FromDate.Date <= s.CreatedAt.Date &&
                                                 s.CreatedAt.Date <= statisticParams.ToDate.Date);
+        if (!statisticParams.IncludeDeletedPost)
+        {
+            statistics = statistics.Where(s => s.Post.DeletedAt == null);
+        }
         if (!String.IsNullOrEmpty(statisticParams.PostIds))
         {
             var postIds = statisticParams.PostIds.Split(",").Select(c => Convert.ToInt32(c));

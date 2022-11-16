@@ -1,12 +1,31 @@
-namespace Monolithic.Models.ReqParams;
+using Monolithic.Models.Common;
 
-public class UserStatisticParams
+namespace Monolithic.Models.ReqParams
 {
-    public string Key { get; set; }
+    public class UserStatisticParams
+    {
+        public string Key { get; set; }
 
-    public string UserIds { get; set; }
+        public string UserIds { get; set; }
 
-    public DateTime FromDate { get; set; }
+        public DateTime FromDate { get; set; }
 
-    public DateTime ToDate { get; set; }
+        public DateTime ToDate { get; set; }
+    }
+
+    public class UserStatisticInDateParams : ReqParam
+    {
+        public string Key { get; set; }
+
+        public DateTime Date { get; set; }
+    }
+
+    public class UserTopStatisticParams
+    {
+        public int Top { get; set; }
+
+        public string Key { get; set; }
+
+        public DateTime Date { get; set; }
+    }
 }

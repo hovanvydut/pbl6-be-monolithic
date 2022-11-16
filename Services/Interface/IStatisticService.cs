@@ -8,6 +8,7 @@ public interface IStatisticService
 {
     #region PostStatistic
     Task<List<PostStatisticGroupDTO>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
+    Task<List<PostStatisticDTO>> GetTopPostStatistic(int hostId, PostTopStatisticParams statisticParams);
     Task<PagedList<PostStatisticDTO>> GetPostStatisticInDate(int hostId, PostStatisticInDateParams statisticParams);
     Task<bool> SaveBookmarkStatistic(int postId);
     Task<bool> SaveViewPostDetailStatistic(int postId);
@@ -17,6 +18,7 @@ public interface IStatisticService
 
     #region UserStatistic
     Task<List<UserStatisticGroupDTO>> GetUserStatisticWithParams(UserStatisticParams statisticParams);
+    Task<List<UserStatisticDTO>> GetTopUserStatistic(UserTopStatisticParams statisticParams);
     Task<PagedList<UserStatisticDTO>> GetUserStatisticInDate(UserStatisticInDateParams statisticParams);
     #endregion
 }

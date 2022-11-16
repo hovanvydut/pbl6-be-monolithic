@@ -26,4 +26,29 @@ public class StatisticController : BaseController
         var result = await _statisticService.GetPostStatisticWithParams(reqUser.Id, statisticParams);
         return new BaseResponse<List<PostStatisticGroupDTO>>(result);
     }
+
+    [HttpGet("/api/post-statistic/detail")]
+    [Authorize]
+    public async Task<BaseResponse<PagedList<PostStatisticDTO>>> GetPostStatisticDetail([FromQuery] PostStatisticInDateParams statisticParams)
+    {
+        var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var result = await _statisticService.GetPostStatisticInDate(reqUser.Id, statisticParams);
+        return new BaseResponse<PagedList<PostStatisticDTO>>(result);
+    }
+
+    [HttpGet("/api/user-statistic")]
+    [Authorize]
+    public async Task<BaseResponse<List<UserStatisticGroupDTO>>> GetUserStatisticForAdmin([FromQuery] UserStatisticParams statisticParams)
+    {
+        var result = await _statisticService.GetUserStatisticWithParams(statisticParams);
+        return new BaseResponse<List<UserStatisticGroupDTO>>(result);
+    }
+
+    [HttpGet("/api/user-statistic/detail")]
+    [Authorize]
+    public async Task<BaseResponse<PagedList<UserStatisticDTO>>> GetUserStatisticDetail([FromQuery] UserStatisticInDateParams statisticParams)
+    {
+        var result = await _statisticService.GetUserStatisticInDate(statisticParams);
+        return new BaseResponse<PagedList<UserStatisticDTO>>(result);
+    }
 }

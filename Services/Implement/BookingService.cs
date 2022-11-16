@@ -95,7 +95,7 @@ public class BookingService : IBookingService
             }
 
             return true;
-        } catch (BaseException ex)
+        } catch (BaseException)
         {
             return false;
         }

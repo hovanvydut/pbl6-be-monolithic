@@ -47,10 +47,22 @@ public class StatisticRepository : IStatisticRepository
             statistic = statistic.Where(s => s.Post.DeletedAt == null);
         }
         statistic = statistic.OrderByDescending(s => s.Value);
+
+        var statisticCount = statistic.Count();
         var topStatistic = await statistic.Take(statisticParams.Top).ToListAsync();
-        if (topStatistic.Count <= statisticParams.Top)
+
+        /* Giả sử  statistic có 5 bản ghi, mình lấy ra top 4 cho topStatistic thì cái other chính là cái cuối cùng
+        vì thế mình có thể trả ra statistic luôn, còn nếu lấy 3 trở xuống thì mới tính cái post Other, lớn hơn 
+        hoặc bằng 5 thì cái topStatistic đã chứa toàn bộ rồi nên bỏ qua
+        */
+        var otherStatisticCount = statisticCount - topStatistic.Count;
+        if (otherStatisticCount == 1)
         {
-            var bottomStatistic = statistic.Skip(statisticParams.Top).Sum(s => s.Value);
+            return await statistic.ToListAsync();
+        }
+        if (otherStatisticCount > 1)
+        {
+            var bottomStatistic = statistic.Skip(topStatistic.Count).Sum(s => s.Value);
             topStatistic.Add(new PostStatisticEntity()
             {
                 Value = bottomStatistic,
@@ -133,10 +145,18 @@ public class StatisticRepository : IStatisticRepository
                                                 s.Key == statisticParams.Key &&
                                                 s.CreatedAt.Date == statisticParams.Date.Date);
         statistic = statistic.OrderByDescending(s => s.Value);
+
+        var statisticCount = statistic.Count();
         var topStatistic = await statistic.Take(statisticParams.Top).ToListAsync();
-        if (topStatistic.Count <= statisticParams.Top)
+
+        var otherStatisticCount = statisticCount - topStatistic.Count;
+        if (otherStatisticCount == 1)
         {
-            var bottomStatistic = statistic.Skip(statisticParams.Top).Sum(s => s.Value);
+            return await statistic.ToListAsync();
+        }
+        if (otherStatisticCount > 1)
+        {
+            var bottomStatistic = statistic.Skip(topStatistic.Count).Sum(s => s.Value);
             topStatistic.Add(new UserStatisticEntity()
             {
                 Value = bottomStatistic,

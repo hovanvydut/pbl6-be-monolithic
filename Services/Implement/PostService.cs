@@ -53,12 +53,10 @@ public class PostService : IPostService
         _statisticService = statisticService;
     }
 
-    public async Task<PostDTO> GetPostById(int id)
+    public async Task<PostDTO> GetPostById(int id, int userId = 0)
     {
         PostEntity postEntity = await _postRepo.GetPostById(id);
         if (postEntity == null) return null;
-
-        await _statisticService.SaveViewPostDetailStatistic(id);
 
         PostDTO postDTO = _mapper.Map<PostDTO>(postEntity);
 
@@ -69,6 +67,13 @@ public class PostService : IPostService
         // group properties
         List<PostDTO> postDTOList = new List<PostDTO> { postDTO };
         await parsePostDTOGroup(postDTOList);
+
+        // Not save statistic if host view their post detail
+        if (userId > 0 && userId != postEntity.HostId)
+        {
+            await _statisticService.SaveViewPostDetailStatistic(id);
+        }
+
         return postDTO;
     }
 

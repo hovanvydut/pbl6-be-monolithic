@@ -20,7 +20,10 @@ public class PostController : BaseController
     [HttpGet("{id}")]
     public async Task<BaseResponse<PostDTO>> GetPostById(int id)
     {
-        return new BaseResponse<PostDTO>(await _postService.GetPostById(id));
+        var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var userId = reqUser != null ? reqUser.Id : 0;
+        PostDTO post = await _postService.GetPostById(id, userId);
+        return new BaseResponse<PostDTO>(post);
     }
 
     [HttpGet("all")]
@@ -34,7 +37,7 @@ public class PostController : BaseController
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParams([FromQuery] PostSearchFilterParams postParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        var posts = new PagedList<PostDTO>();
+        PagedList<PostDTO> posts = null;
         if (reqUser == null)
         {
             posts = await _postService.GetWithParamsInSearchAndFilter(0, postParams);
@@ -70,7 +73,7 @@ public class PostController : BaseController
             return new BaseResponse<PagedList<PostDTO>>(null, HttpCode.BAD_REQUEST, "hostId is invalid", false);
         }
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        var posts = new PagedList<PostDTO>();
+        PagedList<PostDTO> posts = null;
         if (reqUser == null)
         {
             posts = await _postService.GetWithParamsInTableAndList(hostId, 0, postParams);

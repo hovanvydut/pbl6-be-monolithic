@@ -9,4 +9,6 @@ public class PostStatisticParams
     public DateTime FromDate { get; set; }
 
     public DateTime ToDate { get; set; }
+
+    public bool IncludeDeletedPost { get; set; }
 }

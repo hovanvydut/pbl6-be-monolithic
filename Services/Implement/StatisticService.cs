@@ -40,7 +40,8 @@ public class StatisticService : IStatisticService
                         Title = p.Post.Title,
                         Slug = p.Post.Slug,
                         StatisticValue = p.Value
-                    })
+                    }),
+                    StatisticValue = statistic.Sum(s => s.Value)
                 });
             }
             else
@@ -48,7 +49,8 @@ public class StatisticService : IStatisticService
                 listStatistic.Add(new PostStatisticDTO()
                 {
                     StatisticDate = date.ToString("dd/MM/yyyy"),
-                    Posts = Enumerable.Empty<PostStatisticDetail>()
+                    Posts = Enumerable.Empty<PostStatisticDetail>(),
+                    StatisticValue = 0
                 });
             }
         }
@@ -115,7 +117,8 @@ public class StatisticService : IStatisticService
                         Id = u.UserId,
                         Email = u.UserAccount.Email,
                         StatisticValue = u.Value
-                    })
+                    }),
+                    StatisticValue = statistic.Sum(s => s.Value)
                 });
             }
             else
@@ -123,7 +126,8 @@ public class StatisticService : IStatisticService
                 listStatistic.Add(new UserStatisticDTO()
                 {
                     StatisticDate = date.ToString("dd/MM/yyyy"),
-                    Users = Enumerable.Empty<UserStatisticDetail>()
+                    Users = Enumerable.Empty<UserStatisticDetail>(),
+                    StatisticValue = 0
                 });
             }
         }

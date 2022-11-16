@@ -20,10 +20,10 @@ public class StatisticController : BaseController
 
     [HttpGet("/api/post-statistic")]
     [Authorize]
-    public async Task<BaseResponse<List<PostStatisticDTO>>> GetPostStatisticForHost([FromQuery] PostStatisticParams statisticParams)
+    public async Task<BaseResponse<List<PostStatisticGroupDTO>>> GetPostStatisticForHost([FromQuery] PostStatisticParams statisticParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
         var result = await _statisticService.GetPostStatisticWithParams(reqUser.Id, statisticParams);
-        return new BaseResponse<List<PostStatisticDTO>>(result);
+        return new BaseResponse<List<PostStatisticGroupDTO>>(result);
     }
 }

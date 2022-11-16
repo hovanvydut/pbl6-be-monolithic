@@ -1,20 +1,10 @@
-namespace Monolithic.Models.DTO
+namespace Monolithic.Models.DTO;
+
+public class UserStatisticDTO
 {
-    public class UserStatisticDTO
-    {
-        public IEnumerable<UserStatisticDetail> Users { get; set; }
+    public int Id { get; set; }
 
-        public double StatisticValue { get; set; }
+    public string Email { get; set; }
 
-        public string StatisticDate { get; set; }
-    }
-
-    public class UserStatisticDetail
-    {
-        public int Id { get; set; }
-
-        public string Email { get; set; }
-
-        public double StatisticValue { get; set; }
-    }
+    public double StatisticValue { get; set; }
 }

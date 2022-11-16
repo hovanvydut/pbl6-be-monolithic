@@ -6,7 +6,8 @@ namespace Monolithic.Services.Interface;
 public interface IStatisticService
 {
     #region PostStatistic
-    Task<List<PostStatisticDTO>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
+    Task<List<PostStatisticGroupDTO>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
+    // Task<List<PostStatisticDTO>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
     Task<bool> SaveBookmarkStatistic(int postId);
     Task<bool> SaveViewPostDetailStatistic(int postId);
     Task<bool> SaveBookingStatistic(int postId);
@@ -14,6 +15,6 @@ public interface IStatisticService
     #endregion
 
     #region UserStatistic
-    Task<List<UserStatisticDTO>> GetUserStatisticWithParams(UserStatisticParams statisticParams);
+    Task<List<UserStatisticGroupDTO>> GetUserStatisticWithParams(UserStatisticParams statisticParams);
     #endregion
 }

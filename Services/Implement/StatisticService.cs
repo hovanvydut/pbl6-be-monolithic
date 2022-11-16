@@ -22,36 +22,29 @@ public class StatisticService : IStatisticService
     }
 
     #region PostStatistic
-    public async Task<List<PostStatisticDTO>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams)
+    public async Task<List<PostStatisticGroupDTO>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams)
     {
         var statistics = await _statisticRepo.GetPostStatisticWithParams(hostId, statisticParams);
         var statisticGroup = statistics.GroupBy(s => s.CreatedAt.Date);
-        var listStatistic = new List<PostStatisticDTO>();
+        var listStatistic = new List<PostStatisticGroupDTO>();
         for (DateTime date = statisticParams.FromDate.Date; date <= statisticParams.ToDate.Date; date = date.AddDays(1))
         {
             var statistic = statisticGroup.FirstOrDefault(s => s.Key.Date == date.Date);
             if (statistic != null)
             {
-                listStatistic.Add(new PostStatisticDTO()
+                listStatistic.Add(new PostStatisticGroupDTO()
                 {
                     StatisticDate = date.ToString(DATETIME_FORMAT),
-                    Posts = statistic.Select(p => new PostStatisticDetail()
-                    {
-                        Id = p.PostId,
-                        Title = p.Post.Title,
-                        Slug = p.Post.Slug,
-                        IsDeleted = p.Post.DeletedAt != null,
-                        StatisticValue = p.Value
-                    }),
+                    Posts = statistic.Select(p => _mapper.Map<PostStatisticDTO>(p)),
                     StatisticValue = statistic.Sum(s => s.Value)
                 });
             }
             else
             {
-                listStatistic.Add(new PostStatisticDTO()
+                listStatistic.Add(new PostStatisticGroupDTO()
                 {
                     StatisticDate = date.ToString(DATETIME_FORMAT),
-                    Posts = Enumerable.Empty<PostStatisticDetail>(),
+                    Posts = Enumerable.Empty<PostStatisticDTO>(),
                     StatisticValue = 0
                 });
             }
@@ -101,34 +94,29 @@ public class StatisticService : IStatisticService
     #endregion
 
     #region UserStatistic
-    public async Task<List<UserStatisticDTO>> GetUserStatisticWithParams(UserStatisticParams statisticParams)
+    public async Task<List<UserStatisticGroupDTO>> GetUserStatisticWithParams(UserStatisticParams statisticParams)
     {
         var statistics = await _statisticRepo.GetUserStatisticWithParams(statisticParams);
         var statisticGroup = statistics.GroupBy(s => s.CreatedAt.Date);
-        var listStatistic = new List<UserStatisticDTO>();
+        var listStatistic = new List<UserStatisticGroupDTO>();
         for (DateTime date = statisticParams.FromDate; date <= statisticParams.ToDate; date = date.AddDays(1))
         {
             var statistic = statisticGroup.FirstOrDefault(s => s.Key.Date == date.Date);
             if (statistic != null)
             {
-                listStatistic.Add(new UserStatisticDTO()
+                listStatistic.Add(new UserStatisticGroupDTO()
                 {
                     StatisticDate = date.ToString(DATETIME_FORMAT),
-                    Users = statistic.Select(u => new UserStatisticDetail()
-                    {
-                        Id = u.UserId,
-                        Email = u.UserAccount.Email,
-                        StatisticValue = u.Value
-                    }),
+                    Users = statistic.Select(u => _mapper.Map<UserStatisticDTO>(u)),
                     StatisticValue = statistic.Sum(s => s.Value)
                 });
             }
             else
             {
-                listStatistic.Add(new UserStatisticDTO()
+                listStatistic.Add(new UserStatisticGroupDTO()
                 {
                     StatisticDate = date.ToString(DATETIME_FORMAT),
-                    Users = Enumerable.Empty<UserStatisticDetail>(),
+                    Users = Enumerable.Empty<UserStatisticDTO>(),
                     StatisticValue = 0
                 });
             }

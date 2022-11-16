@@ -12,8 +12,6 @@ namespace Monolithic.Services.Implement;
 public class StatisticService : IStatisticService
 {
     private const string DATETIME_FORMAT = "dd/MM/yyyy";
-    private const int TOP_STATISTIC = 3;
-
     private readonly IStatisticRepository _statisticRepo;
     private readonly IMapper _mapper;
     public StatisticService(IStatisticRepository statisticRepo,
@@ -37,7 +35,6 @@ public class StatisticService : IStatisticService
                 listStatistic.Add(new PostStatisticGroupDTO()
                 {
                     StatisticDate = date.ToString(DATETIME_FORMAT),
-                    Posts = HandleTopPostStatistic(statistic),
                     StatisticValue = statistic.Sum(s => s.Value)
                 });
             }
@@ -46,7 +43,6 @@ public class StatisticService : IStatisticService
                 listStatistic.Add(new PostStatisticGroupDTO()
                 {
                     StatisticDate = date.ToString(DATETIME_FORMAT),
-                    Posts = Enumerable.Empty<PostStatisticDTO>(),
                     StatisticValue = 0
                 });
             }
@@ -54,29 +50,10 @@ public class StatisticService : IStatisticService
         return listStatistic;
     }
 
-    private IEnumerable<PostStatisticDTO> HandleTopPostStatistic(IGrouping<DateTime, PostStatisticEntity> statistic)
+    public async Task<List<PostStatisticDTO>> GetTopPostStatistic(int hostId, PostTopStatisticParams statisticParams)
     {
-        if (statistic.Count() > TOP_STATISTIC)
-        {
-            var topStatistic = statistic.Take(TOP_STATISTIC).ToList();
-            var bottomStatistic = statistic.Skip(TOP_STATISTIC);
-            topStatistic.Add(new PostStatisticEntity()
-            {
-                Value = bottomStatistic.Sum(s => s.Value),
-                PostId = 0,
-                Post = new PostEntity()
-                {
-                    Title = "Khác",
-                    Slug = "",
-                    DeletedAt = null,
-                }
-            });
-            return topStatistic.Select(p => _mapper.Map<PostStatisticDTO>(p));
-        }
-        else
-        {
-            return statistic.Select(p => _mapper.Map<PostStatisticDTO>(p));
-        }
+        var statistic = await _statisticRepo.GetTopPostStatistic(hostId, statisticParams);
+        return statistic.Select(p => _mapper.Map<PostStatisticDTO>(p)).ToList();
     }
 
     public async Task<PagedList<PostStatisticDTO>> GetPostStatisticInDate(int hostId, PostStatisticInDateParams statisticParams)
@@ -141,7 +118,6 @@ public class StatisticService : IStatisticService
                 listStatistic.Add(new UserStatisticGroupDTO()
                 {
                     StatisticDate = date.ToString(DATETIME_FORMAT),
-                    Users = HandleTopUserStatistic(statistic),
                     StatisticValue = statistic.Sum(s => s.Value)
                 });
             }
@@ -150,7 +126,6 @@ public class StatisticService : IStatisticService
                 listStatistic.Add(new UserStatisticGroupDTO()
                 {
                     StatisticDate = date.ToString(DATETIME_FORMAT),
-                    Users = Enumerable.Empty<UserStatisticDTO>(),
                     StatisticValue = 0
                 });
             }
@@ -158,27 +133,10 @@ public class StatisticService : IStatisticService
         return listStatistic;
     }
 
-    private IEnumerable<UserStatisticDTO> HandleTopUserStatistic(IGrouping<DateTime, UserStatisticEntity> statistic)
+    public async Task<List<UserStatisticDTO>> GetTopUserStatistic(UserTopStatisticParams statisticParams)
     {
-        if (statistic.Count() > TOP_STATISTIC)
-        {
-            var topStatistic = statistic.Take(TOP_STATISTIC).ToList();
-            var bottomStatistic = statistic.Skip(TOP_STATISTIC);
-            topStatistic.Add(new UserStatisticEntity()
-            {
-                Value = bottomStatistic.Sum(s => s.Value),
-                UserId = 0,
-                UserAccount = new UserAccountEntity()
-                {
-                    Email = "Khác",
-                }
-            });
-            return topStatistic.Select(p => _mapper.Map<UserStatisticDTO>(p));
-        }
-        else
-        {
-            return statistic.Select(p => _mapper.Map<UserStatisticDTO>(p));
-        }
+        var statistic = await _statisticRepo.GetTopUserStatistic(statisticParams);
+        return statistic.Select(p => _mapper.Map<UserStatisticDTO>(p)).ToList();
     }
 
     private async Task<bool> HandleSaveUserStatistic(string key, double value, int userId)

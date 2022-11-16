@@ -36,6 +36,36 @@ public class StatisticRepository : IStatisticRepository
         return await statistics.OrderByDescending(s => s.Value).ToListAsync();
     }
 
+    public async Task<List<PostStatisticEntity>> GetTopPostStatistic(int hostId, PostTopStatisticParams statisticParams)
+    {
+        var statistic = _db.PostStatistics.Include(s => s.Post).Where(s =>
+                                                s.Post.HostId == hostId &&
+                                                s.Key == statisticParams.Key &&
+                                                s.CreatedAt.Date == statisticParams.Date.Date);
+        if (!statisticParams.IncludeDeletedPost)
+        {
+            statistic = statistic.Where(s => s.Post.DeletedAt == null);
+        }
+        statistic = statistic.OrderByDescending(s => s.Value);
+        var topStatistic = await statistic.Take(statisticParams.Top).ToListAsync();
+        if (topStatistic.Count <= statisticParams.Top)
+        {
+            var bottomStatistic = statistic.Skip(statisticParams.Top).Sum(s => s.Value);
+            topStatistic.Add(new PostStatisticEntity()
+            {
+                Value = bottomStatistic,
+                PostId = 0,
+                Post = new PostEntity()
+                {
+                    Title = "Khác",
+                    Slug = "",
+                    DeletedAt = null,
+                }
+            });
+        }
+        return topStatistic;
+    }
+
     public async Task<PagedList<PostStatisticEntity>> GetPostStatisticInDate(int hostId, PostStatisticInDateParams statisticParams)
     {
         var statistic = _db.PostStatistics.Include(s => s.Post).Where(s =>
@@ -95,6 +125,29 @@ public class StatisticRepository : IStatisticRepository
             statistics = statistics.Where(s => userIds.Contains(s.UserId));
         }
         return await statistics.OrderBy(s => s.CreatedAt).ToListAsync();
+    }
+
+    public async Task<List<UserStatisticEntity>> GetTopUserStatistic(UserTopStatisticParams statisticParams)
+    {
+        var statistic = _db.UserStatistics.Include(s => s.UserAccount).Where(s =>
+                                                s.Key == statisticParams.Key &&
+                                                s.CreatedAt.Date == statisticParams.Date.Date);
+        statistic = statistic.OrderByDescending(s => s.Value);
+        var topStatistic = await statistic.Take(statisticParams.Top).ToListAsync();
+        if (topStatistic.Count <= statisticParams.Top)
+        {
+            var bottomStatistic = statistic.Skip(statisticParams.Top).Sum(s => s.Value);
+            topStatistic.Add(new UserStatisticEntity()
+            {
+                Value = bottomStatistic,
+                UserId = 0,
+                UserAccount = new UserAccountEntity()
+                {
+                    Email = "Khác",
+                }
+            });
+        }
+        return topStatistic;
     }
 
     public async Task<PagedList<UserStatisticEntity>> GetUserStatisticInDate(UserStatisticInDateParams statisticParams)

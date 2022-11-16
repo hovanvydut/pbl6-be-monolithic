@@ -27,6 +27,15 @@ public class StatisticController : BaseController
         return new BaseResponse<List<PostStatisticGroupDTO>>(result);
     }
 
+    [HttpGet("/api/post-statistic/top")]
+    [Authorize]
+    public async Task<BaseResponse<List<PostStatisticDTO>>> GetTopPostStatistic([FromQuery] PostTopStatisticParams statisticParams)
+    {
+        var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var result = await _statisticService.GetTopPostStatistic(reqUser.Id, statisticParams);
+        return new BaseResponse<List<PostStatisticDTO>>(result);
+    }
+
     [HttpGet("/api/post-statistic/detail")]
     [Authorize]
     public async Task<BaseResponse<PagedList<PostStatisticDTO>>> GetPostStatisticDetail([FromQuery] PostStatisticInDateParams statisticParams)
@@ -36,12 +45,22 @@ public class StatisticController : BaseController
         return new BaseResponse<PagedList<PostStatisticDTO>>(result);
     }
 
+    // USER
+
     [HttpGet("/api/user-statistic")]
     [Authorize]
     public async Task<BaseResponse<List<UserStatisticGroupDTO>>> GetUserStatisticForAdmin([FromQuery] UserStatisticParams statisticParams)
     {
         var result = await _statisticService.GetUserStatisticWithParams(statisticParams);
         return new BaseResponse<List<UserStatisticGroupDTO>>(result);
+    }
+
+    [HttpGet("/api/user-statistic/top")]
+    [Authorize]
+    public async Task<BaseResponse<List<UserStatisticDTO>>> GetTopUserStatistic([FromQuery] UserTopStatisticParams statisticParams)
+    {
+        var result = await _statisticService.GetTopUserStatistic(statisticParams);
+        return new BaseResponse<List<UserStatisticDTO>>(result);
     }
 
     [HttpGet("/api/user-statistic/detail")]

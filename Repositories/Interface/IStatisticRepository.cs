@@ -8,6 +8,9 @@ public interface IStatisticRepository
 {
     #region PostStatistic
     Task<List<PostStatisticEntity>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
+
+    Task<List<PostStatisticEntity>> GetTopPostStatistic(int hostId, PostTopStatisticParams statisticParams);
+
     Task<PagedList<PostStatisticEntity>> GetPostStatisticInDate(int hostId, PostStatisticInDateParams statisticParams);
 
     Task<PostStatisticEntity> GetPostStatisticInNow(string key, int postId);
@@ -19,6 +22,9 @@ public interface IStatisticRepository
 
     #region PostStatistic
     Task<List<UserStatisticEntity>> GetUserStatisticWithParams(UserStatisticParams statisticParams);
+
+    Task<List<UserStatisticEntity>> GetTopUserStatistic(UserTopStatisticParams statisticParams);
+
     Task<PagedList<UserStatisticEntity>> GetUserStatisticInDate(UserStatisticInDateParams statisticParams);
 
     Task<UserStatisticEntity> GetUserStatisticInNow(string key, int userId);

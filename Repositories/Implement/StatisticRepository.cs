@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Monolithic.Models.ReqParams;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Context;
+using Monolithic.Models.Common;
+using Monolithic.Extensions;
 
 namespace Monolithic.Repositories.Implement;
 
@@ -31,7 +33,28 @@ public class StatisticRepository : IStatisticRepository
             var postIds = statisticParams.PostIds.Split(",").Select(c => Convert.ToInt32(c));
             statistics = statistics.Where(s => postIds.Contains(s.PostId));
         }
-        return await statistics.OrderBy(s => s.CreatedAt).ToListAsync();
+        return await statistics.OrderByDescending(s => s.Value).ToListAsync();
+    }
+
+    public async Task<PagedList<PostStatisticEntity>> GetPostStatisticInDate(int hostId, PostStatisticInDateParams statisticParams)
+    {
+        var statistic = _db.PostStatistics.Include(s => s.Post).Where(s =>
+                                                s.Post.HostId == hostId &&
+                                                s.Key == statisticParams.Key &&
+                                                s.CreatedAt.Date == statisticParams.Date.Date);
+        if (!statisticParams.IncludeDeletedPost)
+        {
+            statistic = statistic.Where(s => s.Post.DeletedAt == null);
+        }
+        if (!String.IsNullOrEmpty(statisticParams.SearchValue))
+        {
+            var searchValue = statisticParams.SearchValue.ToLower();
+            statistic = statistic.Where(
+                p => p.Post.Title.ToLower().Contains(searchValue) ||
+                     p.Post.Slug.ToLower().Contains(searchValue)
+            );
+        }
+        return await statistic.OrderByDescending(s => s.Value).ToPagedList(statisticParams.PageNumber, statisticParams.PageSize);
     }
 
     public async Task<PostStatisticEntity> GetPostStatisticInNow(string key, int postId)
@@ -72,6 +95,21 @@ public class StatisticRepository : IStatisticRepository
             statistics = statistics.Where(s => userIds.Contains(s.UserId));
         }
         return await statistics.OrderBy(s => s.CreatedAt).ToListAsync();
+    }
+
+    public async Task<PagedList<UserStatisticEntity>> GetUserStatisticInDate(UserStatisticInDateParams statisticParams)
+    {
+        var statistic = _db.UserStatistics.Include(s => s.UserAccount).Where(s =>
+                                                s.Key == statisticParams.Key &&
+                                                s.CreatedAt.Date == statisticParams.Date.Date);
+        if (!String.IsNullOrEmpty(statisticParams.SearchValue))
+        {
+            var searchValue = statisticParams.SearchValue.ToLower();
+            statistic = statistic.Where(
+                p => p.UserAccount.Email.ToLower().Contains(searchValue)
+            );
+        }
+        return await statistic.OrderByDescending(s => s.Value).ToPagedList(statisticParams.PageNumber, statisticParams.PageSize);
     }
 
     public async Task<UserStatisticEntity> GetUserStatisticInNow(string key, int userId)

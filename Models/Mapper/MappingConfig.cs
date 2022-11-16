@@ -118,5 +118,18 @@ public class MappingConfig : Profile
             .ForMember(dto => dto.Title, prop => prop.MapFrom(entity => entity.Post.Title))
             .ForMember(dto => dto.Slug, prop => prop.MapFrom(entity => entity.Post.Slug))
             .ForMember(dto => dto.Address, prop => prop.MapFrom(entity => entity.Post.Address));
+
+        // statistic
+        CreateMap<PostStatisticEntity, PostStatisticDTO>()
+            .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.PostId))
+            .ForMember(dto => dto.Title, prop => prop.MapFrom(entity => entity.Post.Title))
+            .ForMember(dto => dto.Slug, prop => prop.MapFrom(entity => entity.Post.Slug))
+            .ForMember(dto => dto.IsDeleted, prop => prop.MapFrom(entity => entity.Post.DeletedAt != null))
+            .ForMember(dto => dto.StatisticValue, prop => prop.MapFrom(entity => entity.Value));
+
+        CreateMap<UserStatisticEntity, UserStatisticDTO>()
+            .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.UserId))
+            .ForMember(dto => dto.Email, prop => prop.MapFrom(entity => entity.UserAccount.Email))
+            .ForMember(dto => dto.StatisticValue, prop => prop.MapFrom(entity => entity.Value));
     }
 }

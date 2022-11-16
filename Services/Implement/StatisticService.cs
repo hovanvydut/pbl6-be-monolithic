@@ -12,6 +12,7 @@ public class StatisticService : IStatisticService
 {
     private readonly IStatisticRepository _statisticRepo;
     private readonly IMapper _mapper;
+    private const string DATETIME_FORMAT = "dd/MM/yyyy";
 
     public StatisticService(IStatisticRepository statisticRepo,
                             IMapper mapper)
@@ -26,19 +27,20 @@ public class StatisticService : IStatisticService
         var statistics = await _statisticRepo.GetPostStatisticWithParams(hostId, statisticParams);
         var statisticGroup = statistics.GroupBy(s => s.CreatedAt.Date);
         var listStatistic = new List<PostStatisticDTO>();
-        for (DateTime date = statisticParams.FromDate; date <= statisticParams.ToDate; date = date.AddDays(1))
+        for (DateTime date = statisticParams.FromDate.Date; date <= statisticParams.ToDate.Date; date = date.AddDays(1))
         {
             var statistic = statisticGroup.FirstOrDefault(s => s.Key.Date == date.Date);
             if (statistic != null)
             {
                 listStatistic.Add(new PostStatisticDTO()
                 {
-                    StatisticDate = date.ToString("dd/MM/yyyy"),
+                    StatisticDate = date.ToString(DATETIME_FORMAT),
                     Posts = statistic.Select(p => new PostStatisticDetail()
                     {
                         Id = p.PostId,
                         Title = p.Post.Title,
                         Slug = p.Post.Slug,
+                        IsDeleted = p.Post.DeletedAt != null,
                         StatisticValue = p.Value
                     }),
                     StatisticValue = statistic.Sum(s => s.Value)
@@ -48,7 +50,7 @@ public class StatisticService : IStatisticService
             {
                 listStatistic.Add(new PostStatisticDTO()
                 {
-                    StatisticDate = date.ToString("dd/MM/yyyy"),
+                    StatisticDate = date.ToString(DATETIME_FORMAT),
                     Posts = Enumerable.Empty<PostStatisticDetail>(),
                     StatisticValue = 0
                 });
@@ -111,7 +113,7 @@ public class StatisticService : IStatisticService
             {
                 listStatistic.Add(new UserStatisticDTO()
                 {
-                    StatisticDate = date.ToString("dd/MM/yyyy"),
+                    StatisticDate = date.ToString(DATETIME_FORMAT),
                     Users = statistic.Select(u => new UserStatisticDetail()
                     {
                         Id = u.UserId,
@@ -125,7 +127,7 @@ public class StatisticService : IStatisticService
             {
                 listStatistic.Add(new UserStatisticDTO()
                 {
-                    StatisticDate = date.ToString("dd/MM/yyyy"),
+                    StatisticDate = date.ToString(DATETIME_FORMAT),
                     Users = Enumerable.Empty<UserStatisticDetail>(),
                     StatisticValue = 0
                 });

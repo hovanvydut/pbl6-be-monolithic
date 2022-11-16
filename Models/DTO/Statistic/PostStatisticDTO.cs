@@ -17,6 +17,8 @@ namespace Monolithic.Models.DTO
 
         public string Slug { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public double StatisticValue { get; set; }
     }
 }

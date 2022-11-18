@@ -7,15 +7,15 @@ pipeline{
 	
 	environment {
 		DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-		REMOTE_SERVER_DOMAIN = "node-1.silk-cat.software"
-		NODE_1_CREDENTIALS = credentials('NODE_1')
+		REMOTE_SERVER_DOMAIN = "node-2.silk-cat.software"
+		NODE_1_CREDENTIALS = credentials('NODE_2')
 	}
 
 	stages {
 		stage('Pull and run container') {
 			steps {
 				script {
-					sshagent(credentials: ['NODE_1']) {
+					sshagent(credentials: ['NODE_2']) {
 						sh '''
 							[ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh &&
           					ssh-keyscan -t rsa,dsa $REMOTE_SERVER_DOMAIN >> ~/.ssh/known_hosts &&

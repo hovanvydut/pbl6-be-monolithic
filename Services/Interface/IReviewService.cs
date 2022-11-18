@@ -8,4 +8,5 @@ public interface IReviewService
 {
     Task<PagedList<ReviewDTO>> GetAllReviewOfPost(int postId, ReviewParams reqParams);
     Task CreateReview(int userId, int postId, CreateReviewDTO dto);
+    Task<double> GetAverageRatingOfPost(int postId);
 }

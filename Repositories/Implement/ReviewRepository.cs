@@ -38,4 +38,13 @@ public class ReviewRepository : IReviewRepository
 
         return await entityList.ToPagedList(reqParams.PageNumber, reqParams.PageSize);
     }
+    public async Task<double> GetAverageRatingOfPost(int postId)
+    {
+        var rating = await _db.Reviews
+                .Where(r => r.PostId == postId)
+                .Select(r => r.Rating)
+                .DefaultIfEmpty()
+                .AverageAsync();
+        return rating;
+    }
 }

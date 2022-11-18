@@ -9,4 +9,5 @@ public interface IReviewRepository
 {
     Task<ReviewEntity> CreateReview(int userId, int postId, CreateReviewDTO dto);
     Task<PagedList<ReviewEntity>> GetAllReviewOfPost(int postId, ReviewParams reqParams);
+    Task<double> GetAverageRatingOfPost(int postId);
 }

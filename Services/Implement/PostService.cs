@@ -27,6 +27,7 @@ public class PostService : IPostService
     private readonly IPaymentHistoryService _paymentHistoryService;
     private readonly IPriorityPostRepository _priorityPostRepo;
     private readonly IStatisticService _statisticService;
+    private readonly IReviewService _reviewService;
 
     public PostService(IPostRepository postRepo, IMapper mapper, IBookmarkRepository bookmarkRepo,
                         IMediaRepository mediaRepo, IPropertyRepository propertyRepo,
@@ -35,7 +36,8 @@ public class PostService : IPostService
                         IConfigSettingService configSettingService, IUserService userService,
                         IPaymentHistoryService paymentHistoryService,
                         IPriorityPostRepository priorityPostRepo,
-                        IStatisticService statisticService)
+                        IStatisticService statisticService,
+                        IReviewService reviewService)
     {
         _postRepo = postRepo;
         _mapper = mapper;
@@ -51,6 +53,7 @@ public class PostService : IPostService
         _paymentHistoryService = paymentHistoryService;
         _priorityPostRepo = priorityPostRepo;
         _statisticService = statisticService;
+        _reviewService = reviewService;
     }
 
     public async Task<PostDTO> GetPostById(int id, int userId = 0)
@@ -63,6 +66,9 @@ public class PostService : IPostService
         // adjust media
         List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
         postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+
+        // average rating
+        postDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(postDTO.Id);
 
         // group properties
         List<PostDTO> postDTOList = new List<PostDTO> { postDTO };
@@ -87,6 +93,9 @@ public class PostService : IPostService
         {
             List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
             postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+
+            // average rating
+            postDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(postDTO.Id);
         }
 
         await parsePostDTOGroup(postDTOList);

@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
+using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
 using Microsoft.AspNetCore.Mvc;
-using Monolithic.Constants;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
-using Monolithic.Models.ReqParams;
-using Monolithic.Services.Interface;
+using Monolithic.Constants;
 
 namespace Monolithic.Controllers;
 
@@ -48,20 +48,4 @@ public class UptopController : BaseController
         var duplicate = await _priorityPostService.GetPriorityDuplicateTime(priorityPostParams);
         return new BaseResponse<List<PriorityPostDTO>>(duplicate);
     }
-
-    // [HttpGet("/api/host/personal/uptop")]
-    // [Authorize]
-    // public async Task<BaseResponse<PriorityPostDTO>> GetListUptopPostPersonal([FromQuery] PostParams postParams)
-    // {
-    //     var priority = await _priorityPostService.GetByPostId(postId);
-    //     return new BaseResponse<PriorityPostDTO>(priority);
-    // }
-
-    // [HttpGet("/api/host/{hostId}/uptop")]
-    // [Authorize]
-    // public async Task<BaseResponse<PriorityPostDTO>> GetListUptopPostByHostId(int hostId, [FromQuery] PostParams postParams)
-    // {
-    //     var priority = await _priorityPostService.GetByPostId(postId);
-    //     return new BaseResponse<PriorityPostDTO>(priority);
-    // }
 }

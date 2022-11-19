@@ -16,6 +16,7 @@ public class PriorityPostService : IPriorityPostService
     private readonly IPaymentHistoryService _paymentHistoryService;
     private readonly IConfigSettingService _configSettingService;
     private readonly IPriorityPostRepository _priorityPostRepo;
+    private readonly IStatisticService _statisticService;
     private readonly IPostRepository _postRepo;
     private readonly IUserService _userService;
     private readonly DataContext _db;
@@ -23,6 +24,7 @@ public class PriorityPostService : IPriorityPostService
     public PriorityPostService(IPaymentHistoryService paymentHistoryService,
                                IConfigSettingService configSettingService,
                                IPriorityPostRepository priorityPostRepo,
+                               IStatisticService statisticService,
                                IPostRepository postRepo,
                                IUserService userService,
                                DataContext db,
@@ -31,6 +33,7 @@ public class PriorityPostService : IPriorityPostService
         _paymentHistoryService = paymentHistoryService;
         _configSettingService = configSettingService;
         _priorityPostRepo = priorityPostRepo;
+        _statisticService = statisticService;
         _userService = userService;
         _postRepo = postRepo;
         _db = db;
@@ -77,6 +80,8 @@ public class PriorityPostService : IPriorityPostService
                 // Save payment history
                 await _paymentHistoryService.PayForUptopPost(hostId, priorityCreateDTO.PostId,
                                                                 uptopPaid, priorityCreateDTO.Days);
+                // Save uptop statistic
+                await _statisticService.SaveNumberOfUptopped(hostId);
 
                 transaction.Commit();
                 return payment;

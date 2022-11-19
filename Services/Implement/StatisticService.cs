@@ -139,6 +139,23 @@ public class StatisticService : IStatisticService
         return statistic.Select(p => _mapper.Map<UserStatisticDTO>(p)).ToList();
     }
 
+    public async Task<PagedList<UserStatisticDTO>> GetUserStatisticInDate(UserStatisticInDateParams statisticParams)
+    {
+        PagedList<UserStatisticEntity> statisticEntityList = await _statisticRepo.GetUserStatisticInDate(statisticParams);
+        List<UserStatisticDTO> statisticDTOList = statisticEntityList.Records.Select(b => _mapper.Map<UserStatisticDTO>(b)).ToList();
+        return new PagedList<UserStatisticDTO>(statisticDTOList, statisticEntityList.TotalRecords);
+    }
+
+    public async Task<bool> SaveNumberOfPostCreated(int userId)
+    {
+        return await HandleSaveUserStatistic(StatisticType.CREATE_POST, 1, userId);
+    }
+
+    public async Task<bool> SaveNumberOfUptopped(int userId)
+    {
+        return await HandleSaveUserStatistic(StatisticType.UPTOP_POST, 1, userId);
+    }
+
     private async Task<bool> HandleSaveUserStatistic(string key, double value, int userId)
     {
         var statisticNow = await _statisticRepo.GetUserStatisticInNow(key, userId);
@@ -157,13 +174,6 @@ public class StatisticService : IStatisticService
             statisticNow.Value += value;
             return await _statisticRepo.UpdateUserStatistic(statisticNow);
         }
-    }
-
-    public async Task<PagedList<UserStatisticDTO>> GetUserStatisticInDate(UserStatisticInDateParams statisticParams)
-    {
-        PagedList<UserStatisticEntity> statisticEntityList = await _statisticRepo.GetUserStatisticInDate(statisticParams);
-        List<UserStatisticDTO> statisticDTOList = statisticEntityList.Records.Select(b => _mapper.Map<UserStatisticDTO>(b)).ToList();
-        return new PagedList<UserStatisticDTO>(statisticDTOList, statisticEntityList.TotalRecords);
     }
     #endregion
 }

@@ -1,10 +1,14 @@
+using Microsoft.EntityFrameworkCore.Storage;
 using Monolithic.Repositories.Interface;
 using Monolithic.Services.Interface;
+using Microsoft.Extensions.Options;
 using Monolithic.Models.Entities;
+using Monolithic.Models.Context;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Constants;
 using Monolithic.Helpers;
+using Monolithic.Common;
 using AutoMapper;
 using System.Web;
 
@@ -16,9 +20,10 @@ public class AuthService : IAuthService
     private readonly IUserAccountReposiory _userAccountRepo;
     private readonly IUserProfileReposiory _userProfileRepo;
     private readonly ISendMailHelper _sendMailHelper;
-    private readonly IConfiguration _configuration;
+    private readonly ClientAppSettings _clientApp;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
+    private readonly DataContext _db;
 
     public AuthService(IConfigSettingService configSettingService,
                        IUserAccountReposiory userAccountRepo,
@@ -26,55 +31,69 @@ public class AuthService : IAuthService
                        ISendMailHelper sendMailHelper,
                        IConfiguration configuration,
                        ITokenService tokenService,
-                       IMapper mapper)
+                       IMapper mapper,
+                       DataContext db,
+                       IOptions<ClientAppSettings> clientAppSettings)
     {
         _configSettingService = configSettingService;
         _userAccountRepo = userAccountRepo;
         _userProfileRepo = userProfileRepo;
         _sendMailHelper = sendMailHelper;
-        _configuration = configuration;
         _tokenService = tokenService;
         _mapper = mapper;
+        _db = db;
+        _clientApp = clientAppSettings.Value;
     }
 
-    public async Task<UserRegisterResponseDTO> Register(UserRegisterDTO userRegisterDTO, string scheme, string host)
+    public async Task<UserRegisterResponseDTO> Register(UserRegisterDTO userRegisterDTO)
     {
-        var newUserAccount = _mapper.Map<UserAccountEntity>(userRegisterDTO);
-        var newUserProfile = _mapper.Map<UserProfileEntity>(userRegisterDTO);
-        // Throw exception if register unique info is exists
-        if (await _userAccountRepo.GetByEmail(newUserAccount.Email) != null)
-            throw new BaseException(HttpCode.BAD_REQUEST, "This email is existed");
-        if (await _userProfileRepo.IsInvalidNewProfile(newUserProfile))
-            throw new BaseException(HttpCode.BAD_REQUEST, "Phone number or identity number is existed");
+        using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+        {
+            try
+            {
+                var newUserAccount = _mapper.Map<UserAccountEntity>(userRegisterDTO);
+                var newUserProfile = _mapper.Map<UserProfileEntity>(userRegisterDTO);
+                // Throw exception if register unique info is exists
+                if (await _userAccountRepo.GetByEmail(newUserAccount.Email) != null)
+                    throw new BaseException(HttpCode.BAD_REQUEST, "This email is existed");
+                if (await _userProfileRepo.IsInvalidNewProfile(newUserProfile))
+                    throw new BaseException(HttpCode.BAD_REQUEST, "Phone number or identity number is existed");
 
-        // Create user account
-        var passwordHash = PasswordSecure.GetPasswordHash(userRegisterDTO.Password);
-        newUserAccount.PasswordSalt = passwordHash.PasswordSalt;
-        newUserAccount.PasswordHashed = passwordHash.PasswordHashed;
-        newUserAccount.IsVerified = false;
-        newUserAccount.IsActived = true;
-        newUserAccount.SecurityCode = CodeSecure.CreateRandomCode();
-        await _userAccountRepo.Create(newUserAccount);
+                // Create user account
+                var passwordHash = PasswordSecure.GetPasswordHash(userRegisterDTO.Password);
+                newUserAccount.PasswordSalt = passwordHash.PasswordSalt;
+                newUserAccount.PasswordHashed = passwordHash.PasswordHashed;
+                newUserAccount.IsVerified = false;
+                newUserAccount.IsActived = true;
+                newUserAccount.SecurityCode = CodeSecure.CreateRandomCode();
+                await _userAccountRepo.Create(newUserAccount);
 
-        // Create user profile with new user account Id
-        var postPrice = await _configSettingService.GetValueByKey(ConfigSetting.POST_PRICE);
-        var freePost = await _configSettingService.GetValueByKey(ConfigSetting.FREE_POST);
-        var freeCredit = postPrice * freePost;
-        newUserProfile.CurrentCredit = freeCredit;
-        newUserProfile.UserAccountId = newUserAccount.Id;
-        await _userProfileRepo.Create(newUserProfile);
+                // Create user profile with new user account Id
+                var postPrice = await _configSettingService.GetValueByKey(ConfigSetting.POST_PRICE);
+                var freePost = await _configSettingService.GetValueByKey(ConfigSetting.FREE_POST);
+                var freeCredit = postPrice * freePost;
+                newUserProfile.CurrentCredit = freeCredit;
+                newUserProfile.UserAccountId = newUserAccount.Id;
+                await _userProfileRepo.Create(newUserProfile);
 
-        // Send mail
-        await SendMailConfirm(newUserAccount, freeCredit, scheme, host);
+                // Send mail
+                await SendMailConfirm(newUserAccount, freeCredit);
 
-        return _mapper.Map<UserRegisterResponseDTO>(newUserAccount);
+                transaction.Commit();
+                return _mapper.Map<UserRegisterResponseDTO>(newUserAccount);
+            }
+            catch (BaseException ex)
+            {
+                transaction.Rollback();
+                throw ex;
+            }
+        }
     }
 
-    private async Task SendMailConfirm(UserAccountEntity newUserAccount, double freeCredit,
-                                        string scheme, string host)
+    private async Task SendMailConfirm(UserAccountEntity newUserAccount, double freeCredit)
     {
-        var webServerPath = $"{scheme}://{host}/api/auth/confirm-email";
-        var uriBuilder = new UriBuilder(webServerPath);
+        var webClientPath = $"{_clientApp.EndUserAppUrl}/{_clientApp.ConfirmEmailPath}";
+        var uriBuilder = new UriBuilder(webClientPath);
         var query = HttpUtility.ParseQueryString(uriBuilder.Query);
         query["userId"] = newUserAccount.Id.ToString();
         query["code"] = newUserAccount.SecurityCode;
@@ -113,8 +132,10 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<bool> ConfirmEmail(int userId, string code)
+    public async Task<bool> ConfirmEmail(UserConfirmEmailDTO userConfirmEmailDTO)
     {
+        int userId = userConfirmEmailDTO.UserId;
+        string code = userConfirmEmailDTO.Code;
         var currentUser = await _userAccountRepo.GetById(userId);
         if (currentUser == null || currentUser.IsVerified)
             throw new BaseException(HttpCode.BAD_REQUEST, "Account is already verified or not registed");
@@ -141,7 +162,7 @@ public class AuthService : IAuthService
         return await _userAccountRepo.Update(userId, userDB);
     }
 
-    public async Task ForgotPassword(string email, string scheme, string host)
+    public async Task ForgotPassword(string email)
     {
         var userDB = await _userAccountRepo.GetByEmail(email);
         if (userDB == null || !userDB.IsVerified)
@@ -150,8 +171,7 @@ public class AuthService : IAuthService
         userDB.SecurityCode = newSecurityCode;
         await _userAccountRepo.Update(userDB.Id, userDB);
 
-        var webClientUrl = _configuration["ClientApp:Url"];
-        var webClientPath = $"{webClientUrl}/auth/recover-password";
+        var webClientPath = $"{_clientApp.EndUserAppUrl}/{_clientApp.RecoverPasswordPath}";
         var uriBuilder = new UriBuilder(webClientPath);
         var query = HttpUtility.ParseQueryString(uriBuilder.Query);
         query["userId"] = userDB.Id.ToString();

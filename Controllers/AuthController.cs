@@ -20,9 +20,7 @@ public class AuthController : BaseController
     {
         if (ModelState.IsValid)
         {
-            var scheme = HttpContext.Request.Scheme;
-            var host = HttpContext.Request.Host.Value;
-            var newUser = await _authService.Register(userRegisterDTO, scheme, host);
+            var newUser = await _authService.Register(userRegisterDTO);
             return new BaseResponse<UserRegisterResponseDTO>(newUser, HttpCode.CREATED);
         }
         return new BaseResponse<UserRegisterResponseDTO>(null, HttpCode.BAD_REQUEST, "", false);
@@ -39,10 +37,10 @@ public class AuthController : BaseController
         return new BaseResponse<UserLoginResponseDTO>(null, HttpCode.BAD_REQUEST, "", false);
     }
 
-    [HttpGet("Confirm-Email")]
-    public async Task<BaseResponse<bool>> ConfirmEmail(int userId, string code)
+    [HttpPut("Confirm-Email")]
+    public async Task<BaseResponse<bool>> ConfirmEmail(UserConfirmEmailDTO userConfirmEmailDTO)
     {
-        var userConfirm = await _authService.ConfirmEmail(userId, code);
+        var userConfirm = await _authService.ConfirmEmail(userConfirmEmailDTO);
         return new BaseResponse<bool>(userConfirm);
     }
 
@@ -64,9 +62,7 @@ public class AuthController : BaseController
     [HttpGet("Forgot-Password")]
     public async Task<BaseResponse<string>> ForgotPassword(string email)
     {
-        var scheme = HttpContext.Request.Scheme;
-        var host = HttpContext.Request.Host.Value;
-        await _authService.ForgotPassword(email, scheme, host);
+        await _authService.ForgotPassword(email);
         return new BaseResponse<string>("", HttpCode.OK, "Sent email to recover password");
     }
 

@@ -28,6 +28,7 @@ public static class ServiceExtension
     {
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.Configure<ClientAppSettings>(configuration.GetSection("ClientAppSettings"));
 
         string currentDatabaseConfig = configuration.GetSection("CurrentDatabaseConfig").Value;
         Console.WriteLine(configuration.GetSection("PaymentConfig").GetSection(currentDatabaseConfig).Value);

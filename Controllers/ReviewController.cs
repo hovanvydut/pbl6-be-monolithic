@@ -33,4 +33,13 @@ public class ReviewController : BaseController
         await _reviewService.CreateReview(reqUser.Id, postId, dto);
         return new BaseResponse<bool>(true, HttpCode.OK);
     }
+
+    [HttpGet("check-review/post/{postId}")]
+    [Authorize]
+    public async Task<BaseResponse<bool>> CheckCanReview(int postId)
+    {
+        ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        bool hasMet = await _reviewService.CheckCanReview(reqUser.Id, postId);
+        return new BaseResponse<bool>(hasMet, HttpCode.OK);
+    }
 }

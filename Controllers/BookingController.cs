@@ -35,13 +35,23 @@ public class BookingController : BaseController
         return new BaseResponse<bool>(true, HttpCode.CREATED);
     }
 
-    [HttpGet("")]
+    [HttpGet("personal")]
     [Authorize]
     public async Task<BaseResponse<PagedList<MeetingDTO>>> GetAllMeeting([FromQuery] BookingParams reqParams)
     {
         // get all meeting cua chu tro trong thang
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
         PagedList<MeetingDTO> result = await _bookingService.GetAllMeeting(reqUser.Id, reqParams);
+        return new BaseResponse<PagedList<MeetingDTO>>(result);
+    }
+
+    [HttpGet("booked-by-user")]
+    [Authorize]
+    public async Task<BaseResponse<PagedList<MeetingDTO>>> GetAllMeetingBookedBy([FromQuery] BookingParams reqParams)
+    {
+        // get all meeting which was booked by user
+        ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        PagedList<MeetingDTO> result = await _bookingService.GetAllMeetingBookedBy(reqUser.Id, reqParams);
         return new BaseResponse<PagedList<MeetingDTO>>(result);
     }
 

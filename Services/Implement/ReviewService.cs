@@ -30,6 +30,10 @@ public class ReviewService : IReviewService
         _mediaRepo = mediaRepo;
     }
 
+    public async Task<bool> CheckCanReview(int userId, int postId) {
+        return await _bookingService.CheckMetBooking(userId, postId);;
+    }
+
     public async Task CreateReview(int userId, int postId, CreateReviewDTO dto)
     {
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())

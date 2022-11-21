@@ -13,4 +13,5 @@ public interface IBookingService
     Task CreateMeeting(int userId, CreateMeetingDTO dto);
     Task ApproveMeeting(int userId, int meetingId);
     Task ConfirmMeeting(int userId, int meetingId);
+    Task<PagedList<MeetingDTO>> GetAllMeetingBookedBy(int userId, BookingParams reqParams);
 }

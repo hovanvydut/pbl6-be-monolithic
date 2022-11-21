@@ -84,6 +84,26 @@ public class BookingRepository : IBookingRepository
         return await meetings.ToPagedList(reqParams.PageNumber, reqParams.PageSize);
     }
 
+    public async Task<PagedList<MeetingEntity>> GetAllMeetingBookedBy(int userId, BookingParams reqParams)
+    {
+        var meetings = _db.Meetings
+                .Include(m => m.GuestAccount.UserProfile)
+                .OrderByDescending(c => c.CreatedAt)
+                .Where(m => m.GuestId == userId);
+
+        if (reqParams.month > 0 && reqParams.month <= 12)
+        {
+            meetings = meetings.Where(m => m.Time.Month == reqParams.month);
+        }
+
+        if (reqParams.year > 0)
+        {
+            meetings = meetings.Where(m => m.Time.Year == reqParams.year);
+        }
+
+        return await meetings.ToPagedList(reqParams.PageNumber, reqParams.PageSize);
+    }
+
     public async Task<List<MeetingEntity>> GetMeetingBy(int userId, int postId)
     {
         return await _db.Meetings.Where(m => m.PostId == postId && m.GuestId == userId).ToListAsync();

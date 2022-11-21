@@ -94,7 +94,7 @@ public class BookingService : IBookingService
                 }
             }
 
-            return true;
+            return false;
         } catch (BaseException)
         {
             return false;
@@ -212,6 +212,13 @@ public class BookingService : IBookingService
     public async Task<PagedList<MeetingDTO>> GetAllMeeting(int userId, BookingParams reqParams)
     {
         PagedList<MeetingEntity> meetingEntities = await _bookingRepo.GetAllMeeting(userId, reqParams);
+        List<MeetingDTO> meetingDTOList = meetingEntities.Records.Select(p => _mapper.Map<MeetingDTO>(p)).ToList();
+        return new PagedList<MeetingDTO>(meetingDTOList, meetingEntities.TotalRecords);
+    }
+
+    public async Task<PagedList<MeetingDTO>> GetAllMeetingBookedBy(int userId, BookingParams reqParams)
+    {
+        PagedList<MeetingEntity> meetingEntities = await _bookingRepo.GetAllMeetingBookedBy(userId, reqParams);
         List<MeetingDTO> meetingDTOList = meetingEntities.Records.Select(p => _mapper.Map<MeetingDTO>(p)).ToList();
         return new PagedList<MeetingDTO>(meetingDTOList, meetingEntities.TotalRecords);
     }

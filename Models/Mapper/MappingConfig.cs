@@ -97,7 +97,8 @@ public class MappingConfig : Profile
 
         // payment history
         CreateMap<PaymentHistoryEntity, PaymentHistoryDTO>()
-            .ForMember(dto => dto.HostEmail, prop => prop.MapFrom(entity => entity.HostAccount.Email));
+            .ForMember(dto => dto.UserId, prop => prop.MapFrom(entity => entity.HostId))
+            .ForMember(dto => dto.UserEmail, prop => prop.MapFrom(entity => entity.HostAccount.Email));
         // booking
         CreateMap<FreeTimeDTO, FreeTimeEntity>();
         CreateMap<FreeTimeEntity, FreeTimeDTO>();

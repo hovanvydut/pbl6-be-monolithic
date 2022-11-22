@@ -19,8 +19,7 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
     public async Task<PagedList<PaymentHistoryEntity>> GetWithParams(int hostId, PaymentHistoryParams paymentHistoryParams)
     {
         var histories = _db.PaymentHistories.Include(b => b.HostAccount)
-                            .OrderByDescending(c => c.CreatedAt)
-                            .Where(p => p.Post.DeletedAt == null);
+                            .OrderByDescending(c => c.CreatedAt).AsQueryable();
 
         if (hostId > 0)
         {

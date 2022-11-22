@@ -4,9 +4,9 @@ public class PaymentHistoryDTO
 {
     public string PaymentCode { get; set; }
 
-    public int HostId { get; set; }
+    public int UserId { get; set; }
 
-    public string HostEmail { get; set; }
+    public string UserEmail { get; set; }
 
     public int PostId { get; set; }
 

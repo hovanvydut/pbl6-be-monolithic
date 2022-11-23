@@ -1,4 +1,4 @@
-namespace Monolithic.Helpers;
+namespace Monolithic.Helpers.Password;
 
 public class PasswordHash
 {

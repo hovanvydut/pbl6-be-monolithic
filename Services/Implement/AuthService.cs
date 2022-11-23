@@ -11,6 +11,7 @@ using Monolithic.Helpers;
 using Monolithic.Common;
 using AutoMapper;
 using System.Web;
+using pbl6_password_hash;
 
 namespace Monolithic.Services.Implement;
 

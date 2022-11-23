@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Monolithic.Helpers;
+namespace Monolithic.Helpers.Password;
 
 public static class PasswordSecure
 {

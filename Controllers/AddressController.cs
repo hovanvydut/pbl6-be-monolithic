@@ -21,15 +21,13 @@ public class AddressController : BaseController
     public async Task TestLog()
     {
         _log.LogInformation("The global logger has been configured11111");
-        Log.Information("2222No one listens to me!");
-        Log.Information("33333333No one listens to me!");
-
-        // Serilog.ILogger logger = new LoggerConfiguration()
-        //         .WriteTo.DurableHttpUsingFileSizeRolledBuffers(requestUri: "http://elastic:changeme@0.0.0.0:9200")
-        //         .WriteTo.Console()
-        //         .CreateLogger()
-        //         .ForContext<AddressController>();
-        //         logger.Information("3333No one listens to me!");
+        _log.LogInformation("2222No one listens to me!");
+        _log.LogInformation("33333333No one listens to me!");
+        try {
+            throw new Exception("oke");
+        } catch (Exception e) {
+            _log.LogError(e, "Error nek");
+        }
 
     }
 

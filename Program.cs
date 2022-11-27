@@ -5,6 +5,8 @@ using Monolithic.Common;
 using Monolithic.Extensions;
 using Monolithic.Middlewares;
 using Serilog;
+using Serilog.Events;
+using Serilog.Exceptions;
 using Serilog.Sinks.Network;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,11 +53,13 @@ builder.WebHost.UseSentry();
 
 // Logging
 var log = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .Enrich.WithExceptionDetails()
     .WriteTo.Console()
-    .WriteTo.TCPSink("tcp://localhost", 50000)
+    .WriteTo.TCPSink("tcp://node-3.silk-cat.software", 50000)
+    // .WriteTo.DurableHttpUsingFileSizeRolledBuffers(requestUri: "http://localhost:8001/pbl6-api")
     .CreateLogger();
-Log.Logger = log;
-Log.Information("No one listens to me!");
 
 builder.Logging.AddSerilog(log);
 

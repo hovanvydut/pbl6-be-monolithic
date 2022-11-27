@@ -4,6 +4,8 @@ using Amazon.S3;
 using Monolithic.Common;
 using Monolithic.Extensions;
 using Monolithic.Middlewares;
+using Serilog;
+using Serilog.Sinks.Network;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,16 @@ builder.Services.AddAWSService<IAmazonS3>();
 
 // sentry
 builder.WebHost.UseSentry();
+
+// Logging
+var log = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.TCPSink("tcp://localhost", 50000)
+    .CreateLogger();
+Log.Logger = log;
+Log.Information("No one listens to me!");
+
+builder.Logging.AddSerilog(log);
 
 var app = builder.Build();
 

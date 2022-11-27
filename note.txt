@@ -7,6 +7,13 @@ pipeline{
 	}
 
 	stages {
+		stage('gitclone') {
+
+			steps {
+				git branch: 'develop', credentialsId: 'HOME_SERVER_SSH_PRIVATE_KEY', url: 'git@github.com:hovanvydut/pbl6-be-monolithic.git'
+			}
+		}
+
 		stage('Build') {
 
 			steps {
@@ -69,3 +76,8 @@ pipeline{
 		}
 	}
 }
+
+
++refs/heads/*:refs/remotes/origin/* +refs/pull/${ghprbPullId}/*:refs/remotes/origin/pr/${ghprbPullId}/* +refs/tags/*:refs/remotes/origin/tags/*
+
+${sha1} refs/tags/*

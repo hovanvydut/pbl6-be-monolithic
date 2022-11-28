@@ -152,7 +152,16 @@ public class PostRepository : IPostRepository
                             .Include(p => p.PostProperties)
                             .ThenInclude(prop => prop.Property)
                             .OrderByDescending(c => c.CreatedAt)
-                            .Where(p => p.DeletedAt == null);
+                            .AsQueryable();
+        if (postParams.Deleted)
+        {
+            posts = posts.Where(p => p.DeletedAt != null);
+        }
+        else
+        {
+            posts = posts.Where(p => p.DeletedAt == null);
+        }
+
         if (hostId > 0)
         {
             posts = posts.Where(p => p.HostId == hostId);

@@ -1,0 +1,64 @@
+using Monolithic.Repositories.Interface;
+using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
+using Monolithic.Models.Entities;
+using Monolithic.Models.Common;
+using Monolithic.Models.DTO;
+using Monolithic.Constants;
+using Newtonsoft.Json;
+using AutoMapper;
+
+namespace Monolithic.Services.Implement;
+
+public class NotificationService : INotificationService
+{
+    private readonly INotificationRepository _notyRepo;
+    private readonly IPostRepository _postRepo;
+    private readonly IMapper _mapper;
+    public NotificationService(INotificationRepository notyRepo,
+                               IPostRepository postRepo,
+                               IMapper mapper)
+    {
+        _notyRepo = notyRepo;
+        _postRepo = postRepo;
+        _mapper = mapper;
+    }
+
+    public async Task<PagedList<NotificationDTO>> GetNotifications(int userId, NotificationParams notificationParams)
+    {
+        PagedList<NotificationEntity> notyEntityList = await _notyRepo.GetNotifications(userId, notificationParams);
+        List<NotificationDTO> notyDTOList = notyEntityList.Records.Select(b => _mapper.Map<NotificationDTO>(b)).ToList();
+        return new PagedList<NotificationDTO>(notyDTOList, notyEntityList.TotalRecords);
+    }
+
+    public async Task<bool> CreateReviewOnPostNoty(CreateReviewNotificationDTO createDTO)
+    {
+        PostEntity post = await _postRepo.GetPostById(createDTO.PostId);
+        if (post == null)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Invalid review on post");
+
+        NotificationEntity notyEntity = new NotificationEntity()
+        {
+            Content = createDTO.Content,
+            Code = NotificationCode.REVIEW__HAS_REVIEW_ON_POST,
+            ExtraData = JsonConvert.SerializeObject(new
+            {
+                PostId = createDTO.PostId,
+                ReviewId = createDTO.ReviewId,
+            }),
+            HasRead = false,
+            OriginUserId = createDTO.OriginUserId,
+            TargetUserId = post.HostId,
+        };
+        return await _notyRepo.CreateNotification(notyEntity);
+    }
+
+    public async Task<bool> SetNotyHasRead(int userId, int notyId)
+    {
+        NotificationEntity notyEntity = await _notyRepo.GetById(notyId);
+        if (notyEntity.TargetUserId != userId)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Cannot set has read for other user notification");
+        notyEntity.HasRead = true;
+        return await _notyRepo.UpdateNotification(notyEntity);
+    }
+}

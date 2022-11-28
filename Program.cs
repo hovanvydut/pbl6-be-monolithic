@@ -1,13 +1,6 @@
-using Amazon.Extensions.NETCore.Setup;
-using Amazon.Runtime;
-using Amazon.S3;
-using Monolithic.Common;
-using Monolithic.Extensions;
 using Monolithic.Middlewares;
-using Serilog;
-using Serilog.Events;
-using Serilog.Exceptions;
-using Serilog.Sinks.Network;
+using Monolithic.Extensions;
+using Monolithic.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,28 +33,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // s3
-AWSOptions awsOptions = new AWSOptions
-{
-    Credentials = new BasicAWSCredentials("AKIAXVARHJLQETQ5NGF2", "hFY184c9ff+IX3HW40VJXaaIIPFw32tzHYW+D0db")
-};
-builder.Services.AddDefaultAWSOptions(awsOptions);
-// builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.ConfigureAWSS3(builder.Configuration);
 
 // sentry
 builder.WebHost.UseSentry();
 
 // Logging
-var log = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .Enrich.WithExceptionDetails()
-    .WriteTo.Console()
-    .WriteTo.TCPSink("tcp://node-3.silk-cat.software", 50000)
-    // .WriteTo.DurableHttpUsingFileSizeRolledBuffers(requestUri: "http://localhost:8001/pbl6-api")
-    .CreateLogger();
-
-builder.Logging.AddSerilog(log);
+builder.Logging.ConfigureSerilog(builder.Configuration);
 
 var app = builder.Build();
 

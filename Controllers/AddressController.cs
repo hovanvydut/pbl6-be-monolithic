@@ -18,7 +18,7 @@ public class AddressController : BaseController
     }
 
     [HttpGet("test-log")]
-    public async Task TestLog()
+    public void TestLog()
     {
         _log.LogInformation("The global logger has been configured11111");
         _log.LogInformation("2222No one listens to me!");

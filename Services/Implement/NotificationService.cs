@@ -39,12 +39,33 @@ public class NotificationService : INotificationService
 
         NotificationEntity notyEntity = new NotificationEntity()
         {
-            Content = createDTO.Content,
             Code = NotificationCode.REVIEW__HAS_REVIEW_ON_POST,
             ExtraData = JsonConvert.SerializeObject(new
             {
                 PostId = createDTO.PostId,
                 ReviewId = createDTO.ReviewId,
+                ReviewContent = createDTO.Content,
+            }),
+            HasRead = false,
+            OriginUserId = createDTO.OriginUserId,
+            TargetUserId = post.HostId,
+        };
+        return await _notyRepo.CreateNotification(notyEntity);
+    }
+
+    public async Task<bool> CreateBookingOnPostNoty(CreateBookingNotificationDTO createDTO)
+    {
+        PostEntity post = await _postRepo.GetPostById(createDTO.PostId);
+        if (post == null)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Invalid booking on post");
+
+        NotificationEntity notyEntity = new NotificationEntity()
+        {
+            Code = NotificationCode.BOOKING__HAS_BOOKING_ON_POST,
+            ExtraData = JsonConvert.SerializeObject(new
+            {
+                PostId = createDTO.PostId,
+                BookingId = createDTO.BookingId,
             }),
             HasRead = false,
             OriginUserId = createDTO.OriginUserId,

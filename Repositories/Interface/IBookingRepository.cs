@@ -10,7 +10,7 @@ public interface IBookingRepository
     Task<List<FreeTimeEntity>> GetAllFreeTime(int userId);
     Task DeleteAllFreeTime(int userId);
     Task InsertAllFreeTime(int userId, CreateFreeTimeDTO dto);
-    Task CreateMeeting(int userId, CreateMeetingDTO dto);
+    Task<MeetingEntity> CreateMeeting(int userId, CreateMeetingDTO dto);
     Task<MeetingEntity> GetMeetingById(int meetingId);
     Task<PagedList<MeetingEntity>> GetAllMeetingBookedBy(int userId, BookingParams reqParams);
     Task Approve(int meetingId);

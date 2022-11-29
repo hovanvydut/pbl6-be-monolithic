@@ -19,19 +19,21 @@ public class BookingService : IBookingService
     private readonly IPostRepository _postRepo;
     private readonly IMapper _mapper;
     private readonly IStatisticService _statisticService;
+    private readonly INotificationService _notyService;
     private ILogger<BookingService> _logger;
 
     public BookingService(IUserService userService, IBookingRepository bookingRepo, DataContext db,
                         IPostRepository postRepo, IMapper mapper, ILogger<BookingService> logger,
-                        IStatisticService statisticService)
+                        IStatisticService statisticService, INotificationService notyService)
     {
-        this._userService = userService;
-        this._bookingRepo = bookingRepo;
-        this._db = db;
-        this._postRepo = postRepo;
-        this._mapper = mapper;
-        this._statisticService = statisticService;
-        this._logger = logger;
+        _userService = userService;
+        _bookingRepo = bookingRepo;
+        _db = db;
+        _postRepo = postRepo;
+        _mapper = mapper;
+        _statisticService = statisticService;
+        _logger = logger;
+        _notyService = notyService;
     }
 
     public async Task ApproveMeeting(int userId, int meetingId)
@@ -77,7 +79,8 @@ public class BookingService : IBookingService
 
     public async Task<bool> CheckMetBooking(int userId, int postId)
     {
-        try {
+        try
+        {
             // check userId exists
             await _userService.GetUserProfilePersonal(userId);
 
@@ -85,9 +88,9 @@ public class BookingService : IBookingService
             if (listMeetings.Count <= 0) return false;
 
             foreach (MeetingEntity meeting in listMeetings)
-            {   
+            {
                 bool hasMet = meeting.Met;
-                bool less15Days = (int) DateTime.Now.Subtract(meeting.Time).TotalDays <= 15;
+                bool less15Days = (int)DateTime.Now.Subtract(meeting.Time).TotalDays <= 15;
                 if (hasMet && less15Days)
                 {
                     return true;
@@ -95,7 +98,8 @@ public class BookingService : IBookingService
             }
 
             return false;
-        } catch (BaseException)
+        }
+        catch (BaseException)
         {
             return false;
         }
@@ -188,10 +192,20 @@ public class BookingService : IBookingService
                     throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
-                await _bookingRepo.CreateMeeting(userId, dto);
+                MeetingEntity savedEntity = await _bookingRepo.CreateMeeting(userId, dto);
+
+                // Save statistic
                 await _statisticService.SaveBookingStatistic(dto.PostId);
 
                 transaction.Commit();
+
+                // Notification
+                await _notyService.CreateBookingOnPostNoty(new CreateBookingNotificationDTO()
+                {
+                    OriginUserId = userId,
+                    PostId = dto.PostId,
+                    BookingId = savedEntity.Id,
+                });
             }
             catch (BaseException ex)
             {

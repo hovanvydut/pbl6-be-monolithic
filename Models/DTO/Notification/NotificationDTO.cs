@@ -6,7 +6,6 @@ public class NotificationDTO
     public string OriginUserEmail { get; set; }
     public string OriginUserName { get; set; }
     public string Code { get; set; }
-    public string Content { get; set; }
     public bool HasRead { get; set; }
     public string ExtraData { get; set; }
 }

@@ -12,9 +12,6 @@ public class NotificationEntity : EntityBase
     [Column("id")]
     public int Id { get; set; }
 
-    [Column("content")]
-    public string Content { get; set; }
-
     [Column("code")]
     public string Code { get; set; }
 

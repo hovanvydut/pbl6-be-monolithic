@@ -11,4 +11,6 @@ public interface INotificationService
     Task<bool> CreateReviewOnPostNoty(CreateReviewNotificationDTO createDTO);
 
     Task<bool> SetNotyHasRead(int userId, int notyId);
+
+    Task<bool> SetAllNotyHasRead(int userId);
 }

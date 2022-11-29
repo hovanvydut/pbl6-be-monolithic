@@ -37,4 +37,16 @@ public class NotificationController : BaseController
         else
             return new BaseResponse<bool>(notyUpdated, HttpCode.BAD_REQUEST, "", false);
     }
+
+    [HttpPut("mark-all-read")]
+    [Authorize]
+    public async Task<BaseResponse<bool>> SetNotificationAllRead()
+    {
+        ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var notyUpdated = await _notyService.SetAllNotyHasRead(reqUser.Id);
+        if (notyUpdated)
+            return new BaseResponse<bool>(notyUpdated, HttpCode.NO_CONTENT);
+        else
+            return new BaseResponse<bool>(notyUpdated, HttpCode.BAD_REQUEST, "", false);
+    }
 }

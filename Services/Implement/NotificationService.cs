@@ -61,4 +61,9 @@ public class NotificationService : INotificationService
         notyEntity.HasRead = true;
         return await _notyRepo.UpdateNotification(notyEntity);
     }
+
+    public async Task<bool> SetAllNotyHasRead(int userId)
+    {
+        return await _notyRepo.SetAllNotyHasRead(userId);
+    }
 }

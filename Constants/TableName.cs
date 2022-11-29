@@ -26,4 +26,5 @@ public class TableName
     public const string PRIORITY_POST = "priority_post";
     public const string POST_STATISTIC = "post_statistic";
     public const string USER_STATISTIC = "user_statistic";
+    public const string NOTIFICATION = "notification";
 }

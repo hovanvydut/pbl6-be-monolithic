@@ -60,4 +60,5 @@ public class DataContext : DbContext
     public DbSet<PriorityPostEntity> PriorityPosts { get; set; }
     public DbSet<PostStatisticEntity> PostStatistics { get; set; }
     public DbSet<UserStatisticEntity> UserStatistics { get; set; }
+    public DbSet<NotificationEntity> Notifications { get; set; }
 }

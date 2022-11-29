@@ -48,4 +48,17 @@ public class NotificationRepository : INotificationRepository
         _db.Notifications.Update(notificationEntity);
         return await _db.SaveChangesAsync() >= 0;
     }
+
+    public async Task<bool> SetAllNotyHasRead(int userId)
+    {
+        var noties = await _db.Notifications.Where(n =>
+                                        n.TargetUserId == userId &&
+                                        n.HasRead == false).ToListAsync();
+        if (noties.Count > 0)
+        {
+            noties.ForEach(n => n.HasRead = true);
+            return await _db.SaveChangesAsync() > 0;
+        }
+        return true;
+    }
 }

@@ -13,4 +13,6 @@ public interface INotificationRepository
     Task<bool> CreateNotification(NotificationEntity notificationEntity);
 
     Task<bool> UpdateNotification(NotificationEntity notificationEntity);
+
+    Task<bool> SetAllNotyHasRead(int userId);
 }

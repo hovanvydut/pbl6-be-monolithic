@@ -19,7 +19,7 @@ public class BookmarkController : BaseController
     }
 
     [HttpGet]
-    [Authorize]
+    [Authorize(Roles = BookmarkPermission.View)]
     public async Task<BaseResponse<PagedList<BookmarkDTO>>> GetWithParams([FromQuery] BookmarkParams bookmarkParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
@@ -28,7 +28,7 @@ public class BookmarkController : BaseController
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = BookmarkPermission.Create)]
     public async Task<BaseResponse<bool>> CreateBookmark([FromBody] CreateBookmarkDTO createBookmarkDTO)
     {
         if (ModelState.IsValid)
@@ -44,7 +44,7 @@ public class BookmarkController : BaseController
     }
 
     [HttpDelete("{postId}")]
-    [Authorize]
+    [Authorize(Roles = BookmarkPermission.Remove)]
     public async Task<BaseResponse<bool>> RemoveBookmark(int postId)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;

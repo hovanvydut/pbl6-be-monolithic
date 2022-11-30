@@ -1,3 +1,4 @@
+using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
 using Monolithic.Models.ReqParams;
@@ -18,7 +19,7 @@ public class UptopController : BaseController
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = PostPermission.CreateUptop)]
     public async Task<BaseResponse<bool>> UpTopPost(PriorityPostCreateDTO priorityCreateDTO)
     {
         if (ModelState.IsValid)
@@ -34,7 +35,7 @@ public class UptopController : BaseController
     }
 
     [HttpGet("{postId}")]
-    [Authorize]
+    [Authorize(Roles = PostPermission.GetUptop)]
     public async Task<BaseResponse<PriorityPostDTO>> GetUpTopPost(int postId)
     {
         var priority = await _priorityPostService.GetByPostId(postId);
@@ -42,7 +43,7 @@ public class UptopController : BaseController
     }
 
     [HttpGet("duplicate")]
-    [Authorize]
+    [Authorize(Roles = PostPermission.CheckDuplicateUptop)]
     public async Task<BaseResponse<List<PriorityPostDTO>>> GetDuplicateTimePriorityPost([FromQuery] PriorityPostParams priorityPostParams)
     {
         var duplicate = await _priorityPostService.GetPriorityDuplicateTime(priorityPostParams);

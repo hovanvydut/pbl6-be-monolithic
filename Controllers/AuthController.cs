@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.Common;
@@ -45,6 +46,7 @@ public class AuthController : BaseController
     }
 
     [HttpPut("Change-Password")]
+    [Authorize]
     public async Task<BaseResponse<bool>> ChangePassword(UserChangePasswordDTO userChangePasswordDTO)
     {
         if (ModelState.IsValid)

@@ -1,3 +1,4 @@
+using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Constants;
@@ -26,13 +27,6 @@ public class PostController : BaseController
         return new BaseResponse<PostDTO>(post);
     }
 
-    [HttpGet("all")]
-    public async Task<BaseResponse<List<PostDTO>>> GetAll()
-    {
-        var post = await _postService.GetAllPost();
-        return new BaseResponse<List<PostDTO>>(post);
-    }
-
     [HttpGet]
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParams([FromQuery] PostSearchFilterParams postParams)
     {
@@ -57,7 +51,7 @@ public class PostController : BaseController
     }
 
     [HttpGet("/api/host/personal/post")]
-    [Authorize]
+    [Authorize(Roles = PostPermission.ViewAllPersonal)]
     public async Task<BaseResponse<PagedList<PostDTO>>> GetWithParamsPersonal([FromQuery] PostTableListParams postParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
@@ -86,7 +80,7 @@ public class PostController : BaseController
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = PostPermission.Create)]
     public async Task<BaseResponse<string>> Create([FromBody] CreatePostDTO createPostDTO)
     {
         if (ModelState.IsValid)
@@ -99,7 +93,7 @@ public class PostController : BaseController
     }
 
     [HttpPut("{id}")]
-    [Authorize]
+    [Authorize(Roles = PostPermission.Update)]
     public async Task<BaseResponse<string>> Update(int id, [FromBody] UpdatePostDTO updatePostDTO)
     {
         if (ModelState.IsValid)
@@ -112,7 +106,7 @@ public class PostController : BaseController
     }
 
     [HttpDelete("{id}")]
-    [Authorize]
+    [Authorize(Roles = PostPermission.Delete)]
     public async Task<BaseResponse<string>> Delete(int id)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;

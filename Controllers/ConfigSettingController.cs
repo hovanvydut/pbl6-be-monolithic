@@ -18,6 +18,7 @@ public class ConfigSettingController : BaseController
     }
 
     [HttpGet("/api/config-setting/")]
+    [Authorize(Roles = ConfigSettingPermission.ViewAll)]
     public async Task<BaseResponse<List<ConfigSettingDTO>>> GetAllConfigSettings()
     {
         var settings = await _configSettingService.GetAllConfigSettings();
@@ -25,6 +26,7 @@ public class ConfigSettingController : BaseController
     }
 
     [HttpGet("/api/config-setting/{key}")]
+    [Authorize(Roles = ConfigSettingPermission.ViewOne)]
     public async Task<BaseResponse<ConfigSettingDTO>> GetConfigSettingByKey(string key)
     {
         var setting = await _configSettingService.GetByKey(key);
@@ -32,6 +34,7 @@ public class ConfigSettingController : BaseController
     }
 
     [HttpPut("/api/config-setting/{key}")]
+    [Authorize(Roles = ConfigSettingPermission.Update)]
     public async Task<BaseResponse<bool>> UpdateConfigSetting(string key, ConfigSettingUpdateDTO configSettingUpdateDTO)
     {
         if (ModelState.IsValid)

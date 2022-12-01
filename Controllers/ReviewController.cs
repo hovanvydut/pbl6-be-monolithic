@@ -1,3 +1,4 @@
+using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Constants;
@@ -18,15 +19,15 @@ public class ReviewController : BaseController
         _reviewService = reviewService;
     }
 
-    [HttpGet("post/{postId}")]   
+    [HttpGet("post/{postId}")]
     public async Task<BaseResponse<PagedList<ReviewDTO>>> GetAllReviewOfPost(int postId, [FromQuery] ReviewParams reqParams)
     {
         PagedList<ReviewDTO> result = await _reviewService.GetAllReviewOfPost(postId, reqParams);
-        return new BaseResponse<PagedList<ReviewDTO>>(result);   
+        return new BaseResponse<PagedList<ReviewDTO>>(result);
     }
 
     [HttpPost("post/{postId}")]
-    [Authorize]
+    [Authorize(Roles = ReviewPermission.Create)]
     public async Task<BaseResponse<bool>> CreateReview([FromBody] CreateReviewDTO dto, int postId)
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
@@ -35,7 +36,7 @@ public class ReviewController : BaseController
     }
 
     [HttpGet("check-review/post/{postId}")]
-    [Authorize]
+    [Authorize(Roles = ReviewPermission.CheckCanReview)]
     public async Task<BaseResponse<bool>> CheckCanReview(int postId)
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;

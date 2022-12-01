@@ -1,3 +1,4 @@
+using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Monolithic.Services.Interface;
 using Monolithic.Models.ReqParams;
@@ -17,7 +18,7 @@ public class NotificationController : BaseController
     }
 
     [HttpGet]
-    [Authorize]
+    [Authorize(Roles = NotificationPermission.ViewAll)]
     public async Task<BaseResponse<PagedList<NotificationDTO>>> GetPersonalNotfication(
                         [FromQuery] NotificationParams notificationParams)
     {
@@ -27,7 +28,7 @@ public class NotificationController : BaseController
     }
 
     [HttpPut("has-read/{id}")]
-    [Authorize]
+    [Authorize(Roles = NotificationPermission.Update)]
     public async Task<BaseResponse<bool>> SetNotificationHasRead(int id)
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
@@ -39,7 +40,7 @@ public class NotificationController : BaseController
     }
 
     [HttpPut("mark-all-read")]
-    [Authorize]
+    [Authorize(Roles = NotificationPermission.Update)]
     public async Task<BaseResponse<bool>> SetNotificationAllRead()
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;

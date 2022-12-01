@@ -1,3 +1,4 @@
+using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Constants;
@@ -11,13 +12,14 @@ namespace Monolithic.Controllers;
 public class BookingController : BaseController
 {
     private readonly IBookingService _bookingService;
-    
-    public BookingController(IBookingService bookingService) {
+
+    public BookingController(IBookingService bookingService)
+    {
         this._bookingService = bookingService;
     }
 
     [HttpGet("user/{userId}/free-time")]
-    [Authorize]    
+    [Authorize(Roles = FreeTimePermission.ViewAll)]
     public async Task<BaseResponse<List<FreeTimeDTO>>> GetAllFreeTime(int userId)
     {
         // get tat ca lich ranh cua chu tro
@@ -26,7 +28,7 @@ public class BookingController : BaseController
     }
 
     [HttpPost("free-time")]
-    [Authorize]
+    [Authorize(Roles = FreeTimePermission.Create)]
     public async Task<BaseResponse<bool>> CreateFreeTime([FromBody] CreateFreeTimeDTO dto)
     {
         // chu tro tao lich ranh hang tuan
@@ -36,7 +38,7 @@ public class BookingController : BaseController
     }
 
     [HttpGet("personal")]
-    [Authorize]
+    [Authorize(Roles = BookingPermission.ViewAllPersonal)]
     public async Task<BaseResponse<PagedList<MeetingDTO>>> GetAllMeeting([FromQuery] BookingParams reqParams)
     {
         // get all meeting cua chu tro trong thang
@@ -46,7 +48,7 @@ public class BookingController : BaseController
     }
 
     [HttpGet("booked-by-user")]
-    [Authorize]
+    [Authorize(Roles = BookingPermission.ViewAllBooked)]
     public async Task<BaseResponse<PagedList<MeetingDTO>>> GetAllMeetingBookedBy([FromQuery] BookingParams reqParams)
     {
         // get all meeting which was booked by user
@@ -56,7 +58,7 @@ public class BookingController : BaseController
     }
 
     [HttpPost("")]
-    [Authorize]
+    [Authorize(Roles = BookingPermission.CreateMeeting)]
     public async Task<BaseResponse<bool>> CreateMeeting([FromBody] CreateMeetingDTO dto)
     {
         // nguoi thue tro tao meeting
@@ -66,7 +68,7 @@ public class BookingController : BaseController
     }
 
     [HttpPut("{meetingId}/approve")]
-    [Authorize]
+    [Authorize(Roles = BookingPermission.ApproveMeeting)]
     public async Task<BaseResponse<bool>> ApproveMeeting(int meetingId)
     {
         // chu tro confirm xac nhan gap meeting do khong
@@ -76,7 +78,7 @@ public class BookingController : BaseController
     }
 
     [HttpPut("{meetingId}/confirm-meet")]
-    [Authorize]
+    [Authorize(Roles = BookingPermission.ConfirmMet)]
     public async Task<BaseResponse<bool>> ConfirmMeeting(int meetingId)
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;

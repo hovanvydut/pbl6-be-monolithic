@@ -83,25 +83,6 @@ public class PostService : IPostService
         return postDTO;
     }
 
-    public async Task<List<PostDTO>> GetAllPost()
-    {
-        List<PostEntity> postEntityList = await _postRepo.GetAllPost();
-        List<PostDTO> postDTOList = postEntityList.Select(p => _mapper.Map<PostDTO>(p)).ToList();
-
-        // attach media on PostDTO
-        foreach (var postDTO in postDTOList)
-        {
-            List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
-            postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
-
-            // average rating
-            postDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(postDTO.Id);
-        }
-
-        await parsePostDTOGroup(postDTOList);
-        return postDTOList;
-    }
-
     private List<PropertyGroupDTO> parsePostDTOGroup(PostDTO postDTO, List<PropertyGroupDTO> propertyGroupDTOList)
     {
         foreach (PropertyGroupDTO group in propertyGroupDTOList)
@@ -320,6 +301,8 @@ public class PostService : IPostService
             postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
             // set priority post flag
             postDTO.isPriorityPost = priorityPostIds.Contains(postDTO.Id);
+            // average rating
+            postDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(postDTO.Id);
         }
 
         // Bookmark

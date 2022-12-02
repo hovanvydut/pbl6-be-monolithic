@@ -10,6 +10,8 @@ public interface INotificationRepository
 
     Task<NotificationEntity> GetById(int id);
 
+    Task<Tuple<int, int>> CountUnreadNotification(int userId);
+
     Task<bool> CreateNotification(NotificationEntity notificationEntity);
 
     Task<bool> UpdateNotification(NotificationEntity notificationEntity);

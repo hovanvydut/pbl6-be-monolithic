@@ -27,6 +27,15 @@ public class NotificationController : BaseController
         return new BaseResponse<PagedList<NotificationDTO>>(notifications);
     }
 
+    [HttpGet("unread/count")]
+    [Authorize(Roles = NotificationPermission.ViewAll)]
+    public async Task<BaseResponse<CountUnreadNotificationDTO>> CountUnreadNotification()
+    {
+        ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var countUnread = await _notyService.CountUnreadNotification(reqUser.Id);
+        return new BaseResponse<CountUnreadNotificationDTO>(countUnread);
+    }
+
     [HttpPut("has-read/{id}")]
     [Authorize(Roles = NotificationPermission.Update)]
     public async Task<BaseResponse<bool>> SetNotificationHasRead(int id)

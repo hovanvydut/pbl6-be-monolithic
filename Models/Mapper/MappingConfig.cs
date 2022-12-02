@@ -136,6 +136,7 @@ public class MappingConfig : Profile
         // notification
         CreateMap<NotificationEntity, NotificationDTO>()
             .ForMember(dto => dto.OriginUserEmail, prop => prop.MapFrom(entity => entity.OriginUserAccount.Email))
-            .ForMember(dto => dto.OriginUserName, prop => prop.MapFrom(entity => entity.OriginUserAccount.UserProfile.DisplayName));
+            .ForMember(dto => dto.OriginUserName, prop => prop.MapFrom(entity => entity.OriginUserAccount.UserProfile.DisplayName))
+            .ForMember(dto => dto.OriginUserAvatar, prop => prop.MapFrom(entity => entity.OriginUserAccount.UserProfile.Avatar));
     }
 }

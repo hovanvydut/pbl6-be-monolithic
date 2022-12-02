@@ -43,8 +43,10 @@ public class NotificationService : INotificationService
             ExtraData = JsonConvert.SerializeObject(new
             {
                 PostId = createDTO.PostId,
+                PostTitle = post.Title,
                 ReviewId = createDTO.ReviewId,
-                ReviewContent = createDTO.Content,
+                ReviewContent = createDTO.ReviewContent,
+                ReviewRating = createDTO.ReviewRating,
             }),
             HasRead = false,
             OriginUserId = createDTO.OriginUserId,
@@ -65,7 +67,9 @@ public class NotificationService : INotificationService
             ExtraData = JsonConvert.SerializeObject(new
             {
                 PostId = createDTO.PostId,
+                PostTitle = post.Title,
                 BookingId = createDTO.BookingId,
+                BookingTime = createDTO.BookingTime,
             }),
             HasRead = false,
             OriginUserId = createDTO.OriginUserId,

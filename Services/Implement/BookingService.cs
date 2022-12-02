@@ -205,6 +205,7 @@ public class BookingService : IBookingService
                     OriginUserId = userId,
                     PostId = dto.PostId,
                     BookingId = savedEntity.Id,
+                    BookingTime = savedEntity.Time,
                 });
             }
             catch (BaseException ex)

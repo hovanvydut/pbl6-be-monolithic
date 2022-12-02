@@ -72,9 +72,10 @@ public class ReviewService : IReviewService
                 await _notyService.CreateReviewOnPostNoty(new CreateReviewNotificationDTO()
                 {
                     OriginUserId = userId,
-                    Content = savedEntity.Content,
                     PostId = postId,
                     ReviewId = savedEntity.Id,
+                    ReviewContent = savedEntity.Content,
+                    ReviewRating = savedEntity.Rating,
                 });
             }
             catch (BaseException ex)

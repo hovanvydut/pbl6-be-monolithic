@@ -37,6 +37,17 @@ public class NotificationRepository : INotificationRepository
         return notification;
     }
 
+    public async Task<Tuple<int, int>> CountUnreadNotification(int userId)
+    {
+        var notifications = _db.Notifications.Where(n =>
+                                    n.TargetUserId == userId &&
+                                    n.HasRead == false);
+        int countAll = await notifications.CountAsync();
+        notifications = notifications.Where(n => n.CreatedAt.Date == DateTime.Now.Date);
+        int countToday = await notifications.CountAsync();
+        return new Tuple<int, int>(countAll, countToday);
+    }
+
     public async Task<bool> CreateNotification(NotificationEntity notificationEntity)
     {
         await _db.Notifications.AddAsync(notificationEntity);

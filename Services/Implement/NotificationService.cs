@@ -31,6 +31,16 @@ public class NotificationService : INotificationService
         return new PagedList<NotificationDTO>(notyDTOList, notyEntityList.TotalRecords);
     }
 
+    public async Task<CountUnreadNotificationDTO> CountUnreadNotification(int userId)
+    {
+        var countUnread = await _notyRepo.CountUnreadNotification(userId);
+        return new CountUnreadNotificationDTO()
+        {
+            AllTime = countUnread.Item1,
+            Today = countUnread.Item2,
+        };
+    }
+
     public async Task<bool> CreateReviewOnPostNoty(CreateReviewNotificationDTO createDTO)
     {
         PostEntity post = await _postRepo.GetPostById(createDTO.PostId);

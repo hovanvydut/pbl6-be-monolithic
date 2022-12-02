@@ -8,6 +8,8 @@ public interface INotificationService
 {
     Task<PagedList<NotificationDTO>> GetNotifications(int userId, NotificationParams notificationParams);
 
+    Task<CountUnreadNotificationDTO> CountUnreadNotification(int userId);
+
     Task<bool> CreateReviewOnPostNoty(CreateReviewNotificationDTO createDTO);
 
     Task<bool> CreateBookingOnPostNoty(CreateBookingNotificationDTO createDTO);

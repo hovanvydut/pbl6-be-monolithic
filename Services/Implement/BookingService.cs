@@ -67,6 +67,13 @@ public class BookingService : IBookingService
                 await _bookingRepo.Approve(meetingId);
 
                 transaction.Commit();
+
+                await _notyService.CreateApproveMeetingNoty(new ApproveMeetingNotificationDTO()
+                {
+                    TargetUserId = meetingEntity.GuestId,
+                    PostId = meetingEntity.PostId,
+                    BookingId = meetingEntity.Id,
+                });
             }
             catch (BaseException ex)
             {
@@ -137,6 +144,13 @@ public class BookingService : IBookingService
                 await _statisticService.SaveGuestMetMotelStatistic(meetingEntity.PostId);
 
                 transaction.Commit();
+
+                await _notyService.CreateConfirmMetNoty(new ConfirmMetNotificationDTO()
+                {
+                    TargetUserId = meetingEntity.GuestId,
+                    PostId = meetingEntity.PostId,
+                    BookingId = meetingEntity.Id,
+                });
             }
             catch (BaseException ex)
             {
@@ -200,7 +214,7 @@ public class BookingService : IBookingService
                 transaction.Commit();
 
                 // Notification
-                await _notyService.CreateBookingOnPostNoty(new CreateBookingNotificationDTO()
+                await _notyService.CreateBookingOnPostNoty(new BookingNotificationDTO()
                 {
                     OriginUserId = userId,
                     PostId = dto.PostId,

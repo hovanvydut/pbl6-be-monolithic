@@ -1,6 +1,6 @@
 namespace Monolithic.Models.DTO;
 
-public class CreateBookingNotificationDTO
+public class BookingNotificationDTO
 {
     public int OriginUserId { get; set; }
     public int PostId { get; set; }

@@ -41,7 +41,21 @@ public class NotificationService : INotificationService
         };
     }
 
-    public async Task<bool> CreateReviewOnPostNoty(CreateReviewNotificationDTO createDTO)
+    public async Task<bool> SetNotyHasRead(int userId, int notyId)
+    {
+        NotificationEntity notyEntity = await _notyRepo.GetById(notyId);
+        if (notyEntity.TargetUserId != userId)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Cannot set has read for other user notification");
+        notyEntity.HasRead = true;
+        return await _notyRepo.UpdateNotification(notyEntity);
+    }
+
+    public async Task<bool> SetAllNotyHasRead(int userId)
+    {
+        return await _notyRepo.SetAllNotyHasRead(userId);
+    }
+
+    public async Task<bool> CreateReviewOnPostNoty(ReviewNotificationDTO createDTO)
     {
         PostEntity post = await _postRepo.GetPostById(createDTO.PostId);
         if (post == null)
@@ -65,7 +79,7 @@ public class NotificationService : INotificationService
         return await _notyRepo.CreateNotification(notyEntity);
     }
 
-    public async Task<bool> CreateBookingOnPostNoty(CreateBookingNotificationDTO createDTO)
+    public async Task<bool> CreateBookingOnPostNoty(BookingNotificationDTO createDTO)
     {
         PostEntity post = await _postRepo.GetPostById(createDTO.PostId);
         if (post == null)
@@ -88,17 +102,47 @@ public class NotificationService : INotificationService
         return await _notyRepo.CreateNotification(notyEntity);
     }
 
-    public async Task<bool> SetNotyHasRead(int userId, int notyId)
+    public async Task<bool> CreateApproveMeetingNoty(ApproveMeetingNotificationDTO createDTO)
     {
-        NotificationEntity notyEntity = await _notyRepo.GetById(notyId);
-        if (notyEntity.TargetUserId != userId)
-            throw new BaseException(HttpCode.BAD_REQUEST, "Cannot set has read for other user notification");
-        notyEntity.HasRead = true;
-        return await _notyRepo.UpdateNotification(notyEntity);
+        PostEntity post = await _postRepo.GetPostById(createDTO.PostId);
+        if (post == null)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Invalid meeting on post");
+
+        NotificationEntity notyEntity = new NotificationEntity()
+        {
+            Code = NotificationCode.BOOKING__HOST_APPROVE_MEETING,
+            ExtraData = JsonConvert.SerializeObject(new
+            {
+                PostId = createDTO.PostId,
+                PostTitle = post.Title,
+                BookingId = createDTO.BookingId,
+            }),
+            HasRead = false,
+            OriginUserId = post.HostId,
+            TargetUserId = createDTO.TargetUserId,
+        };
+        return await _notyRepo.CreateNotification(notyEntity);
     }
 
-    public async Task<bool> SetAllNotyHasRead(int userId)
+    public async Task<bool> CreateConfirmMetNoty(ConfirmMetNotificationDTO createDTO)
     {
-        return await _notyRepo.SetAllNotyHasRead(userId);
+        PostEntity post = await _postRepo.GetPostById(createDTO.PostId);
+        if (post == null)
+            throw new BaseException(HttpCode.BAD_REQUEST, "Invalid meeting on post");
+
+        NotificationEntity notyEntity = new NotificationEntity()
+        {
+            Code = NotificationCode.BOOKING__HOST_CONFIRM_MET,
+            ExtraData = JsonConvert.SerializeObject(new
+            {
+                PostId = createDTO.PostId,
+                PostTitle = post.Title,
+                BookingId = createDTO.BookingId,
+            }),
+            HasRead = false,
+            OriginUserId = post.HostId,
+            TargetUserId = createDTO.TargetUserId,
+        };
+        return await _notyRepo.CreateNotification(notyEntity);
     }
 }

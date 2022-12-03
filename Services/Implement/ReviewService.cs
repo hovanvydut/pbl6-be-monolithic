@@ -69,7 +69,7 @@ public class ReviewService : IReviewService
                 transaction.Commit();
 
                 // Notification
-                await _notyService.CreateReviewOnPostNoty(new CreateReviewNotificationDTO()
+                await _notyService.CreateReviewOnPostNoty(new ReviewNotificationDTO()
                 {
                     OriginUserId = userId,
                     PostId = postId,

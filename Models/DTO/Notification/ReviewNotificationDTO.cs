@@ -1,6 +1,6 @@
 namespace Monolithic.Models.DTO;
 
-public class CreateReviewNotificationDTO
+public class ReviewNotificationDTO
 {
     public int OriginUserId { get; set; }
     public int PostId { get; set; }

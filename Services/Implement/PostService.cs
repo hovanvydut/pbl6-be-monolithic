@@ -70,6 +70,9 @@ public class PostService : IPostService
         // average rating
         postDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(postDTO.Id);
 
+        // priority post
+        postDTO.isPriorityPost = await _priorityPostRepo.GetByPostId(id) != null;
+
         // group properties
         List<PostDTO> postDTOList = new List<PostDTO> { postDTO };
         await parsePostDTOGroup(postDTOList);

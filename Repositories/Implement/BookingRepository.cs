@@ -118,7 +118,7 @@ public class BookingRepository : IBookingRepository
     public async Task<MeetingEntity> GetMeetingByUserIdAndMeetingId(int userId, int meetingId)
     {
         return await _db.Meetings.Include(m => m.Post)
-            .Where(m => m.Id == meetingId && m.GuestAccount.Id == userId).FirstOrDefaultAsync();
+            .Where(m => m.Id == meetingId).FirstOrDefaultAsync();
     }
 
     public async Task InsertAllFreeTime(int userId, CreateFreeTimeDTO dto)

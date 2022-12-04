@@ -251,4 +251,10 @@ public class BookingService : IBookingService
         List<MeetingDTO> meetingDTOList = meetingEntities.Records.Select(p => _mapper.Map<MeetingDTO>(p)).ToList();
         return new PagedList<MeetingDTO>(meetingDTOList, meetingEntities.TotalRecords);
     }
+
+    public async Task<MeetingDTO> GetMeetingBookedBy(int userId, int meetingId)
+    {
+        var entity = await _bookingRepo.GetMeetingByUserIdAndMeetingId(userId, meetingId);
+        return _mapper.Map<MeetingDTO>(entity);
+    }
 }

@@ -57,6 +57,16 @@ public class BookingController : BaseController
         return new BaseResponse<PagedList<MeetingDTO>>(result);
     }
 
+    [HttpGet("booked-by-user/{meetingId}")]
+    [Authorize(Roles = BookingPermission.ViewAllBooked)]
+    public async Task<BaseResponse<MeetingDTO>> GetMeetingBookedBy(int meetingId)
+    {
+        // get all meeting which was booked by user
+        ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        MeetingDTO result = await _bookingService.GetMeetingBookedBy(reqUser.Id, meetingId);
+        return new BaseResponse<MeetingDTO>(result);
+    }
+
     [HttpPost("")]
     [Authorize(Roles = BookingPermission.CreateMeeting)]
     public async Task<BaseResponse<bool>> CreateMeeting([FromBody] CreateMeetingDTO dto)

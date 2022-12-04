@@ -14,16 +14,19 @@ public class BookmarkService : IBookmarkService
     private readonly IBookmarkRepository _bookmarkRepo;
     private readonly IMediaRepository _mediaRepo;
     private readonly IStatisticService _statisticService;
+    private readonly IReviewService _reviewService;
     private readonly IMapper _mapper;
 
     public BookmarkService(IBookmarkRepository bookmarkRepo,
                            IMediaRepository mediaRepo,
                            IStatisticService statisticService,
+                           IReviewService reviewService,
                            IMapper mapper)
     {
         _bookmarkRepo = bookmarkRepo;
         _mediaRepo = mediaRepo;
         _statisticService = statisticService;
+        _reviewService = reviewService;
         _mapper = mapper;
     }
 
@@ -35,6 +38,8 @@ public class BookmarkService : IBookmarkService
         {
             List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(bookmarkDTO.Id);
             bookmarkDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
+            // average rating
+            bookmarkDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(bookmarkDTO.Id);
         }
         return new PagedList<BookmarkDTO>(bookmarkDTOList, bookmarkEntityList.TotalRecords);
     }

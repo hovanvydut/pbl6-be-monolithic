@@ -71,7 +71,7 @@ public class MappingConfig : Profile
 
         // bookmark
         CreateMap<BookmarkEntity, BookmarkDTO>()
-            .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.Post.Id))
+            .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.PostId))
             .ForMember(dto => dto.Title, prop => prop.MapFrom(entity => entity.Post.Title))
             .ForMember(dto => dto.FullAddress, prop => prop.MapFrom(entity => entity.Post.AddressWard))
             .ForMember(dto => dto.Price, prop => prop.MapFrom(entity => entity.Post.Price))

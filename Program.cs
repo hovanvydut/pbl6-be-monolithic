@@ -1,5 +1,6 @@
 using Monolithic.Middlewares;
 using Monolithic.Extensions;
+using Monolithic.Helpers;
 using Monolithic.Common;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,7 @@ builder.WebHost.UseSentry();
 builder.Logging.ConfigureSerilog(builder.Configuration);
 
 var app = builder.Build();
+var logger = app.Services.GetRequiredService<ILoggerManager>();
 
 // sentry
 app.UseSentryTracing();
@@ -57,7 +59,7 @@ app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.ConfigureErrorHandler();
+app.ConfigureErrorHandler(logger);
 
 app.UseCustomAuthResponse();
 

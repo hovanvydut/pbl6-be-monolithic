@@ -20,11 +20,10 @@ public class BookingService : IBookingService
     private readonly IMapper _mapper;
     private readonly IStatisticService _statisticService;
     private readonly INotificationService _notyService;
-    private ILogger<BookingService> _logger;
 
-    public BookingService(IUserService userService, IBookingRepository bookingRepo, DataContext db,
-                        IPostRepository postRepo, IMapper mapper, ILogger<BookingService> logger,
-                        IStatisticService statisticService, INotificationService notyService)
+    public BookingService(IUserService userService, IBookingRepository bookingRepo,
+                         IPostRepository postRepo, IMapper mapper, DataContext db,
+                         IStatisticService statisticService, INotificationService notyService)
     {
         _userService = userService;
         _bookingRepo = bookingRepo;
@@ -32,7 +31,6 @@ public class BookingService : IBookingService
         _postRepo = postRepo;
         _mapper = mapper;
         _statisticService = statisticService;
-        _logger = logger;
         _notyService = notyService;
     }
 
@@ -46,21 +44,18 @@ public class BookingService : IBookingService
                 if (meetingEntity == null)
                 {
                     string msgErr = "Meeting id = " + meetingId + " doesn't found";
-                    _logger.LogError(msgErr);
                     throw new BaseException(HttpCode.NOT_FOUND, msgErr);
                 }
 
                 if (meetingEntity.Post.HostId != userId)
                 {
                     string msgErr = "You can't approve this meeting";
-                    _logger.LogError(msgErr);
                     throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
                 if (meetingEntity.ApproveTime != null)
                 {
                     string msgErr = "This meeting is approved";
-                    _logger.LogError(msgErr);
                     throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
@@ -77,7 +72,6 @@ public class BookingService : IBookingService
             }
             catch (BaseException ex)
             {
-                _logger.LogError(ex.Message);
                 transaction.Rollback();
                 throw ex;
             }
@@ -122,21 +116,18 @@ public class BookingService : IBookingService
                 if (meetingEntity == null)
                 {
                     string msgErr = "Meeting id = " + meetingId + " doesn't found";
-                    _logger.LogError(msgErr);
                     throw new BaseException(HttpCode.NOT_FOUND, msgErr);
                 }
 
                 if (meetingEntity.Post.HostId != userId)
                 {
                     string msgErr = "You can't approve this meeting";
-                    _logger.LogError(msgErr);
                     throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
                 if (meetingEntity.Met == true)
                 {
                     string msgErr = "This meeting is confirmed";
-                    _logger.LogError(msgErr);
                     throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
@@ -154,7 +145,6 @@ public class BookingService : IBookingService
             }
             catch (BaseException ex)
             {
-                _logger.LogError(ex.Message);
                 transaction.Rollback();
                 throw ex;
             }
@@ -195,14 +185,12 @@ public class BookingService : IBookingService
                 if (postEntity == null)
                 {
                     string msgErr = "Post id = " + postEntity.Id + " doesn't found";
-                    _logger.LogError(msgErr);
                     throw new BaseException(HttpCode.NOT_FOUND, msgErr);
                 }
 
                 if (postEntity.HostId == userId)
                 {
                     string msgErr = "You doesn't allow to create meeting for this post";
-                    _logger.LogError(msgErr);
                     throw new BaseException(HttpCode.BAD_REQUEST, msgErr);
                 }
 
@@ -224,7 +212,6 @@ public class BookingService : IBookingService
             }
             catch (BaseException ex)
             {
-                _logger.LogError(ex.Message);
                 transaction.Rollback();
                 Console.WriteLine(ex.Message);
                 throw ex;

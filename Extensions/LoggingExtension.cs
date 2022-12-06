@@ -15,7 +15,9 @@ public static class LoggingExtension
         if (elkSettings.Enable)
         {
             var log = new LoggerConfiguration()
-                        .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                        .MinimumLevel.Override("Monolithic", LogEventLevel.Warning)
+                        .MinimumLevel.Override("Sentry", LogEventLevel.Warning)
                         .Enrich.FromLogContext()
                         .Enrich.WithExceptionDetails()
                         .WriteTo.Console()
@@ -25,5 +27,25 @@ public static class LoggingExtension
 
             loggingBuilder.AddSerilog(log);
         }
+    }
+
+    public static string GetLogContent(this HttpContext context,
+                                       string message,
+                                       int statusCode)
+    {
+        LogContent content = new LogContent
+        {
+            Path = context.Request.Path,
+            Method = context.Request.Method,
+            Params = "",
+            Message = message,
+            StatusCode = statusCode,
+        };
+        QueryString queryString = context.Request.QueryString;
+        if (queryString.HasValue)
+        {
+            content.Params = queryString.Value;
+        }
+        return content.ToString();
     }
 }

@@ -2,33 +2,35 @@ using Microsoft.AspNetCore.Mvc;
 using Monolithic.Models.DTO;
 using Monolithic.Services.Interface;
 using Monolithic.Models.Common;
-using Serilog;
 
 namespace Monolithic.Controllers;
 
 public class AddressController : BaseController
 {
     private readonly IAddressService _addressService;
-    private readonly ILogger<AddressController> _log;
+    private readonly ILogger<AddressController> _logger;
 
-    public AddressController(IAddressService addressService, ILogger<AddressController> log)
+    public AddressController(IAddressService addressService,
+                             ILogger<AddressController> logger)
     {
         _addressService = addressService;
-        _log = log;
+        _logger = logger;
     }
 
     [HttpGet("test-log")]
     public void TestLog()
     {
-        _log.LogInformation("The global logger has been configured11111");
-        _log.LogInformation("2222No one listens to me!");
-        _log.LogInformation("33333333No one listens to me!");
-        try {
+        _logger.LogInformation("The global logger has been configured11111");
+        _logger.LogInformation("2222No one listens to me!");
+        _logger.LogInformation("33333333No one listens to me!");
+        try
+        {
             throw new Exception("oke");
-        } catch (Exception e) {
-            _log.LogError(e, "Error nek");
         }
-
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error nek");
+        }
     }
 
     [HttpGet("province")]

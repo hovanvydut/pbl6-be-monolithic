@@ -59,6 +59,7 @@ app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.ConfigureSuccessHandler(logger);
 app.ConfigureErrorHandler(logger);
 
 app.UseCustomAuthResponse();

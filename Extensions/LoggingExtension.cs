@@ -1,4 +1,5 @@
 using Serilog.Sinks.Network;
+using Monolithic.Constants;
 using Serilog.Exceptions;
 using Monolithic.Common;
 using Serilog.Events;
@@ -16,7 +17,7 @@ public static class LoggingExtension
         {
             var log = new LoggerConfiguration()
                         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                        .MinimumLevel.Override("Monolithic", LogEventLevel.Warning)
+                        .MinimumLevel.Override("Monolithic", LogEventLevel.Information)
                         .MinimumLevel.Override("Sentry", LogEventLevel.Warning)
                         .Enrich.FromLogContext()
                         .Enrich.WithExceptionDetails()
@@ -30,8 +31,8 @@ public static class LoggingExtension
     }
 
     public static string GetLogContent(this HttpContext context,
-                                       string message,
-                                       int statusCode)
+                                       string message = "",
+                                       int statusCode = HttpCode.OK)
     {
         LogContent content = new LogContent
         {

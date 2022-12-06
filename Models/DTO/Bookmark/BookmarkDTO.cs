@@ -14,6 +14,8 @@ public class BookmarkDTO
 
     public string Address { get; set; }
 
+    public double AverageRating { get; set; }
+
     public FullAddressDTO FullAddress { get; set; }
 
     public CategoryDTO Category { get; set; }

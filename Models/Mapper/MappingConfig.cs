@@ -71,7 +71,7 @@ public class MappingConfig : Profile
 
         // bookmark
         CreateMap<BookmarkEntity, BookmarkDTO>()
-            .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.Post.Id))
+            .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.PostId))
             .ForMember(dto => dto.Title, prop => prop.MapFrom(entity => entity.Post.Title))
             .ForMember(dto => dto.FullAddress, prop => prop.MapFrom(entity => entity.Post.AddressWard))
             .ForMember(dto => dto.Price, prop => prop.MapFrom(entity => entity.Post.Price))
@@ -132,5 +132,11 @@ public class MappingConfig : Profile
             .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.UserId))
             .ForMember(dto => dto.Email, prop => prop.MapFrom(entity => entity.UserAccount.Email))
             .ForMember(dto => dto.StatisticValue, prop => prop.MapFrom(entity => entity.Value));
+
+        // notification
+        CreateMap<NotificationEntity, NotificationDTO>()
+            .ForMember(dto => dto.OriginUserEmail, prop => prop.MapFrom(entity => entity.OriginUserAccount.Email))
+            .ForMember(dto => dto.OriginUserName, prop => prop.MapFrom(entity => entity.OriginUserAccount.UserProfile.DisplayName))
+            .ForMember(dto => dto.OriginUserAvatar, prop => prop.MapFrom(entity => entity.OriginUserAccount.UserProfile.Avatar));
     }
 }

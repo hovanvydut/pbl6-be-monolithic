@@ -1,11 +1,11 @@
-using AutoMapper;
+using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
+using Monolithic.Services.Interface;
+using Monolithic.Models.ReqParams;
 using Microsoft.AspNetCore.Mvc;
-using Monolithic.Constants;
 using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
-using Monolithic.Models.ReqParams;
-using Monolithic.Services.Interface;
+using AutoMapper;
 
 namespace Monolithic.Controllers;
 
@@ -22,7 +22,7 @@ public class PaymentHistoryController : BaseController
     }
 
     [HttpGet("/api/payment-history")]
-    [Authorize]
+    [Authorize(Roles = PaymentPermission.ViewAllHistory)]
     public async Task<BaseResponse<PagedList<PaymentHistoryDTO>>> GetWithParams([FromQuery] PaymentHistoryParams paymentHistoryParams)
     {
         var histories = await _paymentHistoryService.GetWithParams(0, paymentHistoryParams);
@@ -30,7 +30,7 @@ public class PaymentHistoryController : BaseController
     }
 
     [HttpGet("/api/payment-history/personal")]
-    [Authorize]
+    [Authorize(Roles = PaymentPermission.ViewAllHistoryPersonal)]
     public async Task<BaseResponse<PagedList<PaymentHistoryDTO>>> GetWithParamsPersonal([FromQuery] PaymentHistoryParams paymentHistoryParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;

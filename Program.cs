@@ -1,9 +1,7 @@
-using Amazon.Extensions.NETCore.Setup;
-using Amazon.Runtime;
-using Amazon.S3;
-using Monolithic.Common;
-using Monolithic.Extensions;
 using Monolithic.Middlewares;
+using Monolithic.Extensions;
+using Monolithic.Helpers;
+using Monolithic.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,18 +34,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // s3
-AWSOptions awsOptions = new AWSOptions
-{
-    Credentials = new BasicAWSCredentials("AKIAXVARHJLQETQ5NGF2", "hFY184c9ff+IX3HW40VJXaaIIPFw32tzHYW+D0db")
-};
-builder.Services.AddDefaultAWSOptions(awsOptions);
-// builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.ConfigureAWSS3(builder.Configuration);
 
 // sentry
 builder.WebHost.UseSentry();
 
+// Logging
+builder.Logging.ConfigureSerilog(builder.Configuration);
+
 var app = builder.Build();
+var logger = app.Services.GetRequiredService<ILoggerManager>();
 
 // sentry
 app.UseSentryTracing();
@@ -63,7 +59,8 @@ app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.ConfigureErrorHandler();
+app.ConfigureSuccessHandler(logger);
+app.ConfigureErrorHandler(logger);
 
 app.UseCustomAuthResponse();
 

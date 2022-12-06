@@ -68,6 +68,7 @@ public static class ServiceExtension
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<IPriorityPostRepository, PriorityPostRepository>();
         services.AddScoped<IStatisticRepository, StatisticRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
     }
 
     private static void ConfigureServiceDI(this IServiceCollection services)
@@ -87,6 +88,7 @@ public static class ServiceExtension
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IPriorityPostService, PriorityPostService>();
         services.AddScoped<IStatisticService, StatisticService>();
+        services.AddScoped<INotificationService, NotificationService>();
     }
 
     private static void ConfigCommonServiceDI(this IServiceCollection services)
@@ -98,6 +100,7 @@ public static class ServiceExtension
     private static void ConfigureHelperDI(this IServiceCollection services)
     {
         services.AddScoped<ISendMailHelper, SendMailHelper>();
+        services.AddSingleton<ILoggerManager, LoggerManager>();
     }
 
     private static void ConfigSwagger(this IServiceCollection services, IConfigUtil configUtil)

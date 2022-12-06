@@ -1,18 +1,18 @@
 using Monolithic.Middlewares;
 using Monolithic.Extensions;
 using Monolithic.Common;
+using Monolithic.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// SignalR
+builder.Services.AddSignalR();
+
 // Cors
-builder.Services.AddCors(c =>
-    c.AddDefaultPolicy(options =>
-    {
-        options.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    })
-);
+builder.Services.ConfigureCors(builder.Configuration);
+
+builder.Services.AddSingleton<IDictionary<string, UserConnected>>(
+    _ => new Dictionary<string, UserConnected>());
 
 // Add services to the container.
 builder.Services.ConfigureDataContext(builder.Configuration);
@@ -46,7 +46,7 @@ var app = builder.Build();
 // sentry
 app.UseSentryTracing();
 
-app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
@@ -70,5 +70,7 @@ app.UseAuthorization();
 app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/push-notification");
 
 app.Run();

@@ -7,6 +7,7 @@ public class ReviewDTO
     public UserProfileAnonymousDTO UserInfo { get; set; }
     public string Content { get; set; }
     public int Rating { get; set; }
+    public string Sentiment { get; set; }
     public List<MediaDTO> Medias { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

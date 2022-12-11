@@ -13,10 +13,12 @@ public class ReviewController : BaseController
 {
 
     private readonly IReviewService _reviewService;
+    private readonly IAIService _aiService;
 
-    public ReviewController(IReviewService reviewService)
+    public ReviewController(IReviewService reviewService, IAIService aiService)
     {
         _reviewService = reviewService;
+        _aiService = aiService;
     }
 
     [HttpGet("post/{postId}")]
@@ -42,5 +44,12 @@ public class ReviewController : BaseController
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
         bool hasMet = await _reviewService.CheckCanReview(reqUser.Id, postId);
         return new BaseResponse<bool>(hasMet, HttpCode.OK);
+    }
+
+    [HttpPost("test-analyse-sentiment")]
+    public async Task<BaseResponse<AnalyseReviewResDTO>> TestAnalyseReview([FromBody] string reviewContent)
+    {
+        AnalyseReviewResDTO dto = await _aiService.analyseReview(reviewContent);
+        return new BaseResponse<AnalyseReviewResDTO>(dto);
     }
 }

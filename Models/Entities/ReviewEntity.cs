@@ -29,4 +29,7 @@ public class ReviewEntity : EntityBase
 
     [Column("rating")]
     public int Rating { get; set; }
+
+    [Column("sentiment")]
+    public string Sentiment { get; set; }
 }

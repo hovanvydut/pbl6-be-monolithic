@@ -19,10 +19,12 @@ public class ReviewService : IReviewService
     private readonly IMapper _mapper;
     private readonly IMediaRepository _mediaRepo;
     private readonly INotificationService _notyService;
+    private readonly IAIService _aiService;
 
     public ReviewService(IReviewRepository reviewRepo,
                         IBookingService bookingService, DataContext db, IMapper mapper,
-                        IMediaRepository mediaRepo, INotificationService notyService)
+                        IMediaRepository mediaRepo, INotificationService notyService,
+                        IAIService aIService)
     {
         _reviewRepo = reviewRepo;
         _bookingService = bookingService;
@@ -30,6 +32,7 @@ public class ReviewService : IReviewService
         _mapper = mapper;
         _mediaRepo = mediaRepo;
         _notyService = notyService;
+        _aiService = aIService;
     }
 
     public async Task<bool> CheckCanReview(int userId, int postId)
@@ -77,6 +80,10 @@ public class ReviewService : IReviewService
                     ReviewContent = savedEntity.Content,
                     ReviewRating = savedEntity.Rating,
                 });
+
+                // AI analyse review's sentiment
+                _aiService.analyseReview(savedEntity.Id);
+                Console.WriteLine("Created review Id = " + savedEntity.Id);
             }
             catch (BaseException ex)
             {

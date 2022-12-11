@@ -2,6 +2,7 @@ using Monolithic.Middlewares;
 using Monolithic.Extensions;
 using Monolithic.Helpers;
 using Monolithic.Common;
+using Savorboard.CAP.InMemoryMessageQueue;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,10 @@ builder.Services.ConfigureDataContext(builder.Configuration);
 builder.Services.ConfigureModelSetting(builder.Configuration);
 builder.Services.ConfigureDI(new ConfigUtil(builder.Configuration));
 builder.Services.ConfigureAuth(builder.Configuration);
+builder.Services.AddCap(capOptions => {
+    capOptions.UseInMemoryStorage();
+    capOptions.UseInMemoryMessageQueue();
+});
 // Add Http client
 builder.Services.AddHttpClient();
 

@@ -9,20 +9,11 @@ using Microsoft.OpenApi.Models;
 using Monolithic.Helpers;
 using Monolithic.Common;
 using Monolithic.Models.DTO;
-using Savorboard.CAP.InMemoryMessageQueue;
 
 namespace Monolithic.Extensions;
 
 public static class ServiceExtension
 {
-    public static void ConfigureCAP(this IServiceCollection services)
-    {
-        services.AddCap(capOptions => {
-            capOptions.UseInMemoryStorage();
-            capOptions.UseInMemoryMessageQueue();
-        });
-
-    }
     public static void ConfigureDataContext(this IServiceCollection services, IConfiguration configuration)
     {
         string currentDatabaseConfig = configuration.GetSection("CurrentDatabaseConfig").Value;

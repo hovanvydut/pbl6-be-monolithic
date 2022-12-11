@@ -89,6 +89,7 @@ public static class ServiceExtension
         services.AddScoped<IPriorityPostService, PriorityPostService>();
         services.AddScoped<IStatisticService, StatisticService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IAIService, AIService>();
     }
 
     private static void ConfigCommonServiceDI(this IServiceCollection services)

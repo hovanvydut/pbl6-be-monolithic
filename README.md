@@ -1,4 +1,4 @@
-## PBL6 - BE
+## PBL6 - BE - Version 2.2.0
 
 ## Local
 ```sh

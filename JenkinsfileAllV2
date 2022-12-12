@@ -1,16 +1,41 @@
 pipeline{
 	agent any
 	
+	triggers {
+		githubPush()
+	}
+	
 	environment {
 		DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-        REMOTE_SERVER_DOMAIN = "node-2.silk-cat.software"
+		REMOTE_SERVER_DOMAIN = "node-2.silk-cat.software"
+		NODE_1_CREDENTIALS = credentials('NODE_2')
 	}
 
 	stages {
+	    stage('Print env') {
+            steps {
+                echo "${src_branch}"
+                echo "${dest_branch}"
+                echo "${current_status}"
+                echo "${merged}"
+            }
+        }
+        
+        stage('Check condition') {
+            steps {
+                script {
+                    something = env.merged == "true" && env.current_status == "closed" && String.valueOf(env.src_branch).startsWith("release") && env.dest_branch == "main"
+                    if (!something) {
+                        throw new RuntimeException("Config wrong")
+                    }
+                }
+            }
+        }
+        
 		stage('gitclone') {
 
 			steps {
-				git branch: 'develop', credentialsId: 'HOME_SERVER_SSH_PRIVATE_KEY', url: 'git@github.com:hovanvydut/pbl6-be-monolithic.git'
+				git branch: 'main', credentialsId: 'HOME_SERVER_SSH_PRIVATE_KEY', url: 'git@github.com:hovanvydut/pbl6-be-monolithic.git'
 			}
 		}
 
@@ -34,8 +59,8 @@ pipeline{
 				sh 'docker push hovanvydut/pbl6-be-monolithic'
 			}
 		}
-
-        stage('Pull and run container') {
+		
+		stage('Pull and run container') {
 			steps {
 				script {
 					sshagent(credentials: ['NODE_2']) {
@@ -76,8 +101,3 @@ pipeline{
 		}
 	}
 }
-
-
-+refs/heads/*:refs/remotes/origin/* +refs/pull/${ghprbPullId}/*:refs/remotes/origin/pr/${ghprbPullId}/* +refs/tags/*:refs/remotes/origin/tags/*
-
-${sha1} refs/tags/*

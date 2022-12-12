@@ -82,7 +82,7 @@ public class ReviewService : IReviewService
                 });
 
                 // AI analyse review's sentiment
-                _aiService.analyseReview(savedEntity.Id);
+                await _aiService.analyseReview(savedEntity.Id);
                 Console.WriteLine("Created review Id = " + savedEntity.Id);
             }
             catch (BaseException ex)

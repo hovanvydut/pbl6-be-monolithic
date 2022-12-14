@@ -52,7 +52,8 @@ public class PaymentRepository : IPaymentRepository
     public async Task<PagedList<VNPHistoryEntity>> GetVNPHistories(int userId, VNPParams vnpParams)
     {
         var histories = _db.VNPHistory.Include(v => v.UserAccount)
-                            .OrderByDescending(v => v.CreatedAt).AsQueryable();
+                            .OrderByDescending(v => v.CreatedAt)
+                            .Where(v => v.vnp_TransactionStatus != null);
 
         if (userId > 0)
         {

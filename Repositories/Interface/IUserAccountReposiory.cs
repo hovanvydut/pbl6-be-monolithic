@@ -15,4 +15,6 @@ public interface IUserAccountReposiory
     Task<UserAccountEntity> Create(UserAccountEntity userAccountEntity);
 
     Task<bool> Update(int id, UserAccountEntity userAccountEntity);
+
+    Task<List<UserAccountEntity>> GetListByIds(List<int> userIds);
 }

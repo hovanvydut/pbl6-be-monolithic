@@ -41,6 +41,7 @@ public class JwtMiddleware
             {
                 Id = Convert.ToInt32(jwtToken.Claims.First(x => x.Type == CustomClaimTypes.UserId).Value),
                 Email = jwtToken.Claims.First(x => x.Type == CustomClaimTypes.Email).Value,
+                Token = token,
             };
         }
         catch { }

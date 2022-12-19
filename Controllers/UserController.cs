@@ -89,4 +89,12 @@ public class UserController : BaseController
         var permissions = await _userService.GetPersonalPermissions(reqUser.Id);
         return new BaseResponse<List<string>>(permissions);
     }
+
+    [HttpGet("Notification/{userIds}")]
+    [Authorize]
+    public async Task<BaseResponse<List<UserNotificationDTO>>> GetUsersNotification(string userIds)
+    {
+        var users = await _userService.GetUsersForNotification(userIds);
+        return new BaseResponse<List<UserNotificationDTO>>(users);
+    }
 }

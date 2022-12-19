@@ -112,4 +112,17 @@ public class UserService : IUserService
         var permissions = await _roleRepo.GetPermissionByRoleId(user.RoleId);
         return permissions.Select(p => p.Key).ToList();
     }
+
+    public async Task<List<UserNotificationDTO>> GetUsersForNotification(string userIds)
+    {
+        var userIdList = userIds.Split(",").Select(u => Convert.ToInt32(u)).ToList();
+        var listUser = await _userAccountRepo.GetListByIds(userIdList);
+        return listUser.Select(u => new UserNotificationDTO()
+        {
+            OriginUserId = u.Id,
+            OriginUserEmail = u.Email,
+            OriginUserName = u.UserProfile.DisplayName,
+            OriginUserAvatar = u.UserProfile.Avatar,
+        }).ToList();
+    }
 }

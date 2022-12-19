@@ -8,6 +8,8 @@ public class ReqUser
 
     public string Email { get; set; }
 
+    public string Token { get; set; }
+
     public ReqUser() { }
 
     public override string ToString()

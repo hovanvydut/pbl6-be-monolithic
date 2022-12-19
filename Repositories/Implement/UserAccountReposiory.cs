@@ -69,9 +69,16 @@ public class UserAccountReposiory : IUserAccountReposiory
                      r.UserProfile.Address.Contains(searchValue) ||
                      r.UserProfile.AddressWard.Name.Contains(searchValue) ||
                      r.UserProfile.AddressWard.AddressDistrict.Name.Contains(searchValue) ||
-                     r.UserProfile.AddressWard.AddressDistrict.AddressProvince.Name.Contains(searchValue) 
+                     r.UserProfile.AddressWard.AddressDistrict.AddressProvince.Name.Contains(searchValue)
             );
         }
         return await users.ToPagedList(userParams.PageNumber, userParams.PageSize);
+    }
+
+    public async Task<List<UserAccountEntity>> GetListByIds(List<int> userIds)
+    {
+        return await _db.UserAccounts.Include(u => u.UserProfile)
+                                .Where(u => userIds.Contains(u.Id))
+                                .ToListAsync();
     }
 }

@@ -132,11 +132,5 @@ public class MappingConfig : Profile
             .ForMember(dto => dto.Id, prop => prop.MapFrom(entity => entity.UserId))
             .ForMember(dto => dto.Email, prop => prop.MapFrom(entity => entity.UserAccount.Email))
             .ForMember(dto => dto.StatisticValue, prop => prop.MapFrom(entity => entity.Value));
-
-        // notification
-        CreateMap<NotificationEntity, NotificationDTO>()
-            .ForMember(dto => dto.OriginUserEmail, prop => prop.MapFrom(entity => entity.OriginUserAccount.Email))
-            .ForMember(dto => dto.OriginUserName, prop => prop.MapFrom(entity => entity.OriginUserAccount.UserProfile.DisplayName))
-            .ForMember(dto => dto.OriginUserAvatar, prop => prop.MapFrom(entity => entity.OriginUserAccount.UserProfile.Avatar));
     }
 }

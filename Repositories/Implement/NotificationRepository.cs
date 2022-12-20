@@ -24,7 +24,8 @@ public class NotificationRepository : INotificationRepository
                             .Where(n => n.TargetUserId == userId);
         if (notificationParams.Today)
         {
-            notifications = notifications.Where(n => n.CreatedAt.Date == DateTime.Now.Date);
+            var now = DateTime.Now.ToLocalTime().Date;
+            notifications = notifications.Where(n => n.CreatedAt.Date == now);
         }
         return await notifications.ToPagedList(notificationParams.PageNumber, notificationParams.PageSize);
     }
@@ -43,7 +44,8 @@ public class NotificationRepository : INotificationRepository
                                     n.TargetUserId == userId &&
                                     n.HasRead == false);
         int countAll = await notifications.CountAsync();
-        notifications = notifications.Where(n => n.CreatedAt.Date == DateTime.Now.Date);
+        var now = DateTime.Now.ToLocalTime().Date;
+        notifications = notifications.Where(n => n.CreatedAt.Date == now);
         int countToday = await notifications.CountAsync();
         return new Tuple<int, int>(countAll, countToday);
     }

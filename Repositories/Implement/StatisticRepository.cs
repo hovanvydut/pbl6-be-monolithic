@@ -101,10 +101,11 @@ public class StatisticRepository : IStatisticRepository
 
     public async Task<PostStatisticEntity> GetPostStatisticInNow(string key, int postId)
     {
+        var now = DateTime.Now.ToLocalTime().Date;
         PostStatisticEntity postStatisticEntity = await _db.PostStatistics.FirstOrDefaultAsync(c =>
                                                         c.Key == key &&
                                                         c.PostId == postId &&
-                                                        c.CreatedAt.Date == DateTime.Now.Date);
+                                                        c.CreatedAt.Date == now);
         if (postStatisticEntity == null) return null;
         _db.Entry(postStatisticEntity).State = EntityState.Detached;
         return postStatisticEntity;
@@ -187,10 +188,11 @@ public class StatisticRepository : IStatisticRepository
 
     public async Task<UserStatisticEntity> GetUserStatisticInNow(string key, int userId)
     {
+        var now = DateTime.Now.ToLocalTime().Date;
         UserStatisticEntity userStatisticEntity = await _db.UserStatistics.FirstOrDefaultAsync(c =>
                                                         c.Key == key &&
                                                         c.UserId == userId &&
-                                                        c.CreatedAt.Date == DateTime.Now.Date);
+                                                        c.CreatedAt.Date == now);
         if (userStatisticEntity == null) return null;
         _db.Entry(userStatisticEntity).State = EntityState.Detached;
         return userStatisticEntity;

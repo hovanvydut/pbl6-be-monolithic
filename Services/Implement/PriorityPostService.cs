@@ -44,7 +44,8 @@ public class PriorityPostService : IPriorityPostService
     {
         DateTime startTime = priorityCreateDTO.StartTime;
         DateTime endTime = startTime.AddDays(priorityCreateDTO.Days);
-        if (startTime <= DateTime.Now)
+        var now = DateTime.Now.ToLocalTime();
+        if (startTime <= now)
             throw new BaseException(HttpCode.BAD_REQUEST, "Invalid start time to uptop post");
 
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())

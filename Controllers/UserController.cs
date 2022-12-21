@@ -80,4 +80,13 @@ public class UserController : BaseController
         var userAccount = await _userService.GetUserAccountById(userId);
         return new BaseResponse<UserAccountDTO>(userAccount);
     }
+
+    [HttpGet("Personal/Permission")]
+    [Authorize]
+    public async Task<BaseResponse<List<string>>> GetPersonalPermissions()
+    {
+        ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var permissions = await _userService.GetPersonalPermissions(reqUser.Id);
+        return new BaseResponse<List<string>>(permissions);
+    }
 }

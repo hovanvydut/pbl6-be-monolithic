@@ -21,4 +21,6 @@ public interface IUserService
     Task<bool> UserMakePayment(int userId, double amount);
 
     Task<List<string>> GetPersonalPermissions(int userId);
+
+    Task<List<UserNotificationDTO>> GetUsersForNotification(string userIds);
 }

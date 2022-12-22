@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Storage;
 using Monolithic.Constants;
+using Monolithic.Extensions;
 using Monolithic.Models.Common;
 using Monolithic.Models.Context;
 using Monolithic.Models.DTO;
@@ -91,7 +92,7 @@ public class BookingService : IBookingService
             foreach (MeetingEntity meeting in listMeetings)
             {
                 bool hasMet = meeting.Met;
-                bool less15Days = (int)DateTime.Now.ToLocalTime().Subtract(meeting.Time).TotalDays <= 15;
+                bool less15Days = (int)DateTime.Now.GetLocalTime().Subtract(meeting.Time).TotalDays <= 15;
                 if (hasMet && less15Days)
                 {
                     return true;

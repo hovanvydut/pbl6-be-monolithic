@@ -3,6 +3,7 @@ using Monolithic.Models.Context.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Monolithic.Models.Entities;
 using Monolithic.Models.Common;
+using Monolithic.Extensions;
 
 namespace Monolithic.Models.Context;
 
@@ -26,10 +27,10 @@ public class DataContext : DbContext
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.CreatedAt = DateTime.Now.ToLocalTime();
+                    entry.Entity.CreatedAt = DateTime.Now.GetLocalTime();
                     break;
                 case EntityState.Modified:
-                    entry.Entity.UpdatedAt = DateTime.Now.ToLocalTime();
+                    entry.Entity.UpdatedAt = DateTime.Now.GetLocalTime();
                     break;
             }
         }

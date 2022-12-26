@@ -14,6 +14,8 @@ public interface INotificationService
 
     Task<bool> SetAllNotyHasRead(int userId);
 
+    Task<T> PushNotification<T>(T createDTO);
+
     Task<bool> CreateReviewOnPostNoty(ReviewNotificationDTO createDTO);
 
     Task<bool> CreateBookingOnPostNoty(BookingNotificationDTO createDTO);

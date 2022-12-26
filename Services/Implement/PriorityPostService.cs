@@ -84,6 +84,8 @@ public class PriorityPostService : IPriorityPostService
                                                                 uptopPaid, priorityCreateDTO.Days);
                 // Save uptop statistic
                 await _statisticService.SaveNumberOfUptopped(hostId);
+                // Save revenue statistic
+                await _statisticService.SaveRevenue(hostId, uptopPaid);
 
                 transaction.Commit();
                 return payment;

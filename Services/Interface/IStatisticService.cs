@@ -22,5 +22,6 @@ public interface IStatisticService
     Task<PagedList<UserStatisticDTO>> GetUserStatisticInDate(UserStatisticInDateParams statisticParams);
     Task<bool> SaveNumberOfPostCreated(int userId);
     Task<bool> SaveNumberOfUptopped(int userId);
+    Task<bool> SaveRevenue(int userId, double amount);
     #endregion
 }

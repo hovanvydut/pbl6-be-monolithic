@@ -156,6 +156,11 @@ public class StatisticService : IStatisticService
         return await HandleSaveUserStatistic(StatisticType.UPTOP_POST, 1, userId);
     }
 
+    public async Task<bool> SaveRevenue(int userId, double amount)
+    {
+        return await HandleSaveUserStatistic(StatisticType.REVENUE, amount, userId);
+    }
+
     private async Task<bool> HandleSaveUserStatistic(string key, double value, int userId)
     {
         var statisticNow = await _statisticRepo.GetUserStatisticInNow(key, userId);

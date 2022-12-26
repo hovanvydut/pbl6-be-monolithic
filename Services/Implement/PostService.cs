@@ -174,6 +174,8 @@ public class PostService : IPostService
                 await _paymentHistoryService.PayForCreatePost(hostId, savedPostEntity.Id, postPrice);
                 // Save post created statistic
                 await _statisticService.SaveNumberOfPostCreated(hostId);
+                // Save revenue statistic
+                await _statisticService.SaveRevenue(hostId, postPrice);
 
                 transaction.Commit();
             }

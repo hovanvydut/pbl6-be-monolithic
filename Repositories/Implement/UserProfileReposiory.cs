@@ -72,7 +72,7 @@ public class UserProfileReposiory : IUserProfileReposiory
 
     public async Task<bool> AddGold(int userId, long amount)
     {
-        UserProfileEntity userEntity = await this.GetById(userId);
+        UserProfileEntity userEntity = await this.GetByUserId(userId);
         if (userEntity == null)
             throw new BaseException(HttpCode.BAD_REQUEST, "UserProfile id = " + userId + " doesn't found");
         // Credit from vnp response is multiplied 100
@@ -83,7 +83,7 @@ public class UserProfileReposiory : IUserProfileReposiory
 
     public async Task<bool> UserMakePayment(int userId, double amount)
     {
-        UserProfileEntity userEntity = await this.GetById(userId);
+        UserProfileEntity userEntity = await this.GetByUserId(userId);
         if (userEntity == null)
             throw new BaseException(HttpCode.BAD_REQUEST, "UserProfile id = " + userId + " doesn't found");
         if (userEntity.CurrentCredit < amount)

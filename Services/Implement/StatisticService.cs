@@ -50,6 +50,11 @@ public class StatisticService : IStatisticService
         return listStatistic;
     }
 
+    public async Task<double> GetTotalPostStatisticValue(int hostId, PostStatisticParams statisticParams)
+    {
+        return await _statisticRepo.GetTotalPostStatisticValue(hostId, statisticParams);
+    }
+
     public async Task<List<PostStatisticDTO>> GetTopPostStatistic(int hostId, PostTopStatisticParams statisticParams)
     {
         var statistic = await _statisticRepo.GetTopPostStatistic(hostId, statisticParams);
@@ -131,6 +136,11 @@ public class StatisticService : IStatisticService
             }
         }
         return listStatistic;
+    }
+
+    public async Task<double> GetTotalUserStatisticValue(UserStatisticParams statisticParams)
+    {
+        return await _statisticRepo.GetTotalUserStatisticValue(statisticParams);
     }
 
     public async Task<List<UserStatisticDTO>> GetTopUserStatistic(UserTopStatisticParams statisticParams)

@@ -30,7 +30,7 @@ public class PriorityPostRepository : IPriorityPostRepository
 
     public async Task<PagedList<PriorityPostEntity>> GetListAvailable(PriorityPostParams priorityPostParams)
     {
-        var now = DateTime.Now.GetLocalTime();
+        var now = DateTime.UtcNow;
         var listPriorities = _db.PriorityPosts.Include(c => c.Post)
                                 .Include(p => p.Post.Category)
                                 .Include(p => p.Post.AddressWard.AddressDistrict.AddressProvince)
@@ -45,7 +45,7 @@ public class PriorityPostRepository : IPriorityPostRepository
 
     public async Task<PriorityPostEntity> GetByPostId(int postId)
     {
-        var now = DateTime.Now.GetLocalTime();
+        var now = DateTime.UtcNow;
         PriorityPostEntity priorityPost = await _db.PriorityPosts
                                 .Include(c => c.Post)
                                 .FirstOrDefaultAsync(c => c.PostId == postId && now <= c.EndTime);
@@ -63,7 +63,7 @@ public class PriorityPostRepository : IPriorityPostRepository
 
     public async Task<List<int>> GetAllPostIdAvailable()
     {
-        var now = DateTime.Now.GetLocalTime();
+        var now = DateTime.UtcNow;
         return await _db.PriorityPosts
                         .Where(c => now <= c.EndTime)
                         .Select(c => c.PostId).ToListAsync();

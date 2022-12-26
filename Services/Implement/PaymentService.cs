@@ -44,12 +44,12 @@ public class PaymentService : IPaymentService
             {
                 // Create DTO
                 VNPHistoryDTO vnpHistoryDTO = new VNPHistoryDTO();
-                vnpHistoryDTO.vnp_TxnRef = DateTime.Now.GetLocalTime().Ticks;
+                vnpHistoryDTO.vnp_TxnRef = DateTime.UtcNow.Ticks;
                 vnpHistoryDTO.vnp_OrderInfo = "#" + vnpHistoryDTO.vnp_TxnRef.ToString() + " | " + createPaymentDTO.OrderDesc;
                 vnpHistoryDTO.vnp_Amount = createPaymentDTO.Amount;
                 vnpHistoryDTO.vnp_BankCode = createPaymentDTO.BankCode;
                 vnpHistoryDTO.vnp_TmnCode = paymentConfig.VNPTmnCode;
-                vnpHistoryDTO.vnp_CreateDate = DateTime.Now.GetLocalTime().ToString("yyyyMMddHHmmss");
+                vnpHistoryDTO.vnp_CreateDate = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
 
                 //Build URL for VNPAY
                 VnPayLibrary vnpay = new VnPayLibrary();

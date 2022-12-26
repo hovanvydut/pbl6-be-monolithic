@@ -115,7 +115,7 @@ public class StatisticRepository : IStatisticRepository
 
     public async Task<PostStatisticEntity> GetPostStatisticInNow(string key, int postId)
     {
-        var now = DateTime.Now.GetLocalTime().Date;
+        var now = DateTime.UtcNow.Date;
         PostStatisticEntity postStatisticEntity = await _db.PostStatistics.FirstOrDefaultAsync(c =>
                                                         c.Key == key &&
                                                         c.PostId == postId &&
@@ -216,7 +216,7 @@ public class StatisticRepository : IStatisticRepository
 
     public async Task<UserStatisticEntity> GetUserStatisticInNow(string key, int userId)
     {
-        var now = DateTime.Now.GetLocalTime().Date;
+        var now = DateTime.UtcNow.Date;
         UserStatisticEntity userStatisticEntity = await _db.UserStatistics.FirstOrDefaultAsync(c =>
                                                         c.Key == key &&
                                                         c.UserId == userId &&

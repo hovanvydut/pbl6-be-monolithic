@@ -27,10 +27,10 @@ public class DataContext : DbContext
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.CreatedAt = DateTime.Now.GetLocalTime();
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
                     break;
                 case EntityState.Modified:
-                    entry.Entity.UpdatedAt = DateTime.Now.GetLocalTime();
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
                     break;
             }
         }

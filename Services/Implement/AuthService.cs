@@ -141,6 +141,7 @@ public class AuthService : IAuthService
         {
             Id = currentUser.Id,
             Email = currentUser.Email,
+            RoleId = currentUser.RoleId,
             DisplayName = currentUser.UserProfile.DisplayName,
             AccessToken = accessToken
         };

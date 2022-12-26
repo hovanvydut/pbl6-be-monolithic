@@ -75,8 +75,7 @@ public class UserProfileReposiory : IUserProfileReposiory
         UserProfileEntity userEntity = await this.GetByUserId(userId);
         if (userEntity == null)
             throw new BaseException(HttpCode.BAD_REQUEST, "UserProfile id = " + userId + " doesn't found");
-        // Credit from vnp response is multiplied 100
-        userEntity.CurrentCredit += amount / 100;
+        userEntity.CurrentCredit += amount;
         _db.UserProfiles.Update(userEntity);
         return await _db.SaveChangesAsync() > 0;
     }

@@ -25,7 +25,7 @@ public class PaymentController : BaseController
     public async Task<BaseResponse<string>> CreatePayment([FromBody] CreatePaymentDTO createPaymentDTO)
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        string url = await _paymentService.CreatePayement(reqUser.Id, createPaymentDTO);
+        string url = await _paymentService.CreatePayment(reqUser.Id, createPaymentDTO);
         return new BaseResponse<string>(url, HttpCode.OK);
     }
 

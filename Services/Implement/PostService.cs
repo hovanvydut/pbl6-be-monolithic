@@ -283,7 +283,7 @@ public class PostService : IPostService
         var maxPriorityPostInSearch = await _configSettingService.GetValueByKey(ConfigSetting.PRIORITY_IN_SEARCH);
         var priorityPostParams = new PriorityPostParams()
         {
-            AddressWardId = postParams.AddressWardId,
+            // AddressWardId = postParams.AddressWardId,
             PageNumber = postParams.PageNumber,
             PageSize = Convert.ToInt32(maxPriorityPostInSearch),
         };

@@ -12,7 +12,7 @@ public class PostSearchFilterParams : ReqParam
     public float MinArea { get; set; }
     public float MaxArea { get; set; }
 
-    public int AddressWardId { get; set; }
+    public int AddressDistrictId { get; set; }
 
     public int CategoryId { get; set; }
 }

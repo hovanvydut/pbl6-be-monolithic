@@ -62,6 +62,7 @@ public class PostService : IPostService
         if (postEntity == null) return null;
 
         PostDTO postDTO = _mapper.Map<PostDTO>(postEntity);
+        postDTO.AuthorInfo.Id = postEntity.HostId;
 
         // adjust media
         List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);

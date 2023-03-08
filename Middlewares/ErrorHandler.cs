@@ -30,6 +30,8 @@ public static class ErrorHandler
                     var LogContent = context.GetLogContent(exception.Message, statusCode);
                     logger.LogError(LogContent);
 
+                    context.Items["isError"] = true;
+
                     await context.Response.WriteAsync(new BaseResponse<int>()
                     {
                         Success = false,

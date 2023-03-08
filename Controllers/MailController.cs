@@ -16,7 +16,6 @@ public class MailController : BaseController
     }
 
     [HttpPost("Send")]
-    // [Authorize(Roles = EmailPermission.Send)]
     public async Task<BaseResponse<string>> Send([FromForm] MailContent mailContent)
     {
         await _sendMailHelper.SendEmailAsync(mailContent);

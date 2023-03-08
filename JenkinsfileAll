@@ -1,0 +1,71 @@
+pipeline{
+	agent any
+	
+	environment {
+		DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        REMOTE_SERVER_DOMAIN = "node-2.silk-cat.software"
+	}
+
+	stages {
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t hovanvydut/pbl6-be-monolithic .'
+			}
+		}
+
+		stage('Login docker hub') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+		stage('Push image to docker hub') {
+
+			steps {
+				sh 'docker push hovanvydut/pbl6-be-monolithic'
+			}
+		}
+
+        stage('Pull and run container') {
+			steps {
+				script {
+					sshagent(credentials: ['NODE_2']) {
+						sh '''
+							[ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh &&
+          					ssh-keyscan -t rsa,dsa $REMOTE_SERVER_DOMAIN >> ~/.ssh/known_hosts &&
+							ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker system prune --force --all --volumes'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker rm -f pbl6-api-1'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker pull hovanvydut/pbl6-be-monolithic'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker run -d --name=pbl6-api-1 -p 7133:80 hovanvydut/pbl6-be-monolithic'
+						'''
+					}
+				}
+			}
+		}
+	}
+
+	post {
+		always {
+			sh 'docker system prune -f'
+            echo 'Clean dangling images'
+		}
+
+		success {
+            echo 'Success message'
+        }
+
+		failure {
+            echo 'Failed :( message'
+        }
+
+        changed {
+            echo 'Things were different before...'
+        }
+
+		aborted  {
+			echo "Aborted message"
+		}
+	}
+}

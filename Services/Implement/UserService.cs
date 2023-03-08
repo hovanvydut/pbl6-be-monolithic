@@ -13,16 +13,19 @@ public class UserService : IUserService
 {
     private readonly IUserAccountReposiory _userAccountRepo;
     private readonly IUserProfileReposiory _userProfileRepo;
+    private readonly IRoleRepository _roleRepo;
     private readonly IAddressService _addressService;
     private readonly IMapper _mapper;
 
     public UserService(IUserAccountReposiory userAccountRepo,
                        IUserProfileReposiory userProfileRepo,
+                       IRoleRepository roleRepo,
                        IAddressService addressService,
                        IMapper mapper)
     {
         _userAccountRepo = userAccountRepo;
         _userProfileRepo = userProfileRepo;
+        _roleRepo = roleRepo;
         _addressService = addressService;
         _mapper = mapper;
     }
@@ -101,5 +104,12 @@ public class UserService : IUserService
     public async Task<bool> UserMakePayment(int userId, double amount)
     {
         return await _userProfileRepo.UserMakePayment(userId, amount);
+    }
+
+    public async Task<List<string>> GetPersonalPermissions(int userId)
+    {
+        var user = await _userAccountRepo.GetById(userId);
+        var permissions = await _roleRepo.GetPermissionByRoleId(user.RoleId);
+        return permissions.Select(p => p.Key).ToList();
     }
 }

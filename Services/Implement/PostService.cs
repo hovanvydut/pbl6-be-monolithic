@@ -62,6 +62,7 @@ public class PostService : IPostService
         if (postEntity == null) return null;
 
         PostDTO postDTO = _mapper.Map<PostDTO>(postEntity);
+        postDTO.AuthorInfo.Id = postEntity.HostId;
 
         // adjust media
         List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
@@ -69,6 +70,9 @@ public class PostService : IPostService
 
         // average rating
         postDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(postDTO.Id);
+
+        // priority post
+        postDTO.isPriorityPost = await _priorityPostRepo.GetByPostId(id) != null;
 
         // group properties
         List<PostDTO> postDTOList = new List<PostDTO> { postDTO };
@@ -81,25 +85,6 @@ public class PostService : IPostService
         }
 
         return postDTO;
-    }
-
-    public async Task<List<PostDTO>> GetAllPost()
-    {
-        List<PostEntity> postEntityList = await _postRepo.GetAllPost();
-        List<PostDTO> postDTOList = postEntityList.Select(p => _mapper.Map<PostDTO>(p)).ToList();
-
-        // attach media on PostDTO
-        foreach (var postDTO in postDTOList)
-        {
-            List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
-            postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
-
-            // average rating
-            postDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(postDTO.Id);
-        }
-
-        await parsePostDTOGroup(postDTOList);
-        return postDTOList;
     }
 
     private List<PropertyGroupDTO> parsePostDTOGroup(PostDTO postDTO, List<PropertyGroupDTO> propertyGroupDTOList)
@@ -299,7 +284,7 @@ public class PostService : IPostService
         var maxPriorityPostInSearch = await _configSettingService.GetValueByKey(ConfigSetting.PRIORITY_IN_SEARCH);
         var priorityPostParams = new PriorityPostParams()
         {
-            AddressWardId = postParams.AddressWardId,
+            // AddressWardId = postParams.AddressWardId,
             PageNumber = postParams.PageNumber,
             PageSize = Convert.ToInt32(maxPriorityPostInSearch),
         };
@@ -320,6 +305,8 @@ public class PostService : IPostService
             postDTO.Medias = mediaEntityList.Select(m => _mapper.Map<MediaDTO>(m)).ToList();
             // set priority post flag
             postDTO.isPriorityPost = priorityPostIds.Contains(postDTO.Id);
+            // average rating
+            postDTO.AverageRating = await _reviewService.GetAverageRatingOfPost(postDTO.Id);
         }
 
         // Bookmark

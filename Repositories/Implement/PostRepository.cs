@@ -40,17 +40,6 @@ public class PostRepository : IPostRepository
         return false;
     }
 
-    public async Task<List<PostEntity>> GetAllPost()
-    {
-        return await _db.Posts.Where(p => p.DeletedAt == null)
-                            .Include(p => p.Category)
-                            .Include(p => p.AddressWard.AddressDistrict.AddressProvince)
-                            .Include(p => p.PostProperties)
-                            .ThenInclude(prop => prop.Property)
-                            .OrderByDescending(c => c.CreatedAt)
-                            .ToListAsync();
-    }
-
     public async Task<PostEntity> GetPostById(int id)
     {
         var postEntity = await _db.Posts.Where(p => p.DeletedAt == null && p.Id == id)
@@ -92,9 +81,13 @@ public class PostRepository : IPostRepository
                             .Where(p => p.DeletedAt == null)
                             .Where(p => !priorityIds.Contains(p.Id));
 
-        if (postParams.AddressWardId > 0)
+        if (postParams.AddressDistrictId > 0)
         {
-            posts = posts.Where(p => p.AddressWardId == postParams.AddressWardId);
+            var addressWardIds = await _db.AddressWards
+                                        .Where(w => w.AddressDistrictId == postParams.AddressDistrictId)
+                                        .Select(w => w.Id)
+                                        .ToListAsync();
+            posts = posts.Where(p => addressWardIds.Contains(p.AddressWardId));
         }
 
         if (postParams.CategoryId > 0)
@@ -152,7 +145,16 @@ public class PostRepository : IPostRepository
                             .Include(p => p.PostProperties)
                             .ThenInclude(prop => prop.Property)
                             .OrderByDescending(c => c.CreatedAt)
-                            .Where(p => p.DeletedAt == null);
+                            .AsQueryable();
+        if (postParams.Deleted)
+        {
+            posts = posts.Where(p => p.DeletedAt != null);
+        }
+        else
+        {
+            posts = posts.Where(p => p.DeletedAt == null);
+        }
+
         if (hostId > 0)
         {
             posts = posts.Where(p => p.HostId == hostId);

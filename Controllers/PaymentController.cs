@@ -1,3 +1,4 @@
+using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -20,11 +21,11 @@ public class PaymentController : BaseController
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = VNPPermission.CreatePayment)]
     public async Task<BaseResponse<string>> CreatePayment([FromBody] CreatePaymentDTO createPaymentDTO)
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
-        string url = await _paymentService.CreatePayement(reqUser.Id, createPaymentDTO);
+        string url = await _paymentService.CreatePayment(reqUser.Id, createPaymentDTO);
         return new BaseResponse<string>(url, HttpCode.OK);
     }
 
@@ -43,7 +44,7 @@ public class PaymentController : BaseController
     }
 
     [HttpGet("history")]
-    [Authorize]
+    [Authorize(Roles = VNPPermission.ViewAllHistory)]
     public async Task<BaseResponse<PagedList<UserVNPHistoryDTO>>> GetWithParams([FromQuery] VNPParams vnpParams)
     {
         var histories = await _paymentService.GetVNPHistories(0, vnpParams);
@@ -51,7 +52,7 @@ public class PaymentController : BaseController
     }
 
     [HttpGet("history/personal")]
-    [Authorize]
+    [Authorize(Roles = VNPPermission.ViewAllHistoryPersonal)]
     public async Task<BaseResponse<PagedList<UserVNPHistoryDTO>>> GetWithParamsPersonal([FromQuery] VNPParams vnpParams)
     {
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;

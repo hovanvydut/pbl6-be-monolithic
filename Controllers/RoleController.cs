@@ -19,6 +19,7 @@ public class RoleController : BaseController
     }
 
     [HttpPost]
+    [Authorize(Roles = RolePermission.Create)]
     public async Task<BaseResponse<bool>> CreateRole(CreateRoleDTO createRoleDTO)
     {
         if (ModelState.IsValid)
@@ -33,6 +34,7 @@ public class RoleController : BaseController
     }
 
     [HttpPut("{roleId}")]
+    [Authorize(Roles = RolePermission.Update)]
     public async Task<BaseResponse<bool>> UpdateRole(int roleId, UpdateRoleDTO updateRoleDTO)
     {
         if (ModelState.IsValid)
@@ -47,6 +49,7 @@ public class RoleController : BaseController
     }
 
     [HttpGet]
+    [Authorize(Roles = RolePermission.ViewAll)]
     public async Task<BaseResponse<PagedList<RoleDTO>>> GetWithParams([FromQuery] RoleParams roleParams)
     {
         var roles = await _roleService.GetWithParams(roleParams);
@@ -54,6 +57,7 @@ public class RoleController : BaseController
     }
 
     [HttpGet("all")]
+    [Authorize(Roles = RolePermission.ViewAll)]
     public async Task<BaseResponse<List<RoleDTO>>> GetAllRoles()
     {
         var roles = await _roleService.GetAllRoles();
@@ -61,6 +65,7 @@ public class RoleController : BaseController
     }
 
     [HttpGet("{roleId}")]
+    [Authorize(Roles = RolePermission.ViewOne)]
     public async Task<BaseResponse<RoleDTO>> GetRoleById(int roleId)
     {
         var role = await _roleService.GetRoleById(roleId);
@@ -68,6 +73,7 @@ public class RoleController : BaseController
     }
 
     [HttpGet("{roleId}/Permission")]
+    [Authorize(Roles = PermissionPermission.View)]
     public async Task<BaseResponse<List<PermissionGroupDTO>>> GetPermissionByRoleId(int roleId)
     {
         // permission not have => id = 0
@@ -78,6 +84,7 @@ public class RoleController : BaseController
     }
 
     [HttpPost("Permission")]
+    [Authorize(Roles = PermissionPermission.Create)]
     public async Task<BaseResponse<bool>> AddPermissionForRole(CreatePermissionDTO createPermissionDTO)
     {
         if (ModelState.IsValid)
@@ -92,6 +99,7 @@ public class RoleController : BaseController
     }
 
     [HttpDelete("{roleId}/Permission/{permissionId}")]
+    [Authorize(Roles = PermissionPermission.Remove)]
     public async Task<BaseResponse<bool>> RemovePermissionForRole(int permissionId, int roleId)
     {
         var permisisonDeleted = await _roleService.RemovePermissionForRole(permissionId, roleId);

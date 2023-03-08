@@ -8,10 +8,29 @@ namespace Monolithic.Controllers;
 public class AddressController : BaseController
 {
     private readonly IAddressService _addressService;
+    private readonly ILogger<AddressController> _logger;
 
-    public AddressController(IAddressService addressService)
+    public AddressController(IAddressService addressService,
+                             ILogger<AddressController> logger)
     {
         _addressService = addressService;
+        _logger = logger;
+    }
+
+    [HttpGet("test-log")]
+    public void TestLog()
+    {
+        _logger.LogInformation("The global logger has been configured11111");
+        _logger.LogInformation("2222No one listens to me!");
+        _logger.LogInformation("33333333No one listens to me!");
+        try
+        {
+            throw new Exception("oke");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error nek");
+        }
     }
 
     [HttpGet("province")]

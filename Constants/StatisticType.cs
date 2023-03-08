@@ -13,4 +13,6 @@ public class StatisticType
     public const string CREATE_POST = "create_post";
 
     public const string UPTOP_POST = "uptop_post";
+
+    public const string REVENUE = "revenue";
 }

@@ -18,20 +18,26 @@ public class ReviewService : IReviewService
     private readonly DataContext _db;
     private readonly IMapper _mapper;
     private readonly IMediaRepository _mediaRepo;
+    private readonly INotificationService _notyService;
+    private readonly IAIService _aiService;
 
     public ReviewService(IReviewRepository reviewRepo,
                         IBookingService bookingService, DataContext db, IMapper mapper,
-                        IMediaRepository mediaRepo)
+                        IMediaRepository mediaRepo, INotificationService notyService,
+                        IAIService aIService)
     {
         _reviewRepo = reviewRepo;
         _bookingService = bookingService;
         _db = db;
         _mapper = mapper;
         _mediaRepo = mediaRepo;
+        _notyService = notyService;
+        _aiService = aIService;
     }
 
-    public async Task<bool> CheckCanReview(int userId, int postId) {
-        return await _bookingService.CheckMetBooking(userId, postId);;
+    public async Task<bool> CheckCanReview(int userId, int postId)
+    {
+        return await _bookingService.CheckMetBooking(userId, postId); ;
     }
 
     public async Task CreateReview(int userId, int postId, CreateReviewDTO dto)
@@ -64,6 +70,20 @@ public class ReviewService : IReviewService
                 await _mediaRepo.Create(mediaEntityList);
 
                 transaction.Commit();
+
+                // Notification
+                await _notyService.PushNotification(new ReviewNotificationDTO()
+                {
+                    OriginUserId = userId,
+                    PostId = postId,
+                    ReviewId = savedEntity.Id,
+                    ReviewContent = savedEntity.Content,
+                    ReviewRating = savedEntity.Rating,
+                });
+
+                // AI analyse review's sentiment
+                await _aiService.analyseReview(savedEntity.Id);
+                Console.WriteLine("Created review Id = " + savedEntity.Id);
             }
             catch (BaseException ex)
             {

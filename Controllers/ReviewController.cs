@@ -1,3 +1,4 @@
+using static Monolithic.Constants.PermissionPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Monolithic.Constants;
@@ -12,21 +13,23 @@ public class ReviewController : BaseController
 {
 
     private readonly IReviewService _reviewService;
+    private readonly IAIService _aiService;
 
-    public ReviewController(IReviewService reviewService)
+    public ReviewController(IReviewService reviewService, IAIService aiService)
     {
         _reviewService = reviewService;
+        _aiService = aiService;
     }
 
-    [HttpGet("post/{postId}")]   
+    [HttpGet("post/{postId}")]
     public async Task<BaseResponse<PagedList<ReviewDTO>>> GetAllReviewOfPost(int postId, [FromQuery] ReviewParams reqParams)
     {
         PagedList<ReviewDTO> result = await _reviewService.GetAllReviewOfPost(postId, reqParams);
-        return new BaseResponse<PagedList<ReviewDTO>>(result);   
+        return new BaseResponse<PagedList<ReviewDTO>>(result);
     }
 
     [HttpPost("post/{postId}")]
-    [Authorize]
+    [Authorize(Roles = ReviewPermission.Create)]
     public async Task<BaseResponse<bool>> CreateReview([FromBody] CreateReviewDTO dto, int postId)
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
@@ -35,11 +38,18 @@ public class ReviewController : BaseController
     }
 
     [HttpGet("check-review/post/{postId}")]
-    [Authorize]
+    [Authorize(Roles = ReviewPermission.CheckCanReview)]
     public async Task<BaseResponse<bool>> CheckCanReview(int postId)
     {
         ReqUser reqUser = HttpContext.Items["reqUser"] as ReqUser;
         bool hasMet = await _reviewService.CheckCanReview(reqUser.Id, postId);
         return new BaseResponse<bool>(hasMet, HttpCode.OK);
+    }
+
+    [HttpPost("test-analyse-sentiment")]
+    public async Task<BaseResponse<AnalyseReviewResDTO>> TestAnalyseReview([FromBody] string reviewContent)
+    {
+        AnalyseReviewResDTO dto = await _aiService.analyseReview(reviewContent);
+        return new BaseResponse<AnalyseReviewResDTO>(dto);
     }
 }

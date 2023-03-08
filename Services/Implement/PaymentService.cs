@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Monolithic.Common;
 using Monolithic.Constants;
+using Monolithic.Extensions;
 using Monolithic.Models.Common;
 using Monolithic.Models.Context;
 using Monolithic.Models.DTO;
@@ -20,19 +21,22 @@ public class PaymentService : IPaymentService
     private readonly PaymentConfig paymentConfig;
     private readonly DataContext _db;
     private readonly IUserProfileReposiory _userProfileRepo;
+    private readonly IStatisticService _statisticService;
 
     public PaymentService(IPaymentRepository bankCodeRepo, IMapper mapper,
         IOptions<PaymentConfig> paymentConfig, DataContext db,
-        IUserProfileReposiory userProfileReposiory)
+        IUserProfileReposiory userProfileReposiory,
+        IStatisticService statisticService)
     {
         _paymentRepo = bankCodeRepo;
         _mapper = mapper;
         this.paymentConfig = paymentConfig.Value;
         _db = db;
         _userProfileRepo = userProfileReposiory;
+        _statisticService = statisticService;
     }
 
-    public async Task<string> CreatePayement(int userId, CreatePaymentDTO createPaymentDTO)
+    public async Task<string> CreatePayment(int userId, CreatePaymentDTO createPaymentDTO)
     {
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
         {
@@ -40,12 +44,12 @@ public class PaymentService : IPaymentService
             {
                 // Create DTO
                 VNPHistoryDTO vnpHistoryDTO = new VNPHistoryDTO();
-                vnpHistoryDTO.vnp_TxnRef = DateTime.Now.Ticks;
+                vnpHistoryDTO.vnp_TxnRef = DateTime.UtcNow.Ticks;
                 vnpHistoryDTO.vnp_OrderInfo = "#" + vnpHistoryDTO.vnp_TxnRef.ToString() + " | " + createPaymentDTO.OrderDesc;
                 vnpHistoryDTO.vnp_Amount = createPaymentDTO.Amount;
                 vnpHistoryDTO.vnp_BankCode = createPaymentDTO.BankCode;
                 vnpHistoryDTO.vnp_TmnCode = paymentConfig.VNPTmnCode;
-                vnpHistoryDTO.vnp_CreateDate = DateTime.Now.ToString("yyyyMMddHHmmss");
+                vnpHistoryDTO.vnp_CreateDate = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
 
                 //Build URL for VNPAY
                 VnPayLibrary vnpay = new VnPayLibrary();
@@ -111,8 +115,13 @@ public class PaymentService : IPaymentService
 
             if (checkSignature && !isHandledOrder)
             {
-                await _userProfileRepo.AddGold(vnpHistoryEntity.UserAccountId, vnpayReturnDTO.vnp_Amount);
+                // Credit from vnp response is multiplied 100
+                await _userProfileRepo.AddGold(vnpHistoryEntity.UserAccountId, vnpayReturnDTO.vnp_Amount / 100);
+
                 await _paymentRepo.updateStatusTransaction(vnpHistoryEntity.vnp_TxnRef, PaymentConst.VNP_TRANSACTION_STATUS_SUCCESS);
+
+                // Save revenue statistic
+                await _statisticService.SaveRevenue(vnpHistoryEntity.UserAccountId, vnpayReturnDTO.vnp_Amount / 100);
             }
             else
             {

@@ -43,7 +43,7 @@ public class BookingRepository : IBookingRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task CreateMeeting(int userId, CreateMeetingDTO dto)
+    public async Task<MeetingEntity> CreateMeeting(int userId, CreateMeetingDTO dto)
     {
         MeetingEntity entity = _mapper.Map<MeetingEntity>(dto);
         entity.GuestId = userId;
@@ -51,6 +51,7 @@ public class BookingRepository : IBookingRepository
         await _db.Meetings.AddAsync(entity);
         await _db.SaveChangesAsync();
         Console.WriteLine("Approve Time = " + entity.ApproveTime.ToString());
+        return await GetMeetingById(entity.Id);
     }
 
     public async Task DeleteAllFreeTime(int userId)
@@ -112,6 +113,13 @@ public class BookingRepository : IBookingRepository
     public async Task<MeetingEntity> GetMeetingById(int meetingId)
     {
         return await _db.Meetings.Include(m => m.Post).Where(m => m.Id == meetingId).FirstOrDefaultAsync();
+    }
+
+    public async Task<MeetingEntity> GetMeetingByUserIdAndMeetingId(int userId, int meetingId)
+    {
+        return await _db.Meetings.Include(m => m.Post)
+            .Include(m => m.GuestAccount.UserProfile)
+            .Where(m => m.Id == meetingId).FirstOrDefaultAsync();
     }
 
     public async Task InsertAllFreeTime(int userId, CreateFreeTimeDTO dto)

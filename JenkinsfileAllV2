@@ -1,0 +1,103 @@
+pipeline{
+	agent any
+	
+	triggers {
+		githubPush()
+	}
+	
+	environment {
+		DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+		REMOTE_SERVER_DOMAIN = "node-2.silk-cat.software"
+		NODE_1_CREDENTIALS = credentials('NODE_2')
+	}
+
+	stages {
+	    stage('Print env') {
+            steps {
+                echo "${src_branch}"
+                echo "${dest_branch}"
+                echo "${current_status}"
+                echo "${merged}"
+            }
+        }
+        
+        stage('Check condition') {
+            steps {
+                script {
+                    something = env.merged == "true" && env.current_status == "closed" && String.valueOf(env.src_branch).startsWith("release") && env.dest_branch == "main"
+                    if (!something) {
+                        throw new RuntimeException("Config wrong")
+                    }
+                }
+            }
+        }
+        
+		stage('gitclone') {
+
+			steps {
+				git branch: 'main', credentialsId: 'HOME_SERVER_SSH_PRIVATE_KEY', url: 'git@github.com:hovanvydut/pbl6-be-monolithic.git'
+			}
+		}
+
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t hovanvydut/pbl6-be-monolithic .'
+			}
+		}
+
+		stage('Login docker hub') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+		stage('Push image to docker hub') {
+
+			steps {
+				sh 'docker push hovanvydut/pbl6-be-monolithic'
+			}
+		}
+		
+		stage('Pull and run container') {
+			steps {
+				script {
+					sshagent(credentials: ['NODE_2']) {
+						sh '''
+							[ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh &&
+          					ssh-keyscan -t rsa,dsa $REMOTE_SERVER_DOMAIN >> ~/.ssh/known_hosts &&
+							ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker system prune --force --all --volumes'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker rm -f pbl6-api-1'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker pull hovanvydut/pbl6-be-monolithic'
+                            ssh -o StrictHostKeyChecking=no -l ubuntu $REMOTE_SERVER_DOMAIN 'docker run -d --name=pbl6-api-1 -p 7133:80 hovanvydut/pbl6-be-monolithic'
+						'''
+					}
+				}
+			}
+		}
+	}
+
+	post {
+		always {
+			sh 'docker system prune -f'
+            echo 'Clean dangling images'
+		}
+
+		success {
+            echo 'Success message'
+        }
+
+		failure {
+            echo 'Failed :( message'
+        }
+
+        changed {
+            echo 'Things were different before...'
+        }
+
+		aborted  {
+			echo "Aborted message"
+		}
+	}
+}

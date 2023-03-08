@@ -12,6 +12,7 @@ using Monolithic.Common;
 using AutoMapper;
 using System.Web;
 using pbl6_password_hash;
+using DotNetCore.CAP;
 
 namespace Monolithic.Services.Implement;
 
@@ -25,6 +26,7 @@ public class AuthService : IAuthService
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
     private readonly DataContext _db;
+    private readonly ICapPublisher _capBus;
 
     public AuthService(IConfigSettingService configSettingService,
                        IUserAccountReposiory userAccountRepo,
@@ -34,7 +36,8 @@ public class AuthService : IAuthService
                        ITokenService tokenService,
                        IMapper mapper,
                        DataContext db,
-                       IOptions<ClientAppSettings> clientAppSettings)
+                       IOptions<ClientAppSettings> clientAppSettings,
+                       ICapPublisher capBus)
     {
         _configSettingService = configSettingService;
         _userAccountRepo = userAccountRepo;
@@ -43,6 +46,7 @@ public class AuthService : IAuthService
         _tokenService = tokenService;
         _mapper = mapper;
         _db = db;
+        _capBus = capBus;
         _clientApp = clientAppSettings.Value;
     }
 
@@ -106,7 +110,16 @@ public class AuthService : IAuthService
             Subject = "Confirm email to use Motel Finder",
             Body = $"Confirm the registration by clicking on the <a href='{uriBuilder}'>link</a> and receive {freeCredit} credit"
         };
-        await _sendMailHelper.SendEmailAsync(mailContent);
+        await SendMailBackground(mailContent);
+    }
+
+    private async Task SendMailBackground(MailContent mailContent)
+    {
+        try
+        {
+            await _capBus.PublishAsync(WorkerConst.SEND_MAIL, mailContent);
+        }
+        catch { }
     }
 
     public async Task<UserLoginResponseDTO> Login(UserLoginDTO userLoginDTO)
@@ -128,6 +141,7 @@ public class AuthService : IAuthService
         {
             Id = currentUser.Id,
             Email = currentUser.Email,
+            RoleId = currentUser.RoleId,
             DisplayName = currentUser.UserProfile.DisplayName,
             AccessToken = accessToken
         };
@@ -185,7 +199,7 @@ public class AuthService : IAuthService
             Subject = "Motel Finder password recovery",
             Body = $"Clicking on the <a href='{uriBuilder}'>link</a> to recover your password"
         };
-        await _sendMailHelper.SendEmailAsync(mailContent);
+        await SendMailBackground(mailContent);
     }
 
     public async Task RecoverPassword(UserRecoverPasswordDTO userRecoverPasswordDTO)

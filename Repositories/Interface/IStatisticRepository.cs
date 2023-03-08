@@ -8,6 +8,8 @@ public interface IStatisticRepository
 {
     #region PostStatistic
     Task<List<PostStatisticEntity>> GetPostStatisticWithParams(int hostId, PostStatisticParams statisticParams);
+    
+    Task<double> GetTotalPostStatisticValue(int hostId, PostStatisticParams statisticParams);
 
     Task<List<PostStatisticEntity>> GetTopPostStatistic(int hostId, PostTopStatisticParams statisticParams);
 
@@ -22,6 +24,8 @@ public interface IStatisticRepository
 
     #region PostStatistic
     Task<List<UserStatisticEntity>> GetUserStatisticWithParams(UserStatisticParams statisticParams);
+
+    Task<double> GetTotalUserStatisticValue(UserStatisticParams statisticParams);
 
     Task<List<UserStatisticEntity>> GetTopUserStatistic(UserTopStatisticParams statisticParams);
 

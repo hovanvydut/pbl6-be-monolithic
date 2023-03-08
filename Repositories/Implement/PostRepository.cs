@@ -81,9 +81,13 @@ public class PostRepository : IPostRepository
                             .Where(p => p.DeletedAt == null)
                             .Where(p => !priorityIds.Contains(p.Id));
 
-        if (postParams.AddressWardId > 0)
+        if (postParams.AddressDistrictId > 0)
         {
-            posts = posts.Where(p => p.AddressWardId == postParams.AddressWardId);
+            var addressWardIds = await _db.AddressWards
+                                        .Where(w => w.AddressDistrictId == postParams.AddressDistrictId)
+                                        .Select(w => w.Id)
+                                        .ToListAsync();
+            posts = posts.Where(p => addressWardIds.Contains(p.AddressWardId));
         }
 
         if (postParams.CategoryId > 0)

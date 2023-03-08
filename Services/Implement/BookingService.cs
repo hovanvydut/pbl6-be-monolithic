@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Storage;
 using Monolithic.Constants;
+using Monolithic.Extensions;
 using Monolithic.Models.Common;
 using Monolithic.Models.Context;
 using Monolithic.Models.DTO;
@@ -63,7 +64,7 @@ public class BookingService : IBookingService
 
                 transaction.Commit();
 
-                await _notyService.CreateApproveMeetingNoty(new ApproveMeetingNotificationDTO()
+                await _notyService.PushNotification(new ApproveMeetingNotificationDTO()
                 {
                     TargetUserId = meetingEntity.GuestId,
                     PostId = meetingEntity.PostId,
@@ -91,7 +92,7 @@ public class BookingService : IBookingService
             foreach (MeetingEntity meeting in listMeetings)
             {
                 bool hasMet = meeting.Met;
-                bool less15Days = (int)DateTime.Now.Subtract(meeting.Time).TotalDays <= 15;
+                bool less15Days = (int)DateTime.UtcNow.Subtract(meeting.Time).TotalDays <= 15;
                 if (hasMet && less15Days)
                 {
                     return true;
@@ -136,7 +137,7 @@ public class BookingService : IBookingService
 
                 transaction.Commit();
 
-                await _notyService.CreateConfirmMetNoty(new ConfirmMetNotificationDTO()
+                await _notyService.PushNotification(new ConfirmMetNotificationDTO()
                 {
                     TargetUserId = meetingEntity.GuestId,
                     PostId = meetingEntity.PostId,
@@ -202,7 +203,7 @@ public class BookingService : IBookingService
                 transaction.Commit();
 
                 // Notification
-                await _notyService.CreateBookingOnPostNoty(new BookingNotificationDTO()
+                await _notyService.PushNotification(new BookingNotificationDTO()
                 {
                     OriginUserId = userId,
                     PostId = dto.PostId,

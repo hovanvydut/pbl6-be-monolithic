@@ -19,4 +19,6 @@ public interface IUserService
     Task<bool> UpdateUserAccount(int userId, UserAccountUpdateDTO userAccountUpdateDTO);
 
     Task<bool> UserMakePayment(int userId, double amount);
+
+    Task<List<string>> GetPersonalPermissions(int userId);
 }

@@ -36,6 +36,20 @@ public class StatisticRepository : IStatisticRepository
         return await statistics.OrderByDescending(s => s.Value).ToListAsync();
     }
 
+    public async Task<double> GetTotalPostStatisticValue(int hostId, PostStatisticParams statisticParams)
+    {
+        var statistics = _db.PostStatistics.Include(s => s.Post).Where(s =>
+                                                s.Post.HostId == hostId &&
+                                                s.Key == statisticParams.Key &&
+                                                statisticParams.FromDate.Date <= s.CreatedAt.Date &&
+                                                s.CreatedAt.Date <= statisticParams.ToDate.Date);
+        if (!statisticParams.IncludeDeletedPost)
+        {
+            statistics = statistics.Where(s => s.Post.DeletedAt == null);
+        }
+        return await statistics.SumAsync(s => s.Value);
+    }
+
     public async Task<List<PostStatisticEntity>> GetTopPostStatistic(int hostId, PostTopStatisticParams statisticParams)
     {
         var statistic = _db.PostStatistics.Include(s => s.Post).Where(s =>
@@ -62,7 +76,7 @@ public class StatisticRepository : IStatisticRepository
         }
         if (otherStatisticCount > 1)
         {
-            var bottomStatistic = statistic.Skip(topStatistic.Count).Sum(s => s.Value);
+            var bottomStatistic = await statistic.Skip(topStatistic.Count).SumAsync(s => s.Value);
             topStatistic.Add(new PostStatisticEntity()
             {
                 Value = bottomStatistic,
@@ -101,10 +115,11 @@ public class StatisticRepository : IStatisticRepository
 
     public async Task<PostStatisticEntity> GetPostStatisticInNow(string key, int postId)
     {
+        var now = DateTime.UtcNow.Date;
         PostStatisticEntity postStatisticEntity = await _db.PostStatistics.FirstOrDefaultAsync(c =>
                                                         c.Key == key &&
                                                         c.PostId == postId &&
-                                                        c.CreatedAt.Date == DateTime.Now.Date);
+                                                        c.CreatedAt.Date == now);
         if (postStatisticEntity == null) return null;
         _db.Entry(postStatisticEntity).State = EntityState.Detached;
         return postStatisticEntity;
@@ -139,6 +154,20 @@ public class StatisticRepository : IStatisticRepository
         return await statistics.OrderBy(s => s.CreatedAt).ToListAsync();
     }
 
+    public async Task<double> GetTotalUserStatisticValue(UserStatisticParams statisticParams)
+    {
+        var statistics = _db.UserStatistics.Include(s => s.UserAccount).Where(s =>
+                                s.Key == statisticParams.Key &&
+                                statisticParams.FromDate.Date <= s.CreatedAt.Date &&
+                                s.CreatedAt.Date <= statisticParams.ToDate.Date);
+        if (!String.IsNullOrEmpty(statisticParams.UserIds))
+        {
+            var userIds = statisticParams.UserIds.Split(",").Select(c => Convert.ToInt32(c));
+            statistics = statistics.Where(s => userIds.Contains(s.UserId));
+        }
+        return await statistics.SumAsync(s => s.Value);
+    }
+
     public async Task<List<UserStatisticEntity>> GetTopUserStatistic(UserTopStatisticParams statisticParams)
     {
         var statistic = _db.UserStatistics.Include(s => s.UserAccount).Where(s =>
@@ -156,7 +185,7 @@ public class StatisticRepository : IStatisticRepository
         }
         if (otherStatisticCount > 1)
         {
-            var bottomStatistic = statistic.Skip(topStatistic.Count).Sum(s => s.Value);
+            var bottomStatistic = await statistic.Skip(topStatistic.Count).SumAsync(s => s.Value);
             topStatistic.Add(new UserStatisticEntity()
             {
                 Value = bottomStatistic,
@@ -187,10 +216,11 @@ public class StatisticRepository : IStatisticRepository
 
     public async Task<UserStatisticEntity> GetUserStatisticInNow(string key, int userId)
     {
+        var now = DateTime.UtcNow.Date;
         UserStatisticEntity userStatisticEntity = await _db.UserStatistics.FirstOrDefaultAsync(c =>
                                                         c.Key == key &&
                                                         c.UserId == userId &&
-                                                        c.CreatedAt.Date == DateTime.Now.Date);
+                                                        c.CreatedAt.Date == now);
         if (userStatisticEntity == null) return null;
         _db.Entry(userStatisticEntity).State = EntityState.Detached;
         return userStatisticEntity;

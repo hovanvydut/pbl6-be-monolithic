@@ -16,16 +16,7 @@ public static class LoggingExtension
         if (elkSettings.Enable)
         {
             var log = new LoggerConfiguration()
-                        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                        .MinimumLevel.Override("Monolithic", LogEventLevel.Information)
-                        .MinimumLevel.Override("Sentry", LogEventLevel.Error)
-                        .MinimumLevel.Override("Savorboard", LogEventLevel.Error)
-                        .MinimumLevel.Override("DotNetCore.CAP", LogEventLevel.Error)
-                        .Enrich.FromLogContext()
-                        .Enrich.WithExceptionDetails()
-                        .WriteTo.Console()
-                        .WriteTo.TCPSink(elkSettings.LogstashInputUrl, elkSettings.LogstashInputPort)
-                        // .WriteTo.DurableHttpUsingFileSizeRolledBuffers(requestUri: "http://localhost:8001/pbl6-api")
+                        .ReadFrom.Configuration(configuration)
                         .CreateLogger();
 
             loggingBuilder.AddSerilog(log);

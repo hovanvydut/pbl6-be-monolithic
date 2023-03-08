@@ -30,13 +30,14 @@ public class PriorityPostRepository : IPriorityPostRepository
 
     public async Task<PagedList<PriorityPostEntity>> GetListAvailable(PriorityPostParams priorityPostParams)
     {
+        var now = DateTime.UtcNow;
         var listPriorities = _db.PriorityPosts.Include(c => c.Post)
                                 .Include(p => p.Post.Category)
                                 .Include(p => p.Post.AddressWard.AddressDistrict.AddressProvince)
                                 .Include(p => p.Post.PostProperties)
                                 .ThenInclude(prop => prop.Property)
                                 .OrderBy(c => c.CreatedAt)
-                                .Where(c => DateTime.Now <= c.EndTime);
+                                .Where(c => now <= c.EndTime);
         if (priorityPostParams.AddressWardId > 0)
             listPriorities = listPriorities.Where(c => c.Post.AddressWardId == priorityPostParams.AddressWardId);
         return await listPriorities.ToPagedList(priorityPostParams.PageNumber, priorityPostParams.PageSize);
@@ -44,9 +45,10 @@ public class PriorityPostRepository : IPriorityPostRepository
 
     public async Task<PriorityPostEntity> GetByPostId(int postId)
     {
+        var now = DateTime.UtcNow;
         PriorityPostEntity priorityPost = await _db.PriorityPosts
                                 .Include(c => c.Post)
-                                .FirstOrDefaultAsync(c => c.PostId == postId && DateTime.Now <= c.EndTime);
+                                .FirstOrDefaultAsync(c => c.PostId == postId && now <= c.EndTime);
         if (priorityPost == null) return null;
         _db.Entry(priorityPost).State = EntityState.Detached;
         return priorityPost;
@@ -61,8 +63,9 @@ public class PriorityPostRepository : IPriorityPostRepository
 
     public async Task<List<int>> GetAllPostIdAvailable()
     {
+        var now = DateTime.UtcNow;
         return await _db.PriorityPosts
-                        .Where(c => DateTime.Now <= c.EndTime)
+                        .Where(c => now <= c.EndTime)
                         .Select(c => c.PostId).ToListAsync();
     }
 }

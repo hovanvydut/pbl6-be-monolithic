@@ -62,6 +62,7 @@ public class PostService : IPostService
         if (postEntity == null) return null;
 
         PostDTO postDTO = _mapper.Map<PostDTO>(postEntity);
+        postDTO.AuthorInfo.Id = postEntity.HostId;
 
         // adjust media
         List<MediaEntity> mediaEntityList = await _mediaRepo.GetAllMediaOfPost(postDTO.Id);
@@ -283,7 +284,7 @@ public class PostService : IPostService
         var maxPriorityPostInSearch = await _configSettingService.GetValueByKey(ConfigSetting.PRIORITY_IN_SEARCH);
         var priorityPostParams = new PriorityPostParams()
         {
-            AddressWardId = postParams.AddressWardId,
+            // AddressWardId = postParams.AddressWardId,
             PageNumber = postParams.PageNumber,
             PageSize = Convert.ToInt32(maxPriorityPostInSearch),
         };

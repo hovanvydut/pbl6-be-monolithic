@@ -6,6 +6,7 @@ using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Constants;
 using Newtonsoft.Json;
+using DotNetCore.CAP;
 using AutoMapper;
 
 namespace Monolithic.Services.Implement;
@@ -15,15 +16,19 @@ public class NotificationService : INotificationService
     private readonly INotificationRepository _notyRepo;
     private readonly IPostRepository _postRepo;
     private readonly IMapper _mapper;
+    private readonly ICapPublisher _capBus;
     public NotificationService(INotificationRepository notyRepo,
                                IPostRepository postRepo,
-                               IMapper mapper)
+                               IMapper mapper,
+                               ICapPublisher capBus)
     {
         _notyRepo = notyRepo;
         _postRepo = postRepo;
         _mapper = mapper;
+        _capBus = capBus;
     }
 
+    // CRUD
     public async Task<PagedList<NotificationDTO>> GetNotifications(int userId, NotificationParams notificationParams)
     {
         PagedList<NotificationEntity> notyEntityList = await _notyRepo.GetNotifications(userId, notificationParams);
@@ -55,6 +60,39 @@ public class NotificationService : INotificationService
         return await _notyRepo.SetAllNotyHasRead(userId);
     }
 
+    // PUSH
+    public async Task<T> PushNotification<T>(T createDTO)
+    {
+        try
+        {
+            string name = "";
+            switch (createDTO)
+            {
+                case ReviewNotificationDTO _:
+                    name = WorkerConst.REVIEW_NOTIFICATION;
+                    break;
+                case BookingNotificationDTO _:
+                    name = WorkerConst.BOOKING_NOTIFICATION;
+                    break;
+                case ApproveMeetingNotificationDTO _:
+                    name = WorkerConst.APPROVE_MEETING_NOTIFICATION;
+                    break;
+                case ConfirmMetNotificationDTO _:
+                    name = WorkerConst.CONFIRM_MET_NOTIFICATION;
+                    break;
+                default:
+                    break;
+            }
+            await _capBus.PublishAsync(name, createDTO);
+            return default(T);
+        }
+        catch
+        {
+            return default(T);
+        }
+    }
+
+    // HANDLE WORKER
     public async Task<bool> CreateReviewOnPostNoty(ReviewNotificationDTO createDTO)
     {
         PostEntity post = await _postRepo.GetPostById(createDTO.PostId);

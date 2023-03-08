@@ -7,7 +7,7 @@ namespace Monolithic.Services.Interface;
 public interface IPaymentService
 {
     Task<List<BankCodeDTO>> GetAllBankCode();
-    Task<string> CreatePayement(int userId, CreatePaymentDTO createPaymentDTO);
+    Task<string> CreatePayment(int userId, CreatePaymentDTO createPaymentDTO);
     Task ReceiveDataFromVNP(VNPayReturnDTO vnpayReturnDTO);
     Task<PagedList<UserVNPHistoryDTO>> GetVNPHistories(int userId, VNPParams vnpParams);
 }

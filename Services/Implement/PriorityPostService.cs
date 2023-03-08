@@ -8,6 +8,7 @@ using Monolithic.Models.Common;
 using Monolithic.Models.DTO;
 using Monolithic.Constants;
 using AutoMapper;
+using Monolithic.Extensions;
 
 namespace Monolithic.Services.Implement;
 
@@ -44,7 +45,8 @@ public class PriorityPostService : IPriorityPostService
     {
         DateTime startTime = priorityCreateDTO.StartTime;
         DateTime endTime = startTime.AddDays(priorityCreateDTO.Days);
-        if (startTime <= DateTime.Now)
+        var now = DateTime.UtcNow;
+        if (startTime <= now)
             throw new BaseException(HttpCode.BAD_REQUEST, "Invalid start time to uptop post");
 
         using (IDbContextTransaction transaction = _db.Database.BeginTransaction())

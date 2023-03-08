@@ -18,6 +18,7 @@ public class StatisticController : BaseController
         _statisticService = statisticService;
     }
 
+    // POST
     [HttpGet("/api/post-statistic")]
     [Authorize(Roles = PostStatisticPermission.ViewInDateRange)]
     public async Task<BaseResponse<List<PostStatisticGroupDTO>>> GetPostStatisticForHost([FromQuery] PostStatisticParams statisticParams)
@@ -25,6 +26,15 @@ public class StatisticController : BaseController
         var reqUser = HttpContext.Items["reqUser"] as ReqUser;
         var result = await _statisticService.GetPostStatisticWithParams(reqUser.Id, statisticParams);
         return new BaseResponse<List<PostStatisticGroupDTO>>(result);
+    }
+
+    [HttpGet("/api/post-statistic/total-value")]
+    [Authorize(Roles = PostStatisticPermission.ViewInDateRange)]
+    public async Task<BaseResponse<double>> GetTotalPostStatisticValue([FromQuery] PostStatisticParams statisticParams)
+    {
+        var reqUser = HttpContext.Items["reqUser"] as ReqUser;
+        var result = await _statisticService.GetTotalPostStatisticValue(reqUser.Id, statisticParams);
+        return new BaseResponse<double>(result);
     }
 
     [HttpGet("/api/post-statistic/top")]
@@ -46,13 +56,20 @@ public class StatisticController : BaseController
     }
 
     // USER
-
     [HttpGet("/api/user-statistic")]
     [Authorize(Roles = UserStatisticPermission.ViewInDateRange)]
     public async Task<BaseResponse<List<UserStatisticGroupDTO>>> GetUserStatisticForAdmin([FromQuery] UserStatisticParams statisticParams)
     {
         var result = await _statisticService.GetUserStatisticWithParams(statisticParams);
         return new BaseResponse<List<UserStatisticGroupDTO>>(result);
+    }
+
+    [HttpGet("/api/user-statistic/total-value")]
+    [Authorize(Roles = UserStatisticPermission.ViewInDateRange)]
+    public async Task<BaseResponse<double>> GetTotalUserStatisticValue([FromQuery] UserStatisticParams statisticParams)
+    {
+        var result = await _statisticService.GetTotalUserStatisticValue(statisticParams);
+        return new BaseResponse<double>(result);
     }
 
     [HttpGet("/api/user-statistic/top")]

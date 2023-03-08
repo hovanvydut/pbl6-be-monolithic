@@ -1,6 +1,6 @@
 # Homie - INN Findor System - Backend
 
-<img alt="logo.png" height="100" src=".github/img/logo.png" width="100"/>
+<img alt="logo.png" src=".github/img/logo.png" height="100" width="100"/>
 
 An INN Findor System web api created by PBL6 Team 🤖
 
@@ -19,51 +19,56 @@ An INN Findor System web api created by PBL6 Team 🤖
 - Payment management (VNPAY)
 - Notifications
 
-## Core structure used 🔬
-
-- Very Good Ventures's Boring Structure, check out in this [link](https://verygood.ventures/blog/very-good-flutter-architecture) to learn more about app architecture.
-- Multi-package (Mono repo).
-
 ## Technologies used 💪
 
-- [flutter_bloc](https://pub.dev/packages/flutter_bloc) for state management solution.
-- Service locator using [get_it](https://pub.dev/packages/get_it) and DI via Widget Tree.
-- [go_router](https://pub.dev/packages/go_router) for routing solution, deep link.
-- Structure templates using [Mason](https://brickhub.dev) brick with [own implementation](https://github.com/dungngminh/mason_bricks) and Very Good Ventures bricks.
-- Secure Storage via [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage).
-- [http](https://pub.dev/packages/http) ([customized](https://pub.dev/packages/http_client_handler) wrapper for http session) for api call.
+- [.NET 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0): API development.
+- [NuGet](https://www.nuget.org/): Package manager for .NET.
+- [MySQL](https://www.mysql.com/): Relational database for project.
+- [Serilog](https://serilog.net/): Success and error request/response logging.
+- [Elastic Stack](https://www.elastic.co/elastic-stack/): Log storage and visualization.
+- [Sentry](https://sentry.io/): Performance monitoring and error tracking.
+- [Slack](https://slack.com/): Receive notifications from sentry.
+- [Jenkins](https://www.jenkins.io/): CI – Continuous Integration and CD - Continuous Delivery.
+- [Docker](https://www.docker.com/): Web application containerization
+- [AWS](https://aws.amazon.com/): EC2 – Elastic Compute Cloud and S3 - Simple Storage Service.
 
-## Design System/UI-UX ️🎨
+## System Design for combining AI ️🎨
 
-- [Material Design 3](https://m3.material.io/) (some widgets aren't supported will be customized).
-- [Material 3 Dynamic Color](https://m3.material.io/theme-builder#/custom).
+<img alt="system-design.png" src=".github/img/flow.png" height="400"/>
 
-## Environment 🚀
+## Logging flow ️🌈
+
+<img alt="logging.png" src=".github/img/logging.png" height="300"/>
+
+## Monitoring flow ️⛱️
+
+<img alt="monitoring.png" src=".github/img/monitoring.png" height="300"/>
+
+## CI/CD flow ️🌟
+
+<img alt="cicd.png" src=".github/img/cicd.png" height="600"/>
+
+## Platforms 🚀
 
 This project contains 2 flavors:
-
-- development
-- production
-
-To run the desired flavor either use the launch configuration in VSCode/Android Studio or use the following commands with env variables:
-
-```sh
-# Development
-$ flutter run --flavor development --target lib/main_development.dart --dart-define BASE_URL="your_development_url"
-``
-# Production
-$ flutter run --flavor production --target lib/main_production.dart --dart-define BASE_URL="your_production_url"
-```
-
-## Platforms 📦
 
 - Local run by .NET CLI
 - Run docker image
 
+To run the desired flavor either use the launch configuration in VSCode/Terminal or use the following commands with env variables:
+
+```sh
+# Development
+$ dotnet run / dotnet watch
+``
+# Docker
+$ docker run -d --name "your-container-name" -p "your-port":80 hovanvydut/pbl6-be-monolithic
+```
+
 ### Docker image
 
-<a href='https://play.google.com/store/apps/details?id=me.dungngminh.pbl6_mobile'>
-<img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
+<a href='https://hub.docker.com/r/hovanvydut/pbl6-be-monolithic'>
+<img alt='Get image on docker hub' src='.github/img/docker.png' height="100"/></a>
 
 
 ## Contributor 🌟
